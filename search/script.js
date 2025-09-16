@@ -39,11 +39,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     return {
       id: item.id,
       title: item.title || item.name,
-      author: item.author || "Eternity Ready", // Provide a default author
+      author: item.author || "Eternity Ready",
       thumbnail: {
         url: imageUrl,
       },
       categories: categories,
+      sourceType: type, // <-- ALTERAÇÃO IMPORTANTE: Adiciona o tipo ao objeto
     };
   }
 
@@ -105,6 +106,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (!response.ok)
           throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
+        // Assume API items don't have a specific type, will use default URL
         return data.videos || [];
       } catch (error) {
         console.error(`Failed to fetch API search results: ${error}`);
@@ -131,14 +133,32 @@ document.addEventListener("DOMContentLoaded", async () => {
   // =======================================================================
 
   /**
+   * NOVA FUNÇÃO: Determina a URL correta para um item de mídia com base em seu tipo.
+   * @param {object} video - O objeto de mídia, deve ter 'id' e 'sourceType'.
+   * @returns {string} A URL correta para o item.
+   */
+  function getVideoUrl(video) {
+    const id = encodeURIComponent(video.id);
+    switch (video.sourceType) {
+      case "music":
+        return `/radio/?id=${id}`;
+      case "channel":
+      case "movie":
+        return `/tv/?id=${id}`;
+      default:
+        // Fallback para resultados da API ou tipos desconhecidos
+        return `/player/?q=${id}`;
+    }
+  }
+
+  /**
    * Creates the HTML for a single video card.
    * @param {object} video - The unified video object (from API or local).
    * @returns {string} - The HTML of the media-card.
    */
   function createVideoCardHTML(video) {
-    let imageUrl = "images/placeholder.jpg"; // Default placeholder
+    let imageUrl = "images/placeholder.jpg";
     if (video.thumbnail && video.thumbnail.url) {
-      // Handle both absolute URLs (from local JSON) and relative URLs (from API)
       if (video.thumbnail.url.startsWith("http")) {
         imageUrl = video.thumbnail.url;
       } else {
@@ -146,7 +166,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     }
 
-    const videoUrl = `/player/?q=${video.id}`;
+    // <-- ALTERAÇÃO: Usa a nova função para obter a URL
+    const videoUrl = getVideoUrl(video);
     const title = video.title;
     const author = video.author || "Eternity Ready";
     const categoriesText = (video.categories || [])
@@ -242,7 +263,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   async function initializeSearchDropdown() {
     const input = document.getElementById("search-input");
     const dropdown = document.getElementById("search-dropdown");
-    if (!input || !dropdown) return; // Exit if search elements aren't on this page
+    if (!input || !dropdown) return;
 
     const mediaList = document.getElementById("media-list");
     const mediaSection = document.getElementById("media-section");
@@ -255,7 +276,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     let history = JSON.parse(localStorage.getItem("searchHistory") || "[]");
 
-    // Helper functions for the dropdown
     const renderLiveResults = (videos) => {
       categoriesSection.style.display = "none";
       historySection.style.display = "none";
@@ -276,6 +296,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             imageUrl = `${API_BASE_URL}${video.thumbnail.url}`;
           }
         }
+
+        // <-- ALTERAÇÃO: Usa a nova função aqui também
+        const videoUrl = getVideoUrl(video);
         const li = document.createElement("li");
         li.className = "media-item";
         li.innerHTML = `
@@ -287,7 +310,7 @@ document.addEventListener("DOMContentLoaded", async () => {
               .join(", ")}</p>
           </div>`;
         li.onclick = () => {
-          window.location.href = `/player/?q=${video.id}`;
+          window.location.href = videoUrl;
         };
         mediaList.appendChild(li);
       });
@@ -328,7 +351,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       renderLiveResults(results);
     };
 
-    // Event Listeners
     const debouncedSearch = debounce(performLiveSearch, 400);
     input.addEventListener("input", debouncedSearch);
 
@@ -362,7 +384,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   // --- GENERAL UI & INITIALIZATION ---
   // =======================================================================
 
-  // Mobile Menu Logic
   const menuBtn = document.querySelector(".btn-menu");
   const overlay = document.querySelector(".menu-overlay");
   const mobileNav = document.querySelector(".mobile-nav");
@@ -386,11 +407,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // --- PAGE INITIALIZER ---
-  // This decides what functions to run when the page loads.
   if (dynamicContentArea) {
-    // We are on the search results page.
     fetchAndRenderSearchResults();
   }
-  initializeSearchDropdown(); // Initialize the header search bar on all pages.
+
+  initializeSearchDropdown();
 });
