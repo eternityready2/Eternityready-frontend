@@ -38,11 +38,9 @@ document.addEventListener("DOMContentLoaded", () => {
   async function init() {
     setupEventListeners();
 
-    // Carrega os canais salvos dos cookies
     savedChannels = getSavedChannelsFromCookies();
 
     try {
-      // Carrega os dados de canais e filmes em paralelo
       const [channelData, movieData] = await Promise.all([
         fetch("channels.json").then((res) => res.json()),
         fetch("movies.json").then((res) => res.json()),
@@ -51,16 +49,28 @@ document.addEventListener("DOMContentLoaded", () => {
       allChannels = channelData.channels.sort((a, b) =>
         a.name.localeCompare(b.name)
       );
-      // Assumindo que seu movies.json tem uma estrutura { "movies": [...] }
       allMovies = movieData.movies.sort((a, b) =>
         a.title.localeCompare(b.title)
       );
 
-      // Inicia a aplicação na visualização de canais
-      updateView("channel");
+      const urlParams = new URLSearchParams(window.location.search);
+      const itemId = urlParams.get("id");
 
-
-      
+      if (itemId) {
+        const allMedia = [...allMovies, ...allChannels];
+        const itemToShow = allMedia.find(
+          (item) => (item.id || item.id) === decodeURIComponent(itemId)
+        );
+        if (itemToShow) {
+          updateView("movie");
+          openChannelModal(itemToShow);
+        } else {
+          console.warn(`Item ID "${itemId}" not found.`);
+          updateView("channel");
+        }
+      } else {
+        updateView("channel");
+      }
     } catch (error) {
       mainContainer.innerHTML =
         "<h2>Error loading data. Please try again later.</h2>";
@@ -228,12 +238,10 @@ document.addEventListener("DOMContentLoaded", () => {
     renderSavedChannels();
     renderSavedList();
     applyChannelFilters();
-    
-if (typeof startProgramUpdates === "function") {
 
-startProgramUpdates();
-
-}
+    if (typeof startProgramUpdates === "function") {
+      startProgramUpdates();
+    }
   }
 
   // --- RENDERIZAÇÃO DA VIEW DE FILMES (MODIFICADA) ---
@@ -697,88 +705,5 @@ startProgramUpdates();
     return savedChannels.includes(channelName);
   }
 
-  // =================================================================================
-  // 10. PONTO DE ENTRADA DA APLICAÇÃO
-  // =================================================================================
   init();
 });
-
-window.onload = function () {
-  // --- Variáveis de Controle ---
-  let item_timeous = []; // Guarda os timers de animação para poder limpá-los
-  let previousIndex = 0; // **IMPORTANTE**: Guarda o índice do slide anterior
-
-  // --- Funções Auxiliares ---
-
-  // Função que aplica a classe .show item por item, criando o efeito de fade-in
-  function fadeInByRows(activeSlide) {
-    // Limpa timers de animações anteriores para evitar sobreposição
-    item_timeous.forEach((timeout) => clearTimeout(timeout));
-    item_timeous = [];
-
-    const items = Array.from(activeSlide.querySelectorAll(".container .item"));
-    const rows = {};
-
-    items.forEach((item) => {
-      const top = item.offsetTop;
-      if (!rows[top]) rows[top] = [];
-      rows[top].push(item);
-    });
-
-    const rowKeys = Object.keys(rows).sort((a, b) => a - b);
-
-    rowKeys.forEach((rowTop, index) => {
-      const rowItems = rows[rowTop];
-      const timeout = setTimeout(() => {
-        rowItems.forEach((item) => item.classList.add("show"));
-      }, index * 100); // Atraso de 100ms entre cada linha
-      item_timeous.push(timeout);
-    });
-  }
-
-  // Função que "limpa" um slide, removendo as animações
-  function cleanupSlide(slide) {
-    if (slide) {
-      slide.querySelectorAll(".item.show").forEach((item) => {
-        item.classList.remove("show");
-      });
-    }
-  }
-
-  // --- Inicialização do Swiper ---
-  const swiper = new Swiper(".mySwiper", {
-    pagination: {
-      el: ".swiper-pagination",
-      clickable: true,
-    },
-
-    // Eventos do Swiper
-    on: {
-      // Evento que roda quando o Swiper é criado
-      init: function () {
-        const activeSlide = this.slides[this.activeIndex];
-        fadeInByRows(activeSlide);
-        previousIndex = this.activeIndex;
-      },
-
-      // Evento que roda AO FINAL de uma transição de slide
-      transitionEnd: function () {
-        // Se não houve mudança de slide, não faz nada
-        if (this.activeIndex === previousIndex) {
-          return;
-        }
-
-        // 1. Limpa o slide que ficou para trás (o anterior)
-        const oldSlide = this.slides[previousIndex];
-        cleanupSlide(oldSlide);
-
-        // 2. Anima o novo slide que apareceu
-        const newActiveSlide = this.slides[this.activeIndex];
-        fadeInByRows(newActiveSlide);
-
-        // 3. Atualiza o índice para a próxima transição
-        previousIndex = this.activeIndex;
-      },
-    },
-  });
-};

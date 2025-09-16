@@ -30,7 +30,6 @@ document.addEventListener("DOMContentLoaded", () => {
     Movies: "movies",
     Music: "music",
   };
-  const LOCAL_CATEGORY_NAMES = Object.keys(LOCAL_CATEGORIES_MAP);
 
   let sliderObserver;
   let allPlaceholders = [];
@@ -93,11 +92,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function normalizeAllLocalData() {
     for (const key of Object.keys(localData)) {
-      normalizedData[key] = localData[key].map((item) =>
-        normalizeLocalItem(item)
-      );
+      normalizedData[key] = localData[key].map((item) => {
+        const normalizedItem = normalizeLocalItem(item);
+        normalizedItem.sourceType = key;
+        return normalizedItem;
+      });
     }
-    // Limpa os dados brutos para liberar memória
     localData = { channels: [], movies: [], music: [] };
   }
 
@@ -107,7 +107,6 @@ document.addEventListener("DOMContentLoaded", () => {
       thumbnail = new URL(thumbnail, API_BASE_URL).href;
     }
 
-    // Garante que as categorias sejam sempre um array de objetos {name: string}
     const categories = Array.isArray(item.categories)
       ? item.categories.map((name) =>
           typeof name === "string" ? { name } : name
@@ -411,7 +410,24 @@ document.addEventListener("DOMContentLoaded", () => {
           : video.thumbnail?.url
           ? `${API_BASE_URL}${video.thumbnail.url.replace(/^\//, "")}`
           : "images/placeholder.jpg";
-        const videoUrl = `/player/?q=${video.id}`;
+
+        // const videoUrl = `/player/?q=${video.id}`;
+        let videoUrl;
+        const id = encodeURIComponent(video.id);
+
+        switch (video.sourceType) {
+          case "music":
+            videoUrl = `/radio/?id=${id}`;
+            break;
+          case "channels":
+          case "movies":
+            videoUrl = `/tv/?id=${id}`;
+            break;
+          default:
+            videoUrl = `/player/?q=${id}`;
+            break;
+        }
+
         const li = document.createElement("li");
         li.className = "media-item";
         li.innerHTML = `<a href="${videoUrl}" class="media-item-link"><img src="${imageUrl}" loading="lazy" decoding="async" alt="${
