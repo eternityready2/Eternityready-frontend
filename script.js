@@ -493,14 +493,15 @@ document.addEventListener("DOMContentLoaded", () => {
   // ─── LÓGICA DOS SLIDERS (CARROSSÉIS) DINÂMICOS ──────────────────────────────────────────
   let sharedYTPlayer = null;
   let playerReady = false;
-  let activeCard = null;
+  let hoverTimeout;
 
-  function createSharedPlayer(card, videoId) {
-    const playerContainer = card.querySelector(".youtube-player-embed");
-    if (!playerContainer) return;
+  function createPlayer(elementId, videoId) {
+    if (sharedYTPlayer && typeof sharedYTPlayer.destroy === "function") {
+      sharedYTPlayer.destroy();
+    }
 
     try {
-      new YT.Player(playerContainer.id, {
+      sharedYTPlayer = new YT.Player(elementId, {
         videoId: videoId,
         playerVars: {
           autoplay: 1,
@@ -516,20 +517,12 @@ document.addEventListener("DOMContentLoaded", () => {
         events: {
           onReady: (event) => {
             event.target.unMute();
-            card.addEventListener("mouseenter", () => {
-              event.target.playVideo();
-              event.target.seekTo(30);
-            });
-            card.addEventListener("mouseleave", () => {
-              event.target.mute();
-              event.target.pauseVideo();
-              event.target.seekTo(0);
-            });
+            event.target.playVideo();
           },
         },
       });
     } catch (e) {
-      console.error(`Error creating YT Player for ${videoId}: ${e}`);
+      console.error(`Erro ao criar o Player do YT para ${videoId}: ${e}`);
     }
   }
 
@@ -543,33 +536,34 @@ document.addEventListener("DOMContentLoaded", () => {
     );
     if (!slidersContainer) return;
 
+    const stopAndDestroyPlayer = () => {
+      if (sharedYTPlayer && typeof sharedYTPlayer.destroy === "function") {
+        sharedYTPlayer.destroy();
+        sharedYTPlayer = null;
+      }
+    };
+
     slidersContainer.addEventListener("mouseover", (event) => {
       if (!playerReady) return;
 
       const card = event.target.closest(".media-card[data-youtube-id]");
-      if (card && card !== activeCard) {
+      if (card) {
+        clearTimeout(hoverTimeout);
+
         const videoId = card.dataset.youtubeId;
         const playerContainer = card.querySelector(".youtube-player-embed");
+
         if (!videoId || !playerContainer) return;
 
-        activeCard = card;
-
-        if (!sharedYTPlayer) {
-          createSharedPlayer(card, videoId);
-        } else {
-          playerContainer.appendChild(sharedYTPlayer.getIframe());
-          sharedYTPlayer.loadVideoById({ videoId: videoId });
-          sharedYTPlayer.mute();
-        }
+        createPlayer(playerContainer.id, videoId);
       }
     });
 
     slidersContainer.addEventListener("mouseout", (event) => {
-      if (!activeCard || !sharedYTPlayer) return;
-
-      if (!activeCard.contains(event.relatedTarget)) {
-        sharedYTPlayer.pauseVideo();
-        activeCard = null;
+      const card = event.target.closest(".media-card[data-youtube-id]");
+      if (card) {
+        clearTimeout(hoverTimeout);
+        hoverTimeout = setTimeout(stopAndDestroyPlayer, 150);
       }
     });
   }
