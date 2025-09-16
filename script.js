@@ -739,13 +739,21 @@ document.addEventListener("DOMContentLoaded", () => {
       const prevBtn = wrapper.querySelector(".slider-arrow.prev");
       const nextBtn = wrapper.querySelector(".slider-arrow.next");
       if (!slider || !prevBtn || !nextBtn) return;
-      const scrollAmount = slider.clientWidth * 0.8;
-      prevBtn.addEventListener("click", () =>
-        slider.scrollBy({ left: -scrollAmount, behavior: "smooth" })
-      );
-      nextBtn.addEventListener("click", () =>
-        slider.scrollBy({ left: scrollAmount, behavior: "smooth" })
-      );
+
+      const itemCount = slider.querySelectorAll(".media-card-link").length;
+
+      if (itemCount > 5) {
+        const scrollAmount = slider.clientWidth * 0.8;
+        prevBtn.addEventListener("click", () =>
+          slider.scrollBy({ left: -scrollAmount, behavior: "smooth" })
+        );
+        nextBtn.addEventListener("click", () =>
+          slider.scrollBy({ left: scrollAmount, behavior: "smooth" })
+        );
+      } else {
+        prevBtn.style.display = "none";
+        nextBtn.style.display = "none";
+      }
     });
     context.querySelectorAll(".media-grid").forEach((slider) => {
       let isDown = false,

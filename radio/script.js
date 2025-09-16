@@ -869,18 +869,12 @@ function muteSong() {
 }
 
 function closeBar() {
-  // const widget = document.querySelector(".widget-visible");
-  // widget.style.setProperty("display", "block", "important");
-
   player.classList.remove("ativo");
   pauseSong();
 }
 
-// Event Listeners (escutadores de eventos)
 playBtn.addEventListener("click", () => (isPlaying ? pauseSong() : playSong()));
 prevBtn.addEventListener("click", prevSong);
 nextBtn.addEventListener("click", nextSong);
 mute.addEventListener("click", muteSong);
 close.addEventListener("click", closeBar);
-
-// loadSong(currentPlaylist[currentSongIndex]);
