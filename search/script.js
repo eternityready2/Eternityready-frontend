@@ -166,7 +166,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     }
 
-    // <-- ALTERAÇÃO: Usa a nova função para obter a URL
     const videoUrl = getVideoUrl(video);
     const title = video.title;
     const author = video.author || "Eternity Ready";
@@ -174,10 +173,20 @@ document.addEventListener("DOMContentLoaded", async () => {
       .map((cat) => cat.name)
       .join(", ");
 
+    // Converte a primeira letra do tipo de mídia para maiúscula para o rótulo
+    const mediaTypeLabel = video.sourceType
+      ? video.sourceType.charAt(0).toUpperCase() + video.sourceType.slice(1)
+      : "";
+
     return `
       <div class="media-card" onclick="window.location.href='${videoUrl}'">
         <div class="media-thumb">
           <img src="${imageUrl}" alt="${title}" />
+          ${
+            mediaTypeLabel
+              ? `<div class="media-type-label">${mediaTypeLabel}</div>`
+              : ""
+          }
         </div>
         <div class="media-info-col">
           <p class="media-title">${title}</p>
@@ -297,10 +306,15 @@ document.addEventListener("DOMContentLoaded", async () => {
           }
         }
 
-        // <-- ALTERAÇÃO: Usa a nova função aqui também
         const videoUrl = getVideoUrl(video);
         const li = document.createElement("li");
         li.className = "media-item";
+
+        // Converte a primeira letra do tipo de mídia para maiúscula para o rótulo
+        const mediaTypeLabel = video.sourceType
+          ? video.sourceType.charAt(0).toUpperCase() + video.sourceType.slice(1)
+          : "";
+
         li.innerHTML = `
           <img src="${imageUrl}" alt="${video.title}">
           <div class="media-info">
@@ -308,6 +322,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             <p class="media-meta">${(video.categories || [])
               .map((c) => c.name)
               .join(", ")}</p>
+            ${
+              mediaTypeLabel
+                ? `<div class="media-type-label-dropdown">${mediaTypeLabel}</div>`
+                : ""
+            }
           </div>`;
         li.onclick = () => {
           window.location.href = videoUrl;
