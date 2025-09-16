@@ -26,7 +26,6 @@ document.addEventListener("DOMContentLoaded", () => {
     savedChannels = getSavedChannelsFromCookies();
 
     try {
-      // Carrega os dados de canais e filmes em paralelo
       const [channelData, movieData] = await Promise.all([
         fetch("radio.json").then((res) => res.json()),
         fetch("music.json").then((res) => res.json()),
@@ -35,13 +34,40 @@ document.addEventListener("DOMContentLoaded", () => {
       allChannels = channelData.channels.sort((a, b) =>
         a.name.localeCompare(b.name)
       );
-      // Assumindo que seu movies.json tem uma estrutura { "movies": [...] }
       allMovies = movieData.movies.sort((a, b) =>
         a.title.localeCompare(b.title)
       );
 
-      // Inicia a aplicação na visualização de canais
-      updateView("channel");
+      const urlParams = new URLSearchParams(window.location.search);
+      const itemId = urlParams.get("id");
+
+      if (itemId) {
+        const allMedia = [...allMovies, ...allChannels];
+
+        const itemToShow = allMedia.find(
+          (item) => (item.id || item.id) === decodeURIComponent(itemId)
+        );
+
+        if (itemToShow) {
+          if (itemToShow.logo) {
+            const radioIndex = allChannels.findIndex(
+              (radio) => radio.name === itemToShow.name
+            );
+            if (radioIndex > -1) {
+              updateView("channel");
+              playRadio(itemToShow, radioIndex);
+            }
+          } else {
+            updateView("movie");
+            openChannelModal(itemToShow);
+          }
+        } else {
+          console.warn(`Item com ID "${itemId}" não encontrado.`);
+          updateView("channel");
+        }
+      } else {
+        updateView("channel");
+      }
 
       if (window.updatePrograms) {
         window.updatePrograms();
@@ -273,7 +299,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     });
-    
 
     // 2. Renderiza a nova Grid de Todos os Filmes
     const allMoviesGridHTML = `
@@ -591,7 +616,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // const videoIframe = document.querySelector(".video-iframe");
     // videoIframe.src = item.embed || "";
-    
+
     const videoContainer = document.querySelector(".video-container");
     videoContainer.innerHTML = item.embed || "";
   }
@@ -744,29 +769,27 @@ window.onload = function () {
       },
     },
   });
-  
-  
-    const dropdownBtn = document.getElementById("dropdown-btn");
-    const dropdownMenu = document.getElementById("dropdown-menu");
 
-    // Adiciona um "escutador de evento" que reage ao clique no botão
-    dropdownBtn.addEventListener("click", function(event) {
-        console.log("oi")
-        event.preventDefault(); 
-        dropdownMenu.classList.toggle("show");
-    });
+  const dropdownBtn = document.getElementById("dropdown-btn");
+  const dropdownMenu = document.getElementById("dropdown-menu");
 
-    // Opcional, mas recomendado: Fecha o dropdown se o usuário clicar fora dele
-    window.addEventListener("click", function(event) {
-        // Verifica se o clique NÃO foi no botão do dropdown
-        if (!dropdownBtn.contains(event.target)) {
-        // Se o menu estiver aberto (contém a classe 'show'), ele a remove para fechar
-        if (dropdownMenu.classList.contains('show')) {
-            dropdownMenu.classList.remove('show');
-        }
+  // Adiciona um "escutador de evento" que reage ao clique no botão
+  dropdownBtn.addEventListener("click", function (event) {
+    console.log("oi");
+    event.preventDefault();
+    dropdownMenu.classList.toggle("show");
+  });
+
+  // Opcional, mas recomendado: Fecha o dropdown se o usuário clicar fora dele
+  window.addEventListener("click", function (event) {
+    // Verifica se o clique NÃO foi no botão do dropdown
+    if (!dropdownBtn.contains(event.target)) {
+      // Se o menu estiver aberto (contém a classe 'show'), ele a remove para fechar
+      if (dropdownMenu.classList.contains("show")) {
+        dropdownMenu.classList.remove("show");
+      }
     }
   });
-  
 };
 
 //
@@ -784,7 +807,7 @@ const nextBtn = document.getElementById("next");
 const playBtnIcon = playBtn.querySelector("i.fas");
 const mute = document.getElementById("mute");
 const close = document.getElementById("close");
-  const player = document.getElementById("player-bar");
+const player = document.getElementById("player-bar");
 
 // Estado do Player
 let currentPlaylist = [];
@@ -845,19 +868,19 @@ function muteSong() {
   mute.classList.toggle("fa-volume-mute");
 }
 
-  function closeBar() {
-    // const widget = document.querySelector(".widget-visible");
-    // widget.style.setProperty("display", "block", "important");
+function closeBar() {
+  // const widget = document.querySelector(".widget-visible");
+  // widget.style.setProperty("display", "block", "important");
 
-    player.classList.remove("ativo");
-    pauseSong();
-  }
+  player.classList.remove("ativo");
+  pauseSong();
+}
 
 // Event Listeners (escutadores de eventos)
 playBtn.addEventListener("click", () => (isPlaying ? pauseSong() : playSong()));
 prevBtn.addEventListener("click", prevSong);
 nextBtn.addEventListener("click", nextSong);
 mute.addEventListener("click", muteSong);
-close.addEventListener("click", closeBar)
+close.addEventListener("click", closeBar);
 
 // loadSong(currentPlaylist[currentSongIndex]);
