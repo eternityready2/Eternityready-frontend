@@ -154,93 +154,59 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   async function fetchCategories() {
     // Começa com as categorias da API
-    const combinedCategories = [...apiCategories];
-    const allCategoryNames = new Set(
-      apiCategories.map((c) => c.name.toLowerCase())
-    );
+    // const combinedCategories = [...apiCategories];
+    // const allCategoryNames = new Set(
+    //   apiCategories.map((c) => c.name.toLowerCase())
+    // );
 
     // Adiciona as categorias locais principais (Channels, Movies, Music) se ainda não existirem
-    LOCAL_CATEGORY_NAMES.forEach((localName) => {
-      if (!allCategoryNames.has(localName.toLowerCase())) {
-        allCategoryNames.add(localName.toLowerCase());
-        combinedCategories.push({ name: localName });
-      }
-    });
+    // LOCAL_CATEGORY_NAMES.forEach((localName) => {
+    //   if (!allCategoryNames.has(localName.toLowerCase())) {
+    //     allCategoryNames.add(localName.toLowerCase());
+    //     combinedCategories.push({ name: localName });
+    //   }
+    // });
 
     // Varre todos os dados locais normalizados para encontrar outras categorias
-    for (const key of Object.keys(normalizedData)) {
-      // 'channels', 'movies', 'music'
-      for (const item of normalizedData[key]) {
-        // cada item individual
-        if (item.categories && Array.isArray(item.categories)) {
-          for (const category of item.categories) {
-            if (
-              category.name &&
-              !allCategoryNames.has(category.name.toLowerCase())
-            ) {
-              allCategoryNames.add(category.name.toLowerCase());
-              combinedCategories.push({ name: category.name });
-            }
-          }
-        }
-      }
-    }
+    // for (const key of Object.keys(normalizedData)) {
+    //   // 'channels', 'movies', 'music'
+    //   for (const item of normalizedData[key]) {
+    //     // cada item individual
+    //     if (item.categories && Array.isArray(item.categories)) {
+    //       for (const category of item.categories) {
+    //         if (
+    //           category.name &&
+    //           !allCategoryNames.has(category.name.toLowerCase())
+    //         ) {
+    //           allCategoryNames.add(category.name.toLowerCase());
+    //           combinedCategories.push({ name: category.name });
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
 
-    return combinedCategories;
+    return apiCategories;
   }
 
-  /**
-   * MODIFICADO: Busca vídeos/mídia para uma categoria específica,
-   * combinando resultados da API e dos arquivos locais.
-   */
   async function fetchVideosByCategory(categoryName) {
-    // Se for uma categoria principal local, retorna todos os itens desse tipo.
-    if (LOCAL_CATEGORY_NAMES.includes(categoryName)) {
-      const localKey = LOCAL_CATEGORIES_MAP[categoryName];
-      return normalizedData[localKey] || [];
-    }
-
-    const lowerCaseCategory = categoryName.toLowerCase();
-
-    // Promessa para buscar na API
-    const apiPromise = fetch(
-      `${API_BASE_URL}api/search?category=${encodeURIComponent(categoryName)}`
-    )
-      .then((res) => (res.ok ? res.json() : Promise.resolve({ videos: [] })))
-      .then((data) => data.videos || [])
-      .catch((err) => {
-        console.error(`Falha na API para categoria ${categoryName}:`, err);
-        return [];
-      });
-
-    // Promessa para filtrar os dados locais
-    const localPromise = new Promise((resolve) => {
-      const allLocalItems = [
-        ...normalizedData.channels,
-        ...normalizedData.movies,
-        ...normalizedData.music,
-      ];
-      const results = allLocalItems.filter((item) =>
-        item.categories.some(
-          (cat) => cat.name.toLowerCase() === lowerCaseCategory
-        )
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}api/search?category=${encodeURIComponent(categoryName)}`
       );
-      resolve(results);
-    });
-
-    // Aguarda ambas as buscas e combina os resultados
-    const [apiResults, localResults] = await Promise.all([
-      apiPromise,
-      localPromise,
-    ]);
-
-    // Remove duplicados, dando preferência aos resultados da API
-    const apiResultIds = new Set(apiResults.map((v) => v.id));
-    const uniqueLocalResults = localResults.filter(
-      (v) => !apiResultIds.has(v.id)
-    );
-
-    return [...apiResults, ...uniqueLocalResults];
+      if (!response.ok) {
+        console.error(
+          `Failed API fetch for category ${categoryName}:`,
+          response.status
+        );
+        return [];
+      }
+      const data = await response.json();
+      return data.videos || [];
+    } catch (err) {
+      console.error(`Network error for category ${categoryName}:`, err);
+      return [];
+    }
   }
 
   // ─── CONTROLES DO PLAYER DE VÍDEO PRINCIPAL (HERO) ─────────────────────────────────
@@ -448,7 +414,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const videoUrl = `/player/?q=${video.id}`;
         const li = document.createElement("li");
         li.className = "media-item";
-        li.innerHTML = `<a href="${videoUrl}" class="media-item-link"><img src="${imageUrl}" alt="${
+        li.innerHTML = `<a href="${videoUrl}" class="media-item-link"><img src="${imageUrl}" loading="lazy" decoding="async" alt="${
           video.title
         }"><div class="media-info"><p class="media-title">${
           video.title
