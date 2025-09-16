@@ -2634,6 +2634,25 @@ a {
   justify-content: center;
 }
 
+.search-dropdown .media-item .media-info {
+  position: relative;
+  /* Garante que o div pai tenha um contexto de posicionamento */
+}
+
+.search-dropdown .media-item .media-type-label-dropdown {
+  position: absolute;
+  bottom: 5px; /* Posição na parte inferior do contêiner de informações */
+  right: 5px; /* Posição na parte direita */
+  background-color: #4caf50; /* Cor de fundo (ex: verde) */
+  color: white;
+  padding: 3px 7px;
+  border-radius: 3px;
+  font-size: 0.7em;
+  font-weight: bold;
+  z-index: 10;
+  text-transform: capitalize;
+}
+
 /* Quando o placeholder estiver na fila para ser observado, ele se expande */
 .slider-placeholder.is-observable {
   min-height: 300px; /* Altura do estado de carregamento */

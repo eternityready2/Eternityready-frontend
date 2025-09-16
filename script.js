@@ -1,10 +1,9 @@
 // script.js
 
 /**
- * Atraso na execução de uma função para otimizar eventos como digitação em buscas.
- * @param {Function} func A função a ser executada após o delay.
- * @param {number} delay O tempo de espera em milissegundos.
- * @returns {Function} A nova função com o comportamento de "debounce".
+ * @param {Function} func
+ * @param {number} delay
+ * @returns {Function}
  */
 function debounce(func, delay) {
   let timeoutId;
@@ -17,19 +16,11 @@ function debounce(func, delay) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  // --- CONFIGURAÇÕES GLOBAIS E ESTADO DA APLICAÇÃO ---
   const API_BASE_URL = "https://api.eternityready.com/";
 
-  // Estado para armazenar dados
   let localData = { channels: [], movies: [], music: [] };
   let normalizedData = { channels: [], movies: [], music: [] };
   let apiCategories = [];
-
-  const LOCAL_CATEGORIES_MAP = {
-    Channels: "channels",
-    Movies: "movies",
-    Music: "music",
-  };
 
   let sliderObserver;
   let allPlaceholders = [];
@@ -51,11 +42,11 @@ document.addEventListener("DOMContentLoaded", () => {
       if (response.ok) {
         apiCategories = (await response.json()) || [];
       } else {
-        console.error("Falha ao buscar categorias da API:", response.status);
+        console.error("Failed fetching API categories: ", response.status);
       }
     } else {
       console.error(
-        "Erro de rede ao buscar categorias da API:",
+        "Network error featching API categories: ",
         results[0].reason
       );
     }
@@ -71,19 +62,19 @@ document.addEventListener("DOMContentLoaded", () => {
           localData[fileName] = data[fileName] || [];
         } else {
           console.error(
-            `Falha ao carregar /data/${fileName}.json:`,
+            `Failed loading /data/${fileName}.json:`,
             response.status
           );
         }
       } else {
         console.error(
-          `Erro de rede ao carregar /data/${fileName}.json:`,
+          `Networking failed loading /data/${fileName}.json:`,
           result.reason
         );
       }
     }
     console.log(
-      "Fontes de dados carregadas. API Categorias:",
+      "Data font loaded. API Categories:",
       apiCategories.length,
       "Itens Locais:",
       localData
@@ -130,7 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
             videoId = potentialId.replace(/[^A-Za-z0-9_-]/g, "");
           }
         } catch (e) {
-          console.warn(`URL do embed inválida: "${urlString}"`, e);
+          console.warn(`Invalid embed URL: "${urlString}"`, e);
         }
       }
     }
@@ -147,44 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   }
 
-  /**
-   * MODIFICADO: Coleta categorias da API, as categorias principais locais
-   * e também varre todos os itens locais para encontrar sub-categorias únicas.
-   */
   async function fetchCategories() {
-    // Começa com as categorias da API
-    // const combinedCategories = [...apiCategories];
-    // const allCategoryNames = new Set(
-    //   apiCategories.map((c) => c.name.toLowerCase())
-    // );
-
-    // Adiciona as categorias locais principais (Channels, Movies, Music) se ainda não existirem
-    // LOCAL_CATEGORY_NAMES.forEach((localName) => {
-    //   if (!allCategoryNames.has(localName.toLowerCase())) {
-    //     allCategoryNames.add(localName.toLowerCase());
-    //     combinedCategories.push({ name: localName });
-    //   }
-    // });
-
-    // Varre todos os dados locais normalizados para encontrar outras categorias
-    // for (const key of Object.keys(normalizedData)) {
-    //   // 'channels', 'movies', 'music'
-    //   for (const item of normalizedData[key]) {
-    //     // cada item individual
-    //     if (item.categories && Array.isArray(item.categories)) {
-    //       for (const category of item.categories) {
-    //         if (
-    //           category.name &&
-    //           !allCategoryNames.has(category.name.toLowerCase())
-    //         ) {
-    //           allCategoryNames.add(category.name.toLowerCase());
-    //           combinedCategories.push({ name: category.name });
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
-
     return apiCategories;
   }
 
@@ -324,6 +278,7 @@ document.addEventListener("DOMContentLoaded", () => {
       "The Amateur",
       "Squid Game",
     ];
+
     let history = JSON.parse(localStorage.getItem("searchHistory") || "[]");
     let availableCategories = await fetchCategories();
 
@@ -381,6 +336,7 @@ document.addEventListener("DOMContentLoaded", () => {
         trendingList.appendChild(btn);
       });
     }
+
     function renderCategories(categoriesData) {
       categoriesList.innerHTML = "";
       categoriesData.slice(0, 6).forEach((c) => {
@@ -394,6 +350,7 @@ document.addEventListener("DOMContentLoaded", () => {
         categoriesList.appendChild(btn);
       });
     }
+
     function renderLiveResults(videos) {
       mediaSection.style.display = "block";
       categoriesSection.style.display = "none";
@@ -401,7 +358,7 @@ document.addEventListener("DOMContentLoaded", () => {
       mediaList.innerHTML = "";
       if (videos.length === 0) {
         mediaList.innerHTML =
-          '<li class="search-feedback">Nenhum resultado encontrado.</li>';
+          '<li class="search-feedback">No results found.</li>';
         return;
       }
       videos.slice(0, 5).forEach((video) => {
@@ -411,7 +368,6 @@ document.addEventListener("DOMContentLoaded", () => {
           ? `${API_BASE_URL}${video.thumbnail.url.replace(/^\//, "")}`
           : "images/placeholder.jpg";
 
-        // const videoUrl = `/player/?q=${video.id}`;
         let videoUrl;
         const id = encodeURIComponent(video.id);
 
@@ -428,15 +384,28 @@ document.addEventListener("DOMContentLoaded", () => {
             break;
         }
 
+        const mediaTypeLabel = video.sourceType
+          ? video.sourceType.charAt(0).toUpperCase() + video.sourceType.slice(1)
+          : "";
+
         const li = document.createElement("li");
         li.className = "media-item";
-        li.innerHTML = `<a href="${videoUrl}" class="media-item-link"><img src="${imageUrl}" loading="lazy" decoding="async" alt="${
+        li.innerHTML = `<a href="${videoUrl}" class="media-item-link">
+            <img src="${imageUrl}" loading="lazy" decoding="async" alt="${
           video.title
-        }"><div class="media-info"><p class="media-title">${
-          video.title
-        }</p><p class="media-meta">${video.categories
-          .map((c) => c.name)
-          .join(", ")}</p></div></a>`;
+        }">
+            <div class="media-info">
+                <p class="media-title">${video.title}</p>
+                <p class="media-meta">${(video.categories || [])
+                  .map((c) => c.name)
+                  .join(", ")}</p>
+                ${
+                  mediaTypeLabel
+                    ? `<div class="media-type-label-dropdown">${mediaTypeLabel}</div>`
+                    : ""
+                }
+            </div>
+        </a>`;
         mediaList.appendChild(li);
       });
     }
@@ -458,14 +427,14 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       renderCategories(availableCategories);
       renderTrending();
-      seeAllLink.textContent = "Ver todos os resultados »";
+      seeAllLink.textContent = "See all results »";
       seeAllLink.href = "/search";
     }
     const performLiveSearch = async (event) => {
       const query = event.target.value.trim();
       if (query) {
         seeAllLink.href = `/search/?query=${encodeURIComponent(query)}`;
-        seeAllLink.textContent = `Ver todos os resultados para "${query}" »`;
+        seeAllLink.textContent = `View all results for "${query}" »`;
       }
       if (query.length < 2) {
         renderEmpty();
@@ -538,7 +507,7 @@ document.addEventListener("DOMContentLoaded", () => {
         },
       });
     } catch (e) {
-      console.error(`Erro ao criar o Player do YT para ${videoId}: ${e}`);
+      console.error(`Error creating YT Player for ${videoId}: ${e}`);
     }
   }
 
@@ -660,12 +629,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!slidersContainer) return;
 
     slidersContainer.innerHTML =
-      '<p class="loading-feedback">Carregando categorias...</p>';
+      '<p class="loading-feedback">Loading categories...</p>';
     const categories = await fetchCategories();
 
     if (categories.length === 0) {
       slidersContainer.innerHTML =
-        '<p class="loading-feedback">Nenhuma categoria encontrada.</p>';
+        '<p class="loading-feedback">No category found.</p>';
       return;
     }
 
@@ -712,7 +681,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       },
       {
-        rootMargin: "200px 0px", // Começa a carregar quando estiver a 200px de distância da tela
+        rootMargin: "200px 0px",
         threshold: 0.01,
       }
     );
