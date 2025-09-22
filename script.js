@@ -17,6 +17,8 @@ function debounce(func, delay) {
 
 document.addEventListener("DOMContentLoaded", () => {
   const API_BASE_URL = "https://api.eternityready.com/";
+  const PODCAST_API_URL =
+    "https://keystone.eternityready.com/api/podcasts?limit=9999";
 
   let localData = { channels: [], movies: [], music: [] };
   let normalizedData = { channels: [], movies: [], music: [] };
@@ -30,12 +32,17 @@ document.addEventListener("DOMContentLoaded", () => {
   async function loadAllDataSources() {
     const promises = [
       fetch(`${API_BASE_URL}api/categories`), // API
+      // fetch(PODCAST_API_URL), // Podcast
       fetch("/data/channels.json"), // Local
       fetch("/data/movies.json"), // Local
       fetch("/data/music.json"), // Local
     ];
 
     const results = await Promise.allSettled(promises);
+    console.log(results);
+    if (results[1].status == "rejected") {
+      console.log("Conexão com Podcast Rejeitada");
+    }
 
     if (results[0].status === "fulfilled") {
       const response = results[0].value;
@@ -79,6 +86,26 @@ document.addEventListener("DOMContentLoaded", () => {
       "Itens Locais:",
       localData
     );
+  }
+
+  async function fetchRecentVideos(limit = 20) {
+    try {
+      const response = await fetch(`${API_BASE_URL}api/search?limit=${limit}`);
+
+      if (!response.ok) {
+        console.error(`Failed fetchting recent API videos:`, response.status);
+        return [];
+      }
+      const data = await response.json();
+      const videos = data.videos || [];
+
+      videos.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+      return videos;
+    } catch (err) {
+      console.error(`Network error fetching recent videos:`, err);
+      return [];
+    }
   }
 
   function normalizeAllLocalData() {
@@ -630,16 +657,65 @@ document.addEventListener("DOMContentLoaded", () => {
 
     slidersContainer.innerHTML =
       '<p class="loading-feedback">Loading categories...</p>';
-    const categories = await fetchCategories();
 
-    if (categories.length === 0) {
+    const [recentVideos, categories] = await Promise.all([
+      fetchRecentVideos(20),
+      fetchCategories(),
+    ]);
+
+    slidersContainer.innerHTML = "";
+
+    if (recentVideos.length >= 3) {
+      let playerInstanceCounter = 0;
+      const sliderHTML = recentVideos
+        .map((video) => {
+          const imageUrl = video.thumbnail?.url?.startsWith("http")
+            ? video.thumbnail.url
+            : video.thumbnail?.url
+            ? `${API_BASE_URL}${video.thumbnail.url.replace(/^\//, "")}`
+            : "images/placeholder.jpg";
+          const playerUrl = `/player/?q=${video.id}`;
+          const youtubeVideoId = video.videoId;
+          const videoHoverData = youtubeVideoId
+            ? `data-youtube-id="${youtubeVideoId}"`
+            : "";
+          let playerContainer = "";
+          if (youtubeVideoId) {
+            playerInstanceCounter++;
+            const uniquePlayerId = `yt-player-recent-${playerInstanceCounter}`;
+            playerContainer = `<div class="youtube-player-embed" id="${uniquePlayerId}"></div>`;
+          }
+          return `<a href="${playerUrl}" class="media-card-link"><div class="media-card" ${videoHoverData}><div class="media-thumb">${playerContainer} <img src="${imageUrl}" alt="${
+            video.title
+          }" loading="lazy" class="media-thumbnail" />${
+            video.duration
+              ? `<span class="media-duration">${video.duration}</span>`
+              : ""
+          }</div><div class="media-info-col"><p class="media-title">${
+            video.title
+          }</p><div class="media-subinfo"><p class="media-genre">${video.categories
+            .map((c) => c.name)
+            .join(", ")}</p><p class="media-by">by <span class="media-author">${
+            video.author || "EternityReady"
+          }</span></p></div></div></div></a>`;
+        })
+        .join("");
+
+      const sliderContent = `<div class="section-header"><h2 class="section-title">Newest Stuff</h2></div><div class="slider-wrapper"><button class="slider-arrow prev" aria-label="Anterior"><i class="fa fa-chevron-left"></i></button><div class="media-grid">${sliderHTML}</div><button class="slider-arrow next" aria-label="Próximo"><i class="fa fa-chevron-right"></i></button></div><hr class="media-separator" />`;
+
+      const sliderSection = document.createElement("div");
+      sliderSection.className = "category-section recent-videos-section";
+      sliderSection.innerHTML = sliderContent;
+      slidersContainer.appendChild(sliderSection); // Adiciona o novo slider ao container
+      initializeSliderControls(sliderSection); // Inicializa as setas e o arraste
+    }
+
+    if (categories.length === 0 && recentVideos.length < 3) {
       slidersContainer.innerHTML =
         '<p class="loading-feedback">No category found.</p>';
       return;
     }
 
-    // 1. Limpa o container e cria os placeholders
-    slidersContainer.innerHTML = "";
     categories.forEach((category) => {
       const placeholder = document.createElement("div");
       placeholder.className = "slider-placeholder";
@@ -660,15 +736,12 @@ document.addEventListener("DOMContentLoaded", () => {
             const placeholder = entry.target;
             const categoryName = placeholder.dataset.categoryName;
 
-            // Para de observar imediatamente para não disparar de novo
             observer.unobserve(placeholder);
 
-            // Carrega o slider e, SE for bem-sucedido, aciona a observação do PRÓXIMO item da lista geral
             const success = await loadAndBuildSlider(placeholder, {
               name: categoryName,
             });
             if (success) {
-              // Tenta observar o PRÓXIMO placeholder na lista geral
               const nextPlaceholderToObserve =
                 allPlaceholders[lastObservedIndex + 1];
               if (nextPlaceholderToObserve) {
