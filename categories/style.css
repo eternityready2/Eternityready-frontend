@@ -2333,3 +2333,64 @@ a {
   display: block;
   cursor: pointer;
 }
+
+.filters-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 20px 0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #333;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-group label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #ccc;
+}
+
+.filter-group input[type="text"],
+.filter-group select {
+  background-color: #2a2a2a;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 1rem;
+  min-width: 220px;
+  font-family: "Poppins", sans-serif;
+}
+
+.filter-group input[type="text"]:focus,
+.filter-group select:focus {
+  outline: none;
+  border-color: #e50914;
+  box-shadow: 0 0 0 2px rgba(229, 9, 20, 0.5);
+}
+
+.no-results-feedback {
+  color: #aaa;
+  font-size: 1.2rem;
+  text-align: center;
+  padding: 40px 0;
+  width: 100%;
+}
+
+/* Responsividade para os filtros */
+@media (max-width: 768px) {
+  .filters-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .filter-group input[type="text"],
+  .filter-group select {
+    min-width: unset;
+    width: 100%;
+  }
+}

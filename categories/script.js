@@ -408,9 +408,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // ─── LÓGICA DA PÁGINA DE CATEGORIA ────────────────────────────────────────────────
   //
   async function handleCategoryPage() {
-    const videosGrid = document.getElementById("dynamic-content-area");
+    const dynamicContentArea = document.getElementById("dynamic-content-area");
 
-    if (!videosGrid) {
+    if (!dynamicContentArea) {
       return;
     }
 
@@ -418,36 +418,144 @@ document.addEventListener("DOMContentLoaded", () => {
     const category = urlParams.get("category");
 
     if (!category) {
-      videosGrid.innerHTML =
+      dynamicContentArea.innerHTML =
         "<p>O ID da categoria não foi fornecido na URL.</p>";
       return;
     }
 
-    videosGrid.innerHTML = '<p class="loading-feedback">Buscando vídeos...</p>';
+    dynamicContentArea.innerHTML = `<p class="loading-feedback">Loading videos for ${category}...</p>`;
+
+    let allVideos = [];
+    let currentFilters = {
+      name: "",
+      genre: "all",
+      sort: "title-asc",
+    };
 
     const videos = await fetchVideosByCategory(category);
+    allVideos = videos;
 
     if (videos.length === 0) {
-      videosGrid.innerHTML = `<p>No videos were found for this category.</p>`;
+      dynamicContentArea.innerHTML = `<p>No videos were found for this category.</p>`;
       return;
     }
 
+    const uniqueGenres = [
+      ...new Set(
+        allVideos.flatMap((videos) => videos.categories.map((c) => c.name))
+      ),
+    ];
+
+    function renderVideos(videosToRender) {
+      const dynamicContentArea = document.querySelector(
+        ".media-grid.all-videos-grid"
+      );
+      if (!dynamicContentArea) return; // Sai se a grade não existir
+
+      // Atualiza o contador de vídeos
+      const videoCountSpan = document.getElementById("video-count");
+      if (videoCountSpan) {
+        videoCountSpan.textContent = videosToRender.length;
+      }
+
+      if (videosToRender.length === 0) {
+        dynamicContentArea.innerHTML =
+          '<p class="no-results-feedback">Nenhum vídeo corresponde aos filtros aplicados.</p>';
+        return;
+      }
+      dynamicContentArea.innerHTML = videosToRender
+        .map(createVideoCard)
+        .join("");
+    }
+
+    // 4. Função que aplica todos os filtros e re-renderiza a lista
+    function applyFiltersAndRender() {
+      let filteredVideos = [...allVideos];
+
+      // Filtro por nome (título)
+      if (currentFilters.name) {
+        filteredVideos = filteredVideos.filter((video) =>
+          video.title.toLowerCase().includes(currentFilters.name)
+        );
+      }
+
+      // Filtro por Gênero
+      if (currentFilters.genre !== "all") {
+        filteredVideos = filteredVideos.filter((video) =>
+          video.categories.some((cat) => cat.name === currentFilters.genre)
+        );
+      }
+
+      // Ordenação
+      switch (currentFilters.sort) {
+        case "title-asc":
+          filteredVideos.sort((a, b) => a.title.localeCompare(b.title));
+          break;
+        case "title-desc":
+          filteredVideos.sort((a, b) => b.title.localeCompare(a.title));
+          break;
+        // Adicione mais casos de ordenação se necessário (ex: por data)
+      }
+
+      renderVideos(filteredVideos);
+    }
+
+    // 5. Montar o HTML da página, incluindo os filtros
     const categoryName = category || "Categoria";
+    const genreOptions = uniqueGenres
+      .map((genre) => `<option value="${genre}">${genre}</option>`)
+      .join("");
 
-    cardsHTML = videos.map((video) => createVideoCard(video)).join("");
-    videosGrid.innerHTML = `
-    
+    dynamicContentArea.innerHTML = `
     <a class="backHome-Button" href="/">Back Home</a>
+    <h1 class="section-title">${categoryName} <span><span id="video-count">${allVideos.length}</span> Vídeos</span></h1>
 
-     <h1 class="section-title">${categoryName} <span>${videos.length} Videos </span></h1>
+    <div class="filters-container">
+        <div class="filter-group">
+            <label for="name-filter">Filter by name:</label>
+            <input type="text" id="name-filter" placeholder="Insert video name..." autocomplete="off">
+        </div>
+        <div class="filter-group">
+            <label for="genre-filter">Genre:</label>
+            <select id="genre-filter">
+                <option value="all">All genres</option>
+                ${genreOptions}
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="sort-filter">Order for:</label>
+            <select id="sort-filter">
+                <option value="title-asc">Name (A-Z)</option>
+                <option value="title-desc">Name (Z-A)</option>
+            </select>
+        </div>
+    </div>
 
     <section class="media-section">
         <div class="all-videos-section">
-          <div class="media-grid all-videos-grid">
-            ${cardsHTML}
-          </div>
+            <div class="media-grid all-videos-grid">
+                </div>
         </div>
-      </section>`;
+    </section>`;
+
+    // 6. Adicionar os "escutadores" de eventos aos filtros
+    document.getElementById("name-filter").addEventListener("input", (e) => {
+      currentFilters.name = e.target.value.toLowerCase();
+      applyFiltersAndRender();
+    });
+
+    document.getElementById("genre-filter").addEventListener("change", (e) => {
+      currentFilters.genre = e.target.value;
+      applyFiltersAndRender();
+    });
+
+    document.getElementById("sort-filter").addEventListener("change", (e) => {
+      currentFilters.sort = e.target.value;
+      applyFiltersAndRender();
+    });
+
+    // 7. Renderização inicial com todos os vídeos
+    applyFiltersAndRender();
   }
 
   //
