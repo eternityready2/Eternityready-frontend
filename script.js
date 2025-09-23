@@ -19,9 +19,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const API_BASE_URL = "https://api.eternityready.com/";
   const PODCAST_API_URL =
     "https://keystone.eternityready.com/api/podcasts?limit=9999";
+  const PODCAST_IMAGES_BASE_URL = "https://keystone.eternityready.com";
 
-  let localData = { channels: [], movies: [], music: [] };
-  let normalizedData = { channels: [], movies: [], music: [] };
+  let localData = { channels: [], movies: [], music: [], podcasts: [] };
+  let normalizedData = { channels: [], movies: [], music: [], podcasts: [] };
   let apiCategories = [];
 
   let sliderObserver;
@@ -32,16 +33,25 @@ document.addEventListener("DOMContentLoaded", () => {
   async function loadAllDataSources() {
     const promises = [
       fetch(`${API_BASE_URL}api/categories`), // API
-      // fetch(PODCAST_API_URL), // Podcast
+      fetch(PODCAST_API_URL), // Podcast
       fetch("/data/channels.json"), // Local
       fetch("/data/movies.json"), // Local
       fetch("/data/music.json"), // Local
     ];
 
     const results = await Promise.allSettled(promises);
-    console.log(results);
-    if (results[1].status == "rejected") {
-      console.log("Conexão com Podcast Rejeitada");
+    // console.log(results);
+    if (results[1].status === "fulfilled") {
+      const response = results[1].value;
+      if (response.ok) {
+        const podcastData = await response.json();
+        localData.podcasts = podcastData.data || [];
+        console.log(`Podcasts loaded: ${localData.podcasts.length} episodes.`);
+      } else {
+        console.error("Failed fetching podcasts:", response.status);
+      }
+    } else {
+      console.error("Network error fetching podcasts:", results[1].reason);
     }
 
     if (results[0].status === "fulfilled") {
@@ -60,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const localFiles = ["channels", "movies", "music"];
     for (let i = 0; i < localFiles.length; i++) {
-      const result = results[i + 1];
+      const result = results[i + 2];
       const fileName = localFiles[i];
       if (result.status === "fulfilled") {
         const response = result.value;
@@ -83,9 +93,29 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log(
       "Data font loaded. API Categories:",
       apiCategories.length,
-      "Itens Locais:",
+      "Local items:",
       localData
     );
+  }
+
+  function normalizePodcastItem(item) {
+    const id = item.slug || item.id;
+    const categories = Array.isArray(item.podcastCategories)
+      ? item.podcastCategories.map((cat) => ({ name: cat.name || cat }))
+      : [];
+
+    return {
+      id: id,
+      slug: item.slug,
+      title: item.title,
+      description: item.description || "",
+      thumbnail: { url: item.imageUrl },
+      categories: categories,
+      author: item.author || "EternityReady",
+      duration: item.duration || null,
+      sourceType: "podcasts",
+      videoId: null,
+    };
   }
 
   async function fetchRecentVideos(limit = 20) {
@@ -110,13 +140,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function normalizeAllLocalData() {
     for (const key of Object.keys(localData)) {
-      normalizedData[key] = localData[key].map((item) => {
-        const normalizedItem = normalizeLocalItem(item);
-        normalizedItem.sourceType = key;
-        return normalizedItem;
-      });
+      if (key === "podcasts") {
+        normalizedData[key] = localData[key].map(normalizePodcastItem);
+      } else {
+        normalizedData[key] = localData[key].map((item) => {
+          const normalizedItem = normalizeLocalItem(item);
+          normalizedItem.sourceType = key;
+          return normalizedItem;
+        });
+      }
     }
-    localData = { channels: [], movies: [], music: [] };
+
+    localData = { channels: [], movies: [], music: [], podcasts: [] };
   }
 
   function normalizeLocalItem(item) {
@@ -327,6 +362,7 @@ document.addEventListener("DOMContentLoaded", () => {
           ...normalizedData.channels,
           ...normalizedData.movies,
           ...normalizedData.music,
+          ...normalizedData.podcasts,
         ];
         const results = allLocalItems.filter(
           (item) =>
@@ -389,25 +425,33 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
       videos.slice(0, 5).forEach((video) => {
-        const imageUrl = video.thumbnail?.url?.startsWith("http")
-          ? video.thumbnail.url
-          : video.thumbnail?.url
-          ? `${API_BASE_URL}${video.thumbnail.url.replace(/^\//, "")}`
-          : "images/placeholder.jpg";
+        let imageUrl;
 
         let videoUrl;
+        let targetAttribute = "";
         const id = encodeURIComponent(video.id);
 
         switch (video.sourceType) {
           case "music":
+            imageUrl = video.thumbnail.url;
             videoUrl = `/radio/?id=${id}`;
             break;
           case "channels":
           case "movies":
+            imageUrl = video.thumbnail.url;
             videoUrl = `/tv/?id=${id}`;
+            break;
+          case "podcasts":
+            imageUrl = `https://keystone.eternityready.com${video.thumbnail.url}`;
+            videoUrl = `https://podcasts.eternityready.com/episodes/${video.slug}`;
+            targetAttribute = 'target="_blank" rel="noopener noreferrer"';
             break;
           default:
             videoUrl = `/player/?q=${id}`;
+            imageUrl = `${API_BASE_URL}${video.thumbnail.url.replace(
+              /^\//,
+              ""
+            )}`;
             break;
         }
 
@@ -417,7 +461,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const li = document.createElement("li");
         li.className = "media-item";
-        li.innerHTML = `<a href="${videoUrl}" class="media-item-link">
+        li.innerHTML = `<a href="${videoUrl}" class="media-item-link ${targetAttribute}">
             <img src="${imageUrl}" loading="lazy" decoding="async" alt="${
           video.title
         }">
@@ -603,6 +647,7 @@ document.addEventListener("DOMContentLoaded", () => {
           : video.thumbnail?.url
           ? `${API_BASE_URL}${video.thumbnail.url.replace(/^\//, "")}`
           : "images/placeholder.jpg";
+
         const playerUrl = `/player/?q=${video.id}`;
         const youtubeVideoId = video.videoId;
         const videoHoverData = youtubeVideoId
