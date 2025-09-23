@@ -433,12 +433,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         switch (video.sourceType) {
           case "music":
-            imageUrl = video.thumbnail.url;
+            imageUrl = video.thumbnail?.url;
             videoUrl = `/radio/?id=${id}`;
             break;
           case "channels":
           case "movies":
-            imageUrl = video.thumbnail.url;
+            imageUrl = video.thumbnail?.url;
             videoUrl = `/tv/?id=${id}`;
             break;
           case "podcasts":
