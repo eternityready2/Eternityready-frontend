@@ -1197,6 +1197,8 @@ a {
   grid-template-columns: repeat(auto-fit, minmax(265px, max-content));
   gap: 1rem;
   margin: 0 auto;
+  justify-content: center;
+  padding-bottom: 2rem;
   max-width: calc(5 * 265px + 4 * 1rem);
 }
 
@@ -1430,7 +1432,7 @@ a {
 }
 
 .media-section .media-info-col {
-  margin-top: 12px;
+  margin-top: 0.5rem;
 }
 
 .media-section .media-subinfo {
@@ -2334,7 +2336,7 @@ a {
 
   .media-section .media-info-col,
   .media-section .media-info {
-    padding: 6px 2px;
+    padding: 4px 2px;
     font-size: 0.98rem;
   }
 
