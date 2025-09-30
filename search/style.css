@@ -1219,7 +1219,7 @@ a {
   position: absolute;
   top: 10px; /* Distância do topo */
   left: 0; /* Alinhado à esquerda */
-  background-color: #2a2a2a; /* Cor de fundo escura */
+  background-color: #f33a6a; /* Cor de fundo escura */
   color: white; /* Cor do texto */
   padding: 5px 10px;
   border-radius: 0 5px 5px 0; /* Bordas arredondadas apenas na direita */
