@@ -19,7 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const API_BASE_URL = "https://api.eternityready.com/";
   const PODCAST_API_URL =
     "https://keystone.eternityready.com/api/podcasts?limit=9999";
-  const PODCAST_IMAGES_BASE_URL = "https://keystone.eternityready.com";
 
   let localData = { channels: [], movies: [], music: [], podcasts: [] };
   let normalizedData = { channels: [], movies: [], music: [], podcasts: [] };
@@ -134,6 +133,28 @@ document.addEventListener("DOMContentLoaded", () => {
       return videos;
     } catch (err) {
       console.error(`Network error fetching recent videos:`, err);
+      return [];
+    }
+  }
+
+  async function fetchFeaturedVideos() {
+    try {
+      const response = await fetch(`${API_BASE_URL}api/search?featured=true`);
+
+      if (!response.ok) {
+        console.error(`Failed fetching featured API videos:`, response.status);
+        return [];
+      }
+      const data = await response.json();
+      let featuredVideos = [];
+      for (i = 0; i < data.videos.length; i++) {
+        if (data.videos[i].featured == true) {
+          featuredVideos.push(data.videos[i]);
+        }
+      }
+      return featuredVideos || [];
+    } catch (err) {
+      console.error(`Network error fetching featured videos:`, err);
       return [];
     }
   }
@@ -703,12 +724,62 @@ document.addEventListener("DOMContentLoaded", () => {
     slidersContainer.innerHTML =
       '<p class="loading-feedback">Loading categories...</p>';
 
-    const [recentVideos, categories] = await Promise.all([
+    const [featuredVideos, recentVideos, categories] = await Promise.all([
+      fetchFeaturedVideos(),
       fetchRecentVideos(20),
       fetchCategories(),
     ]);
 
+    console.log(featuredVideos);
+
     slidersContainer.innerHTML = "";
+
+    if (featuredVideos.length >= 3) {
+      let playerInstanceCounter = document.querySelectorAll(
+        ".youtube-player-embed"
+      ).length;
+      const sliderHTML = featuredVideos
+        .map((video) => {
+          const imageUrl = video.thumbnail?.url?.startsWith("http")
+            ? video.thumbnail.url
+            : video.thumbnail?.url
+            ? `${API_BASE_URL}${video.thumbnail.url.replace(/^\//, "")}`
+            : "images/placeholder.jpg";
+          const playerUrl = `/player/?q=${video.id}`;
+          const youtubeVideoId = video.videoId;
+          const videoHoverData = youtubeVideoId
+            ? `data-youtube-id="${youtubeVideoId}"`
+            : "";
+          let playerContainer = "";
+          if (youtubeVideoId) {
+            playerInstanceCounter++;
+            const uniquePlayerId = `yt-player-featured-${playerInstanceCounter}`;
+            playerContainer = `<div class="youtube-player-embed" id="${uniquePlayerId}"></div>`;
+          }
+          return `<a href="${playerUrl}" class="media-card-link"><div class="media-card" ${videoHoverData}><div class="media-thumb">${playerContainer} <img src="${imageUrl}" alt="${
+            video.title
+          }" loading="lazy" class="media-thumbnail" />${
+            video.duration
+              ? `<span class="media-duration">${video.duration}</span>`
+              : ""
+          }</div><div class="media-info-col"><p class="media-title">${
+            video.title
+          }</p><div class="media-subinfo"><p class="media-genre">${video.categories
+            .map((c) => c.name)
+            .join(", ")}</p><p class="media-by">by <span class="media-author">${
+            video.author || "EternityReady"
+          }</span></p></div></div></div></a>`;
+        })
+        .join("");
+
+      const sliderContent = `<div class="section-header"><h2 class="section-title">Featured Videos</h2></div><div class="slider-wrapper"><button class="slider-arrow prev" aria-label="Anterior"><i class="fa fa-chevron-left"></i></button><div class="media-grid">${sliderHTML}</div><button class="slider-arrow next" aria-label="Próximo"><i class="fa fa-chevron-right"></i></button></div><hr class="media-separator" />`;
+
+      const sliderSection = document.createElement("div");
+      sliderSection.className = "category-section featured-videos-section";
+      sliderSection.innerHTML = sliderContent;
+      slidersContainer.appendChild(sliderSection);
+      initializeSliderControls(sliderSection);
+    }
 
     if (recentVideos.length >= 3) {
       let playerInstanceCounter = 0;
