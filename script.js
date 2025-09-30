@@ -15,6 +15,19 @@ function debounce(func, delay) {
   };
 }
 
+fetch("https://beta.ourmanna.com/api/v1/get/?format=json&order=daily")
+  .then((response) => response.json())
+  .then((data) => {
+    console.log("Verse data: ", data);
+    document.getElementById("verse-text").innerText = data.verse.details.text;
+    document.getElementById("verse-ref").innerText =
+      data.verse.details.reference;
+  })
+  .catch((error) => {
+    console.error("Verse fetch error:", error);
+    document.getElementById("verse-text").innerText = "Unable to load verse.";
+  });
+
 document.addEventListener("DOMContentLoaded", () => {
   const API_BASE_URL = "https://api.eternityready.com/";
   const PODCAST_API_URL =
@@ -729,8 +742,6 @@ document.addEventListener("DOMContentLoaded", () => {
       fetchRecentVideos(20),
       fetchCategories(),
     ]);
-
-    console.log(featuredVideos);
 
     slidersContainer.innerHTML = "";
 

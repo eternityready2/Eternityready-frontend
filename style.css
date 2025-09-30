@@ -2672,3 +2672,25 @@ a {
     transform: rotate(360deg);
   }
 }
+
+.verse-section {
+  text-align: center;
+}
+
+#verse-text {
+  font-size: 1.2rem;
+  text-align: center;
+  padding: 0px 10rem;
+}
+
+#verse-ref {
+  font-size: 1rem;
+  padding-top: 0.8rem;
+  text-align: center;
+  color: #ff3c3c;
+  font-weight: 600;
+  margin: 0 auto;
+  width: fit-content;
+  padding-bottom: 2px;
+  border-bottom: 1px solid #ff3c3c88;
+}
