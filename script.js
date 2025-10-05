@@ -978,6 +978,159 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // =======================================================================
+  // --- HERO SECTION DYNAMIC LOGIC ---
+  // =======================================================================
+
+  const heroSliderContainer = document.getElementById("hero-slider-container");
+
+  /**
+   * @returns {Promise<Array>}
+   */
+  async function fetchHeroVideos() {
+    const endpoint = `${API_BASE_URL}api/highlight`;
+    try {
+      const response = await fetch(endpoint);
+      if (!response.ok) {
+        throw new Error(`Erro na API: ${response.status}`);
+      }
+      const data = await response.json();
+      return data.videos || [];
+    } catch (error) {
+      console.error("Failed to fetch videos for hero section:", error);
+      heroSliderContainer.innerHTML = `<p class="container" style="text-align: center; color: red;">Não foi possível carregar os destaques.</p>`;
+      return [];
+    }
+  }
+
+  /**
+   * @param {object} video - O objeto de vídeo da API.
+   * @returns {string} - O HTML do slide.
+   */
+  function createHeroSlideHTML(video) {
+    const logoUrl = video.logoUrl || "images/My-Fault.png";
+    const videoUrl = video.id
+      ? `https://www.youtube.com/watch?v=${video.id}`
+      : "videos/placeholder.mp4";
+    const title = video.title || "Title Unavailable";
+    const description = video.description || "Description Unavailable.";
+    const rating = video.rating || "N/A";
+    const genres = (video.categories || ["Action", "Adventure"])
+      .map((category) => category.name || category)
+      .join('</span><span class="genre">');
+
+    // console.log(video);
+
+    return `
+      <div class="hero-slide">
+        <div class="hero-card">
+          <video class="hero-bg" src="${videoUrl}" autoplay muted loop playsinline></video>
+          <div class="hero-gradient"></div>
+          <div class="hero-content">
+            <div class="hero-logo-img">
+              <img src="${logoUrl}" alt="${title} Logo" />
+            </div>
+            <p class="hero-tagline">${
+              `New on ${video.sourceType}` || "NEW MOVIE ORIGINAL"
+            }</p>
+            <div class="hero-stats">
+              <span class="trending">#Trending Now</span>
+              <span class="rating">★ ${rating}</span>
+            </div>
+            <div class="hero-genres">
+              <span class="genre">${genres}</span>
+            </div>
+            <p class="hero-desc">${description}</p>
+            <div class="hero-cta">
+              <button class="btn-play" aria-label="Watch Now">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>
+                Watch Now
+              </button>
+              <button class="btn-icon" aria-label="Bookmark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h12v18l-6-5-6 5z"></path></svg></button>
+              <button class="btn-icon" aria-label="More info"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 6h.01m-1 4h2v6h-2z"></path></svg></button>
+            </div>
+          </div>
+          </div>
+      </div>
+    `;
+  }
+
+  function initializeHeroSlider() {
+    const slides = document.querySelectorAll(".hero-slide");
+    const prevBtn = document.querySelector(".slider-nav.prev");
+    const nextBtn = document.querySelector(".slider-nav.next");
+    let currentIndex = 0;
+    let slideInterval;
+
+    if (slides.length <= 1) {
+      if (prevBtn) prevBtn.style.display = "none";
+      if (nextBtn) nextBtn.style.display = "none";
+      return;
+    }
+
+    function showSlide(index) {
+      slides.forEach((slide, i) => {
+        slide.classList.toggle("active", i === index);
+      });
+    }
+
+    function nextSlide() {
+      currentIndex = (currentIndex + 1) % slides.length;
+      showSlide(currentIndex);
+    }
+
+    function prevSlide() {
+      currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+      showSlide(currentIndex);
+    }
+
+    function startAutoplay() {
+      stopAutoplay();
+      slideInterval = setInterval(nextSlide, 10 * 1000);
+    }
+
+    function stopAutoplay() {
+      clearInterval(slideInterval);
+    }
+
+    nextBtn.addEventListener("click", () => {
+      nextSlide();
+      startAutoplay();
+    });
+
+    prevBtn.addEventListener("click", () => {
+      prevSlide();
+      startAutoplay();
+    });
+
+    showSlide(currentIndex);
+    startAutoplay();
+  }
+
+  async function loadHeroSection() {
+    if (!heroSliderContainer) return;
+
+    const videos = await fetchHeroVideos();
+
+    if (videos.length > 0) {
+      heroSliderContainer.innerHTML = videos.map(createHeroSlideHTML).join("");
+      heroSliderContainer.firstElementChild.classList.add("active");
+      initializeHeroSlider();
+    } else {
+      heroSliderContainer.innerHTML = `
+          <div class="hero-slide active">
+            <div class="hero-card">
+                <div class="hero-content" style="text-align:center;">
+                    <h2 style="color: white;">No highlights available at this time.</h2>
+                </div>
+            </div>
+          </div>
+        `;
+    }
+  }
+
+  loadHeroSection();
+
   async function main() {
     await loadAllDataSources();
     normalizeAllLocalData();
