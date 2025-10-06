@@ -983,6 +983,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // =======================================================================
 
   const heroSliderContainer = document.getElementById("hero-slider-container");
+  let heroYTPlayer = null;
 
   /**
    * @returns {Promise<Array>}
@@ -1009,9 +1010,7 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   function createHeroSlideHTML(video) {
     const logoUrl = video.logoUrl || "images/My-Fault.png";
-    const videoUrl = video.id
-      ? `https://www.youtube.com/watch?v=${video.id}`
-      : "videos/placeholder.mp4";
+    const youtubeVideoId = video.videoId;
     const title = video.title || "Title Unavailable";
     const description = video.description || "Description Unavailable.";
     const rating = video.rating || "N/A";
@@ -1019,12 +1018,14 @@ document.addEventListener("DOMContentLoaded", () => {
       .map((category) => category.name || category)
       .join('</span><span class="genre">');
 
-    // console.log(video);
-
     return `
       <div class="hero-slide">
         <div class="hero-card">
-          <video class="hero-bg" src="${videoUrl}" autoplay muted loop playsinline></video>
+          ${
+            youtubeVideoId
+              ? `<div class="hero-bg-youtube" id="hero-youtube-player-${youtubeVideoId}"></div>`
+              : `<video class="hero-bg" src="videos/placeholder.mp4" autoplay muted loop playsinline></video>`
+          }
           <div class="hero-gradient"></div>
           <div class="hero-content">
             <div class="hero-logo-img">
@@ -1055,6 +1056,183 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
   }
 
+  function initializeHeroPlayer() {
+    const activeHeroSlide = document.querySelector(".hero-slide.active");
+    if (!activeHeroSlide) return;
+
+    const playerContainer = activeHeroSlide.querySelector(".hero-bg-youtube");
+    if (!playerContainer) {
+      // Se não for um vídeo do YouTube, procuramos o vídeo HTML normal
+      const heroVideo = activeHeroSlide.querySelector(".hero-bg");
+      if (heroVideo) {
+        heroVideo.play().catch(() => {});
+        // Adicionar a lógica para os botões de controle do vídeo HTML aqui
+        // (Play/Pause, Fullscreen, etc.) se houver.
+        // O restante da sua lógica original de `initializeHeroPlayer` para <video> pode ir aqui.
+        const playBtn = activeHeroSlide.querySelector(".control-play"); // Assegure-se de que o seletor está correto para o slide ativo
+        const progress = activeHeroSlide.querySelector(".control-progress");
+        const fsBtn = activeHeroSlide.querySelector(".control-fullscreen");
+
+        if (playBtn) {
+          const playIconPath = playBtn.querySelector("svg path");
+          const PLAY_D = "M8 5v14l11-7z";
+          const PAUSE_D = "M6 19h4V5H6v14zm8-14v14h4V5h-4z";
+          playBtn.addEventListener("click", () => {
+            if (heroVideo.paused) {
+              heroVideo.play();
+              playIconPath.setAttribute("d", PAUSE_D);
+            } else {
+              heroVideo.pause();
+              playIconPath.setAttribute("d", PLAY_D);
+            }
+          });
+        }
+        if (progress) {
+          heroVideo.addEventListener("timeupdate", () => {
+            progress.value =
+              (heroVideo.currentTime / heroVideo.duration) * 100 || 0;
+          });
+          progress.addEventListener("input", () => {
+            heroVideo.currentTime = (progress.value / 100) * heroVideo.duration;
+          });
+        }
+        // Lógica para o botão de fullscreen, etc.
+        const modal = document.getElementById("video-modal");
+        if (fsBtn && modal) {
+          const modalVideo = document.getElementById("modal-video");
+          const modalClose = document.getElementById("video-modal-close");
+          fsBtn.addEventListener("click", () => {
+            modalVideo.src = heroVideo.currentSrc || heroVideo.src;
+            modalVideo.currentTime = heroVideo.currentTime;
+            modal.classList.add("video-modal-open");
+            modalVideo.play();
+          });
+          const closeModal = () => {
+            modal.classList.remove("video-modal-open");
+            modalVideo.pause();
+            heroVideo.currentTime = modalVideo.currentTime;
+            // Ajustar o estado do botão de play se necessário
+            if (playBtn) {
+              const playIconPath = playBtn.querySelector("svg path");
+              if (!heroVideo.paused) {
+                playIconPath.setAttribute("d", PAUSE_D);
+              } else {
+                playIconPath.setAttribute("d", PLAY_D);
+              }
+            }
+          };
+          modalClose.addEventListener("click", closeModal);
+          document.addEventListener("keydown", (e) => {
+            if (
+              e.key === "Escape" &&
+              modal.classList.contains("video-modal-open")
+            ) {
+              closeModal();
+            }
+          });
+        }
+      }
+      return; // Nada a fazer se não for um player do YouTube e não houver vídeo HTML
+    }
+
+    const videoId = playerContainer.id.replace("hero-youtube-player-", "");
+
+    // Destruir o player existente se houver um
+    if (heroYTPlayer && typeof heroYTPlayer.destroy === "function") {
+      heroYTPlayer.destroy();
+      heroYTPlayer = null;
+    }
+
+    // Criar um novo player do YouTube
+    heroYTPlayer = new YT.Player(playerContainer.id, {
+      videoId: videoId,
+      playerVars: {
+        autoplay: 1,
+        controls: 0,
+        rel: 0,
+        showinfo: 0,
+        loop: 1,
+        playlist: videoId,
+        modestbranding: 1,
+        iv_load_policy: 3,
+        disablekb: 1,
+        mute: 1,
+      },
+      events: {
+        onReady: (event) => {
+          event.target.playVideo();
+          event.target.mute();
+        },
+        onStateChange: (event) => {
+          if (event.data === YT.PlayerState.PLAYING) {
+          } else {
+            // Atualizar o ícone do botão de play para play
+          }
+        },
+      },
+    });
+
+    // Lógica para os botões de controle do Hero Player (play/pause, fullscreen, etc.)
+    const playBtn = activeHeroSlide.querySelector(".btn-play");
+    const likeBtn = activeHeroSlide.querySelector(".btn-like");
+    const settingsBtn = activeHeroSlide.querySelector(".control-settings");
+    const settingsMenu = document.getElementById("settings-menu"); // Talvez precise ser específico para o slide ativo
+
+    if (playBtn) {
+      const playIconPath = playBtn.querySelector("svg path");
+      const PLAY_D = "M8 5v14l11-7z";
+      const PAUSE_D = "M6 19h4V5H6v14zm8-14v14h4V5h-4z";
+
+      playBtn.addEventListener("click", () => {
+        if (heroYTPlayer) {
+          if (
+            heroYTPlayer.getPlayerState() === YT.PlayerState.PAUSED ||
+            heroYTPlayer.getPlayerState() === YT.PlayerState.ENDED
+          ) {
+            heroYTPlayer.playVideo();
+            playIconPath.setAttribute("d", PAUSE_D);
+          } else {
+            heroYTPlayer.pauseVideo();
+            playIconPath.setAttribute("d", PLAY_D);
+          }
+        }
+      });
+    }
+    if (likeBtn) {
+      likeBtn.addEventListener("click", () =>
+        likeBtn.classList.toggle("liked")
+      );
+    }
+    if (settingsBtn && settingsMenu) {
+      settingsBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        settingsMenu.style.display =
+          settingsMenu.style.display === "flex" ? "none" : "flex";
+      });
+      document.addEventListener("click", (e) => {
+        if (!settingsMenu.contains(e.target) && e.target !== settingsBtn) {
+          settingsMenu.style.display = "none";
+        }
+      });
+      settingsMenu.querySelectorAll(".setting-item").forEach((item) => {
+        item.addEventListener("click", () => {
+          if (item.dataset.speed && heroYTPlayer) {
+            heroYTPlayer.setPlaybackRate(parseFloat(item.dataset.speed));
+          }
+          if (item.classList.contains("toggle-mute") && heroYTPlayer) {
+            if (heroYTPlayer.isMuted()) {
+              heroYTPlayer.unMute();
+              item.textContent = "Mute";
+            } else {
+              heroYTPlayer.mute();
+              item.textContent = "Unmute";
+            }
+          }
+        });
+      });
+    }
+  }
+
   function initializeHeroSlider() {
     const slides = document.querySelectorAll(".hero-slide");
     const prevBtn = document.querySelector(".slider-nav.prev");
@@ -1065,6 +1243,19 @@ document.addEventListener("DOMContentLoaded", () => {
     if (slides.length <= 1) {
       if (prevBtn) prevBtn.style.display = "none";
       if (nextBtn) nextBtn.style.display = "none";
+      // Se houver apenas um slide, inicializa seu player
+      if (slides.length === 1) {
+        slides[0].classList.add("active");
+        if (playerReady) {
+          // Garante que a API do YouTube esteja pronta
+          initializeHeroPlayer();
+        } else {
+          window.onYouTubeIframeAPIReady = () => {
+            playerReady = true;
+            initializeHeroPlayer();
+          };
+        }
+      }
       return;
     }
 
@@ -1072,21 +1263,27 @@ document.addEventListener("DOMContentLoaded", () => {
       slides.forEach((slide, i) => {
         slide.classList.toggle("active", i === index);
       });
+      if (playerReady) {
+        // Re-inicializa o player do YouTube para o novo slide ativo
+        initializeHeroPlayer();
+      }
     }
 
     function nextSlide() {
       currentIndex = (currentIndex + 1) % slides.length;
       showSlide(currentIndex);
+      startAutoplay(); // Reinicia o autoplay para cada troca manual
     }
 
     function prevSlide() {
       currentIndex = (currentIndex - 1 + slides.length) % slides.length;
       showSlide(currentIndex);
+      startAutoplay(); // Reinicia o autoplay para cada troca manual
     }
 
     function startAutoplay() {
       stopAutoplay();
-      slideInterval = setInterval(nextSlide, 10 * 1000);
+      slideInterval = setInterval(nextSlide, 15 * 1000);
     }
 
     function stopAutoplay() {
@@ -1095,12 +1292,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     nextBtn.addEventListener("click", () => {
       nextSlide();
-      startAutoplay();
     });
 
     prevBtn.addEventListener("click", () => {
       prevSlide();
-      startAutoplay();
     });
 
     showSlide(currentIndex);
