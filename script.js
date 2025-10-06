@@ -1009,7 +1009,8 @@ document.addEventListener("DOMContentLoaded", () => {
    * @returns {string} - O HTML do slide.
    */
   function createHeroSlideHTML(video) {
-    const logoUrl = video.logoUrl || "images/My-Fault.png";
+    // const logoUrl = video.logoUrl || "images/My-Fault.png";
+
     const youtubeVideoId = video.videoId;
     const title = video.title || "Title Unavailable";
     const description = video.description || "Description Unavailable.";
@@ -1028,11 +1029,11 @@ document.addEventListener("DOMContentLoaded", () => {
           }
           <div class="hero-gradient"></div>
           <div class="hero-content">
-            <div class="hero-logo-img">
-              <img src="${logoUrl}" alt="${title} Logo" />
-            </div>
+            
+            <h1 class="hero-title">${title}</h1>
+            
             <p class="hero-tagline">${
-              `New on ${video.sourceType}` || "NEW MOVIE ORIGINAL"
+              `Featured on ${video.sourceType}` || "NEW MOVIE ORIGINAL"
             }</p>
             <div class="hero-stats">
               <span class="trending">#Trending Now</span>
