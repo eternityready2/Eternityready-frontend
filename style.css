@@ -623,6 +623,12 @@ a {
   margin: 0;
   letter-spacing: 2px;
   color: #fff;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .hero-location {
@@ -2701,28 +2707,6 @@ a {
   border-bottom: 1px solid #ff3c3c88;
 }
 
-.hero-section {
-  position: relative; /* Necessário para posicionar os botões de navegação */
-  overflow: hidden;
-}
-
-.hero-slider-container {
-  aspect-ratio: 16 / 9;
-  width: 65%;
-  margin: 0 auto;
-}
-
-.hero-slide {
-  display: none; /* Esconde todos os slides por padrão */
-  width: 100%;
-  height: 100%;
-  animation: fadeIn 0.8s; /* Efeito de transição suave */
-}
-
-.hero-slide.active {
-  display: block; /* Mostra apenas o slide ativo */
-}
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -2763,44 +2747,6 @@ a {
   border-radius: 3px 0 0 3px;
 }
 
-.hero-bg-youtube {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  pointer-events: none;
-  z-index: 1;
-  transform: scale(1.22);
-}
-
-.hero-bg-youtube iframe {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.hero-title {
-  font-family: "Sua-Fonte-Bold", sans-serif; /* Troque pela fonte que estiver usando */
-  font-size: clamp(2rem, 4vw, 3rem); /* Tamanho de fonte responsivo */
-  font-weight: 800; /* Deixa a fonte bem forte */
-  color: #fff; /* Cor branca */
-  line-height: 1.1; /* Altura da linha, bom para títulos com mais de uma linha */
-  margin-bottom: 1.5rem; /* Espaçamento abaixo do título */
-  text-transform: uppercase; /* Opcional: Deixa o texto em maiúsculas para um visual mais impactante */
-
-  text-shadow: 0px 2px 8px rgba(0, 0, 0, 0.7);
-
-  display: -webkit-box;
-  -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-
-  max-width: 25ch;
-}
-
 .panel-grid-cell {
   width: calc(50% - (0.5 * 30px));
 }
@@ -2820,4 +2766,46 @@ a {
 .panel-grid-cell a {
   color: #d32f2f;
   font-weight: bold;
+}
+
+.hero-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-slider-container {
+  width: 88%;
+  height: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.hero-slide {
+  display: none;
+  width: 100%;
+  height: 100%;
+
+  animation: fadeIn 0.8s; /* Efeito de transição suave */
+}
+
+.hero-slide.active {
+  display: block; /* Mostra apenas o slide ativo */
+}
+
+.hero-bg-youtube {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+  transform: scale(1.2);
+}
+
+.hero-bg-youtube iframe {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
