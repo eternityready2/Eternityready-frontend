@@ -2800,3 +2800,24 @@ a {
 
   max-width: 25ch;
 }
+
+.panel-grid-cell {
+  width: calc(50% - (0.5 * 30px));
+}
+
+.panel-grid {
+  margin: 2rem 0 30px 0;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+
+  width: 90%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.panel-grid-cell span,
+.panel-grid-cell a {
+  color: #d32f2f;
+  font-weight: bold;
+}
