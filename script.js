@@ -1050,8 +1050,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>
                 Watch Now
               </a>
-              <button class="btn-icon" aria-label="Adicionar à lista"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h12v18l-6-5-6 5z"></path></svg></button>
-              <button class="btn-icon" aria-label="Mais informações"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 6h.01m-1 4h2v6h-2z"></path></svg></button>
+              <button class="btn-icon" aria-label="Remove from list"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h12v18l-6-5-6 5z"></path></svg></button>
+              <button class="btn-icon" aria-label="More info"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 6h.01m-1 4h2v6h-2z"></path></svg></button>
             </div>
           </div>
         </div>
