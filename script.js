@@ -1020,7 +1020,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .join('</span><span class="genre">');
 
     return `
-      <div class="hero-slide">
+      <div class="hero-slide" data-videoid="${youtubeVideoId || ""}">
         <div class="hero-card">
           ${
             youtubeVideoId
@@ -1029,14 +1029,14 @@ document.addEventListener("DOMContentLoaded", () => {
           }
           <div class="hero-gradient"></div>
           <div class="hero-content">
-            
             <h1 class="hero-title">${title}</h1>
-            
             <p class="hero-tagline">${
-              `Featured on ${video.sourceType}` || "NEW MOVIE ORIGINAL"
+              video.sourceType
+                ? `Destaque de ${video.sourceType}`
+                : "NOVO FILME ORIGINAL"
             }</p>
             <div class="hero-stats">
-              <span class="trending">#Trending Now</span>
+              <span class="trending">#EmAlta</span>
               <span class="rating">★ ${rating}</span>
             </div>
             <div class="hero-genres">
@@ -1044,15 +1044,17 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
             <p class="hero-desc">${description}</p>
             <div class="hero-cta">
-              <button class="btn-play" aria-label="Watch Now">
+              <a href="/player/?q=${
+                video.id
+              }" class="btn-play" aria-label="Assistir Agora">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>
-                Watch Now
-              </button>
-              <button class="btn-icon" aria-label="Bookmark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h12v18l-6-5-6 5z"></path></svg></button>
-              <button class="btn-icon" aria-label="More info"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 6h.01m-1 4h2v6h-2z"></path></svg></button>
+                Assistir Agora
+              </a>
+              <button class="btn-icon" aria-label="Adicionar à lista"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h12v18l-6-5-6 5z"></path></svg></button>
+              <button class="btn-icon" aria-label="Mais informações"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 6h.01m-1 4h2v6h-2z"></path></svg></button>
             </div>
           </div>
-          </div>
+        </div>
       </div>
     `;
   }
