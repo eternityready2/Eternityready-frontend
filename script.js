@@ -203,27 +203,27 @@ document.addEventListener("DOMContentLoaded", () => {
       : [];
 
     let videoId = null;
+    console.log(item.embed);
     if (item.embed) {
       let urlString = item.embed;
+
       if (urlString.trim().startsWith("<iframe")) {
         const match = urlString.match(/src=['"]([^'"]+)['"]/);
         urlString = match ? match[1] : null;
       }
-      if (
-        urlString &&
-        urlString.includes("googleusercontent.com/youtube.com")
-      ) {
-        try {
-          const potentialId = new URL(urlString).pathname.split("/").pop();
-          if (potentialId) {
-            videoId = potentialId.replace(/[^A-Za-z0-9_-]/g, "");
-          }
-        } catch (e) {
-          console.warn(`Invalid embed URL: "${urlString}"`, e);
+
+      if (urlString) {
+        const youtubeRegex =
+          /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+        const match = urlString.match(youtubeRegex);
+
+        if (match && match[1]) {
+          videoId = match[1];
         }
       }
     }
 
+    console.log(videoId);
     return {
       id: item.id || item.title || item.name,
       title: item.title || item.name,
@@ -365,7 +365,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (youtubeVideoId) {
           card.dataset.youtubeId = youtubeVideoId;
+
+          card.addEventListener("mouseover", () => {
+            if (!playerReady) return;
+            clearTimeout(hoverTimeout);
+            const videoId = card.dataset.youtubeId;
+            const playerContainerEl = card.querySelector(
+              ".youtube-player-embed"
+            );
+            if (videoId && playerContainerEl) {
+              createPlayer(playerContainerEl.id, videoId);
+            }
+          });
+
+          card.addEventListener("mouseout", () => {
+            clearTimeout(hoverTimeout);
+            hoverTimeout = setTimeout(() => {
+              if (
+                sharedYTPlayer &&
+                typeof sharedYTPlayer.destroy === "function"
+              ) {
+                sharedYTPlayer.destroy();
+                sharedYTPlayer = null;
+              }
+            }, 150);
+          });
         }
+
         contentGrid.appendChild(card);
       });
     }
