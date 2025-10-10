@@ -588,6 +588,9 @@ a {
   /* adjust to your design */
   width: 100%;
   height: auto;
+
+  border-radius: 16px;
+  border: 2px rgba(255, 255, 255, 0.562) solid;
 }
 
 .hero-content {

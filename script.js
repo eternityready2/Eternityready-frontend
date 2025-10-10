@@ -996,10 +996,11 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error(`Erro na API: ${response.status}`);
       }
       const data = await response.json();
-      return data.videos || [];
+      const randomIndex = Math.floor(Math.random() * data.videos.length);
+      return data.videos[randomIndex] || [];
     } catch (error) {
       console.error("Failed to fetch videos for hero section:", error);
-      heroSliderContainer.innerHTML = `<p class="container" style="text-align: center; color: red;">Não foi possível carregar os destaques.</p>`;
+      heroSliderContainer.innerHTML = `<p class="container" style="text-align: center; color: red;">Unable to load highlights.</p>`;
       return [];
     }
   }
@@ -1014,48 +1015,212 @@ document.addEventListener("DOMContentLoaded", () => {
     const youtubeVideoId = video.videoId;
     const title = video.title || "Title Unavailable";
     const description = video.description || "Description Unavailable.";
-    const rating = video.rating || "N/A";
+    const rating = video.rating || "6.3";
     const genres = (video.categories || ["Action", "Adventure"])
       .map((category) => category.name || category)
       .join('</span><span class="genre">');
+    // const thumbnail = `${API_BASE_URL}${video.thumbnail.url}`;
+    const thumbnail = new URL(video.thumbnail.url, API_BASE_URL);
+    console.log(thumbnail);
 
     return `
-      <div class="hero-slide" data-videoid="${youtubeVideoId || ""}">
-        <div class="hero-card">
-          ${
-            youtubeVideoId
-              ? `<div class="hero-bg-youtube" id="hero-youtube-player-${youtubeVideoId}"></div>`
-              : `<video class="hero-bg" src="videos/placeholder.mp4" autoplay muted loop playsinline></video>`
-          }
-          <div class="hero-gradient"></div>
-          <div class="hero-content">
-            <h1 class="hero-title">${title}</h1>
-            <p class="hero-tagline">${
-              video.sourceType
-                ? `Featured on ${video.sourceType}`
-                : "NEW ORIGINAL MOVIE"
-            }</p>
-            <div class="hero-stats">
-              <span class="trending">#Featured</span>
-              <span class="rating">★ ${rating}</span>
+      <section class="hero-section">
+        <div class="container">
+          <div class="hero-card">
+            
+            <iframe
+              class="hero-bg"
+              src="https://www.youtube.com/embed/${youtubeVideoId}?autoplay=1&mute=1&loop=1&playlist=${youtubeVideoId}&controls=0&showinfo=0&rel=0"
+              frameborder="0"
+              allow="autoplay; encrypted-media"
+              allowfullscreen
+            ></iframe>
+
+            <div class="hero-gradient"></div>
+            <div class="hero-content">
+              <div class="hero-logo-img">
+                <img src="${thumbnail}" alt="${title}" />
+              </div>
+              <div class="hero-langs">
+                <a href="#">English</a> |  <a href="#">Hindi</a> | 
+                <a href="#">Tamil</a> |  <a href="#">Telugu</a> | 
+                <a href="#">Malayalam</a> |  <a href="#">Kannada</a>
+              </div>
+              <p class="hero-tagline">NEW ORIGINAL MOVIE</p>
+              <div class="hero-stats">
+                <span class="trending">#Trending Now</span>
+                <span class="rating">★ ${rating}</span>
+              </div>
+              <div class="hero-genres">
+                <span class="genre">
+                  ${genres}
+                </span>
+              </div>
+              <p class="hero-desc">
+                ${description}
+              </p>
+              <div class="hero-cta">
+                <button class="btn-play" aria-label="Watch Now" onClick="window.location.href = '/player/?q=${video.id}'">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M8 5v14l11-7z"></path>
+                  </svg>
+                  Watch Now
+                </button>
+                <button class="btn-icon" aria-label="Bookmark">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path d="M6 4h12v18l-6-5-6 5z"></path>
+                  </svg>
+                </button>
+                <button class="btn-icon" aria-label="More info">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 6h.01m-1 4h2v6h-2z"
+                    ></path>
+                  </svg>
+                </button>
+              </div>
             </div>
-            <div class="hero-genres">
-              <span class="genre">${genres}</span>
-            </div>
-            <p class="hero-desc">${description}</p>
-            <div class="hero-cta">
-              <a href="/player/?q=${
-                video.id
-              }" class="btn-play" aria-label="Watch Now">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>
-                Watch Now
-              </a>
-              <button class="btn-icon" aria-label="Remove from list"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h12v18l-6-5-6 5z"></path></svg></button>
-              <button class="btn-icon" aria-label="More info"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 6h.01m-1 4h2v6h-2z"></path></svg></button>
+            
+            <div class="hero-media-wrap">
+              <video
+                class="hero-preview"
+                src="path/to/your/outofthisworld.mov"
+                muted
+                loop
+                playsinline
+              ></video>
+              <div class="video-info">
+                <div class="info-bubble">
+                  <img
+                    src="images/toppng.com-donna-picarro-dummy-avatar-768x768.png"
+                    alt=""
+                    class="info-avatar"
+                  />
+                  <span>outofthisworld.mov</span>
+                </div>
+                <div class="info-bubble info-from">
+                  <span>from Studio Mars</span>
+                </div>
+              </div>
+              <div class="aside-icons">
+                <button class="btn-like" aria-label="Like">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M12 21l-1-1C5 15 2 12 2 8a5 5 0 0 1 10 0
+                    5 5 0 0 1 10 0c0 4-3 7-9 12l-1 1z"
+                    />
+                  </svg>
+                </button>
+                <button aria-label="Watch later">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M12 6v6l4 2"></path>
+                  </svg>
+                </button>
+                <button aria-label="Go back">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M20 11H7.83l5.58-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"
+                    ></path>
+                  </svg>
+                </button>
+              </div>
+              <div class="hero-controls">
+                <button class="control-play" aria-label="Play/Pause">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M8 5v14l11-7z"></path>
+                  </svg>
+                </button>
+                <input
+                  type="range"
+                  class="control-progress"
+                  min="0"
+                  max="100"
+                  value="0"
+                  aria-label="Video progress"
+                />
+                <div class="control-actions">
+                  <button class="control-settings" aria-label="Settings">
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path
+                        d="M12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8zm7.43 4a7.43 7.43 0 0 0-.13-1l2.11-1.65-2-3.46-2.49 1a7.36 7.36 0 0 0-1.7-.99l-.38-2.65h-4l-.38 2.65a7.36 7.36 0 0 0-1.7.99l-2.49-1-2 3.46 2.11 1.65c-.05.33-.08.66-.08 1s.03.67.08 1L2.52 15.65l2 3.46 2.49-1c.5.4 1.05.73 1.7.99l.38 2.65h4l.38-2.65c.65-.26 1.2-.59 1.7-.99l2.49 1 2-3.46-2.11-1.65c.1-.33.13-.66.13-1z"
+                      />
+                    </svg>
+                  </button>
+                  <button
+                    class="control-fullscreen"
+                    aria-label="Toggle Fullscreen"
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path
+                        d="M7 14H5v5h5v-2H7v-3zm0-4h2V7h3V5H7v5zm10 4h2v3h-3v2h5v-5zm-2-4V5h-5v2h3v3h2z"
+                      ></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div id="settings-menu" class="settings-menu">
+                <ul>
+                  <li class="setting-item" data-speed="0.5">0.5× Speed</li>
+                  <li class="setting-item" data-speed="1">1× Speed</li>
+                  <li class="setting-item" data-speed="1.5">1.5× Speed</li>
+                  <li class="setting-item" data-speed="2">2× Speed</li>
+                  <li class="setting-item toggle-mute">Mute</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </section> 
     `;
   }
 
@@ -1310,8 +1475,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const videos = await fetchHeroVideos();
 
-    if (videos.length > 0) {
-      heroSliderContainer.innerHTML = videos.map(createHeroSlideHTML).join("");
+    if (videos != null) {
+      heroSliderContainer.innerHTML = createHeroSlideHTML(videos);
       heroSliderContainer.firstElementChild.classList.add("active");
       initializeHeroSlider();
     } else {
