@@ -2923,3 +2923,36 @@ a {
   z-index: 10; /* Garante que fique acima da imagem */
   text-transform: capitalize; /* Garante que a primeira letra seja maiúscula */
 }
+
+.media-thumb {
+  position: relative;
+  overflow: hidden; /* Garante que o player não vaze para fora */
+}
+
+/* Container do player do YouTube */
+.youtube-player-embed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Impede que o player bloqueie o mouse */
+  z-index: 5;
+}
+
+/* O iframe que o YouTube cria dentro do container */
+.youtube-player-embed iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* A imagem thumbnail original */
+.media-thumbnail {
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Efeito ao passar o mouse */
+.media-card[data-youtube-id]:hover .media-thumbnail {
+  opacity: 0; /* Esconde a imagem para revelar o vídeo que está por baixo */
+}

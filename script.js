@@ -320,38 +320,49 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      filteredData.forEach((item) => {
+      filteredData.forEach((item, index) => {
         let imageUrl = item.thumbnail.url || "images/placeholder.jpg";
         if (item.sourceType === "podcasts" && !imageUrl.startsWith("http")) {
           imageUrl = `https://keystone.eternityready.com${imageUrl}`;
         }
 
+        const youtubeVideoId = item.videoId;
+        let playerContainer = "";
+
+      if (youtubeVideoId) {
+        const uniquePlayerId = `yt-player-grid-${index}-${item.id}`;
+        playerContainer = `<div class="youtube-player-embed" id="${uniquePlayerId}"></div>`;
+      }
+
         const card = document.createElement("div");
         card.className = "media-card";
+        card.setAttribute('style', 'cursor: pointer;');
         card.innerHTML = `
-            <div class="media-thumb">
-                <img src="${imageUrl}" alt="${
-          item.title
-        }" loading="lazy" class="media-thumbnail"/>
-                ${
-                  item.duration
-                    ? `<span class="media-duration">${item.duration}</span>`
-                    : ""
-                }
-                <div class="media-type-label">${item.sourceType}</div>
+        <div class="media-thumb">
+            ${playerContainer} 
+            <img src="${imageUrl}" alt="${item.title}" loading="lazy" class="media-thumbnail"/>
+            ${
+              item.duration
+                ? `<span class="media-duration">${item.duration}</span>`
+                : ""
+            }
+        </div>
+        <div class="media-info-col">
+            <p class="media-title">${item.title}</p>
+            <div class="media-subinfo">
+                <p class="media-genre">${item.categories
+                  .map((c) => c.name)
+                  .join(", ")}</p>
+                <p class="media-by">by <span class="media-author">${
+                  item.author || "EternityReady"
+                }</span></p>
             </div>
-            <div class="media-info-col">
-                <p class="media-title">${item.title}</p>
-                <div class="media-subinfo">
-                    <p class="media-genre">${item.categories
-                      .map((c) => c.name)
-                      .join(", ")}</p>
-                    <p class="media-by">by <span class="media-author">${
-                      item.author || "EternityReady"
-                    }</span></p>
-                </div>
-            </div>
-          `;
+        </div>
+      `;
+
+          if(youtubeVideoId) {
+        card.dataset.youtubeId = youtubeVideoId;
+      }
         contentGrid.appendChild(card);
       });
     }
@@ -728,19 +739,17 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   function initializePlayerPreviews() {
-    const slidersContainer = document.getElementById(
-      "dynamic-sliders-container"
-    );
-    if (!slidersContainer) return;
+    const listenArea = document; 
+  if (!listenArea) return;
 
     const stopAndDestroyPlayer = () => {
       if (sharedYTPlayer && typeof sharedYTPlayer.destroy === "function") {
         sharedYTPlayer.destroy();
-        sharedYTPlayer = null;
+        sharedYTPlayer = null;  
       }
     };
 
-    slidersContainer.addEventListener("mouseover", (event) => {
+    listenArea.addEventListener("mouseover", (event) => {
       if (!playerReady) return;
 
       const card = event.target.closest(".media-card[data-youtube-id]");
@@ -756,7 +765,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    slidersContainer.addEventListener("mouseout", (event) => {
+    listenArea.addEventListener("mouseout", (event) => {
       const card = event.target.closest(".media-card[data-youtube-id]");
       if (card) {
         clearTimeout(hoverTimeout);
