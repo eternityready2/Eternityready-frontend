@@ -329,23 +329,26 @@ document.addEventListener("DOMContentLoaded", () => {
         const youtubeVideoId = item.videoId;
         let playerContainer = "";
 
-      if (youtubeVideoId) {
-        const uniquePlayerId = `yt-player-grid-${index}-${item.id}`;
-        playerContainer = `<div class="youtube-player-embed" id="${uniquePlayerId}"></div>`;
-      }
+        if (youtubeVideoId) {
+          const uniquePlayerId = `yt-player-grid-${index}-${item.id}`;
+          playerContainer = `<div class="youtube-player-embed" id="${uniquePlayerId}"></div>`;
+        }
 
         const card = document.createElement("div");
         card.className = "media-card";
-        card.setAttribute('style', 'cursor: pointer;');
+        card.setAttribute("style", "cursor: pointer;");
         card.innerHTML = `
         <div class="media-thumb">
             ${playerContainer} 
-            <img src="${imageUrl}" alt="${item.title}" loading="lazy" class="media-thumbnail"/>
+            <img src="${imageUrl}" alt="${
+          item.title
+        }" loading="lazy" class="media-thumbnail"/>
             ${
               item.duration
                 ? `<span class="media-duration">${item.duration}</span>`
                 : ""
             }
+            <div class="media-type-label">${item.sourceType}</div>
         </div>
         <div class="media-info-col">
             <p class="media-title">${item.title}</p>
@@ -360,9 +363,9 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
       `;
 
-          if(youtubeVideoId) {
-        card.dataset.youtubeId = youtubeVideoId;
-      }
+        if (youtubeVideoId) {
+          card.dataset.youtubeId = youtubeVideoId;
+        }
         contentGrid.appendChild(card);
       });
     }
@@ -739,13 +742,13 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   function initializePlayerPreviews() {
-    const listenArea = document; 
-  if (!listenArea) return;
+    const listenArea = document;
+    if (!listenArea) return;
 
     const stopAndDestroyPlayer = () => {
       if (sharedYTPlayer && typeof sharedYTPlayer.destroy === "function") {
         sharedYTPlayer.destroy();
-        sharedYTPlayer = null;  
+        sharedYTPlayer = null;
       }
     };
 
