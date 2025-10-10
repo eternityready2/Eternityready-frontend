@@ -2812,3 +2812,114 @@ a {
   height: 100%;
   object-fit: cover;
 }
+
+/* ==========================================================================
+   Estilos para a Seção de Grid e Filtros de Conteúdo Local
+   ========================================================================== */
+
+/* Container da seção para garantir espaçamento adequado */
+#local-content-section {
+  padding-top: 2rem;
+  padding-bottom: 1rem;
+}
+
+/* Container dos filtros */
+#filters-container {
+  display: flex;
+  flex-wrap: wrap; /* Permite que os filtros quebrem para a linha de baixo em telas menores */
+  gap: 1rem; /* Espaçamento entre os filtros */
+  margin-block: 1.5rem 2rem; /* Espaçamento vertical (acima e abaixo) */
+  align-items: center;
+}
+
+/* Estilo base para os campos de input e select */
+#filters-container input[type="text"],
+#filters-container select {
+  font-family: "Poppins", sans-serif;
+  background-color: #1f2937; /* Fundo escuro, similar à barra de busca */
+  color: #e0e0e0;
+  border: 1px solid #4b5563;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  outline: none; /* Remove a borda padrão do navegador ao focar */
+}
+
+/* Estilo para o campo de texto do nome */
+#filters-container input[type="text"] {
+  flex: 1 1 300px; /* Permite que o campo cresça, com uma base de 300px */
+}
+
+/* Estilo para os menus suspensos (select) */
+#filters-container select {
+  flex: 1 1 200px; /* Permite que cresçam, com uma base de 200px */
+  -webkit-appearance: none; /* Remove a aparência padrão no Chrome/Safari */
+  appearance: none; /* Remove a aparência padrão */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='2' stroke='%239ca3af'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='m19.5 8.25-7.5 7.5-7.5-7.5' /%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.2em;
+  cursor: pointer;
+}
+
+/* Efeito de foco para todos os filtros */
+#filters-container input[type="text"]:focus,
+#filters-container select:focus {
+  border-color: #3b82f6; /* Cor de destaque ao focar */
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+/* Estilo para o texto de placeholder */
+#filters-container input[type="text"]::placeholder {
+  color: #9ca3af;
+}
+
+/* Estilos para o grid de conteúdo */
+#content-grid {
+  display: grid;
+  /* Cria colunas responsivas: elas terão no mínimo 240px e no máximo 1 fração do espaço */
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.5rem;
+  min-height: 250px; /* Evita que a seção "pule" quando não há resultados */
+}
+
+/* Garante que os cards dentro do novo grid se comportem como os dos sliders */
+#content-grid .media-card {
+  width: 100%;
+}
+
+/* --- Responsividade para Dispositivos Móveis --- */
+@media (max-width: 768px) {
+  #filters-container {
+    flex-direction: column; /* Empilha os filtros verticalmente */
+    align-items: stretch; /* Faz com que todos ocupem a largura total */
+  }
+
+  #content-grid {
+    /* Ajusta o tamanho mínimo dos cards para telas menores */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  #content-grid {
+    /* Em telas muito pequenas, talvez 2 colunas seja o ideal */
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.media-card .media-type-label {
+  position: absolute;
+  top: 10px; /* Distância do topo */
+  left: 0; /* Alinhado à esquerda */
+  background-color: #f33a6a; /* Cor de fundo escura */
+  color: white; /* Cor do texto */
+  padding: 5px 10px;
+  border-radius: 0 5px 5px 0; /* Bordas arredondadas apenas na direita */
+  font-size: 0.8em;
+  font-weight: bold;
+  z-index: 10; /* Garante que fique acima da imagem */
+  text-transform: capitalize; /* Garante que a primeira letra seja maiúscula */
+}

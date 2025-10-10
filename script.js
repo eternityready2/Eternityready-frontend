@@ -18,7 +18,7 @@ function debounce(func, delay) {
 fetch("https://beta.ourmanna.com/api/v1/get/?format=json&order=daily")
   .then((response) => response.json())
   .then((data) => {
-    console.log("Verse data: ", data);
+    // console.log("Verse data: ", data);
     document.getElementById("verse-text").innerText = data.verse.details.text;
     document.getElementById("verse-ref").innerText =
       data.verse.details.reference;
@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (response.ok) {
         const podcastData = await response.json();
         localData.podcasts = podcastData.data || [];
-        console.log(`Podcasts loaded: ${localData.podcasts.length} episodes.`);
+        // console.log(`Podcasts loaded: ${localData.podcasts.length} episodes.`);
       } else {
         console.error("Failed fetching podcasts:", response.status);
       }
@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
     console.log(
-      "Data font loaded. API Categories:",
+      "Data font loaded.API Categories:",
       apiCategories.length,
       "Local items:",
       localData
@@ -160,7 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       const data = await response.json();
       let featuredVideos = [];
-      for (i = 0; i < data.videos.length; i++) {
+      for (let i = 0; i < data.videos.length; i++) {
         if (data.videos[i].featured == true) {
           featuredVideos.push(data.videos[i]);
         }
@@ -179,7 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         normalizedData[key] = localData[key].map((item) => {
           const normalizedItem = normalizeLocalItem(item);
-          normalizedItem.sourceType = key;
+          normalizedItem.sourceType = key; // Atribui o tipo de mídia (channels, movies, etc.)
           return normalizedItem;
         });
       }
@@ -189,11 +189,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function normalizeLocalItem(item) {
+    // Ajustado para usar `logo` como fallback para `thumbnail`
     let thumbnail = item.logo || item.thumbnail;
     if (thumbnail && !thumbnail.startsWith("http")) {
       thumbnail = new URL(thumbnail, API_BASE_URL).href;
     }
 
+    // Normaliza o campo de categorias
     const categories = Array.isArray(item.categories)
       ? item.categories.map((name) =>
           typeof name === "string" ? { name } : name
@@ -226,11 +228,13 @@ document.addEventListener("DOMContentLoaded", () => {
       id: item.id || item.title || item.name,
       title: item.title || item.name,
       description: item.description || "",
+      // Garante que thumbnail seja um objeto com a propriedade `url`
       thumbnail: { url: thumbnail },
       categories: categories,
       author: item.author || "EternityReady",
       duration: item.duration || null,
       videoId: videoId,
+      // `sourceType` será adicionado na função `normalizeAllLocalData`
     };
   }
 
@@ -256,6 +260,109 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error(`Network error for category ${categoryName}:`, err);
       return [];
     }
+  }
+
+  // ─── LÓGICA DO GRID DE CONTEÚDO LOCAL E FILTROS ──────────────────────────────
+  function initializeLocalContentGrid() {
+    const nameFilter = document.getElementById("name-filter");
+    const mediaTypeFilter = document.getElementById("media-type-filter");
+    const categoryFilter = document.getElementById("category-filter");
+    const contentGrid = document.getElementById("content-grid");
+
+    if (!nameFilter || !mediaTypeFilter || !categoryFilter || !contentGrid) {
+      console.error("Elementos de filtro ou grid não encontrados.");
+      return;
+    }
+
+    const allLocalData = [
+      ...normalizedData.channels,
+      ...normalizedData.movies,
+      ...normalizedData.music,
+      ...normalizedData.podcasts,
+    ];
+
+    function populateCategoryFilter() {
+      const allCategories = allLocalData.flatMap((item) =>
+        item.categories.map((cat) => cat.name)
+      );
+      const uniqueCategories = [...new Set(allCategories)].sort();
+
+      uniqueCategories.forEach((categoryName) => {
+        const option = document.createElement("option");
+        option.value = categoryName;
+        option.textContent = categoryName;
+        categoryFilter.appendChild(option);
+      });
+    }
+
+    function renderContentGrid() {
+      const nameQuery = nameFilter.value.toLowerCase();
+      const mediaTypeQuery = mediaTypeFilter.value;
+      const categoryQuery = categoryFilter.value;
+
+      const filteredData = allLocalData
+        .filter((item) => {
+          const nameMatch = item.title.toLowerCase().includes(nameQuery);
+          const mediaTypeMatch =
+            mediaTypeQuery === "all" || item.sourceType === mediaTypeQuery;
+          const categoryMatch =
+            categoryQuery === "all" ||
+            item.categories.some((cat) => cat.name === categoryQuery);
+          return nameMatch && mediaTypeMatch && categoryMatch;
+        })
+        .sort((a, b) => a.title.localeCompare(b.title));
+
+      contentGrid.innerHTML = ""; // Limpa o grid
+
+      if (filteredData.length === 0) {
+        contentGrid.innerHTML =
+          '<p class="loading-feedback">Nenhum resultado encontrado.</p>';
+        return;
+      }
+
+      filteredData.forEach((item) => {
+        let imageUrl = item.thumbnail.url || "images/placeholder.jpg";
+        if (item.sourceType === "podcasts" && !imageUrl.startsWith("http")) {
+          imageUrl = `https://keystone.eternityready.com${imageUrl}`;
+        }
+
+        const card = document.createElement("div");
+        card.className = "media-card";
+        card.innerHTML = `
+            <div class="media-thumb">
+                <img src="${imageUrl}" alt="${
+          item.title
+        }" loading="lazy" class="media-thumbnail"/>
+                ${
+                  item.duration
+                    ? `<span class="media-duration">${item.duration}</span>`
+                    : ""
+                }
+                <div class="media-type-label">${item.sourceType}</div>
+            </div>
+            <div class="media-info-col">
+                <p class="media-title">${item.title}</p>
+                <div class="media-subinfo">
+                    <p class="media-genre">${item.categories
+                      .map((c) => c.name)
+                      .join(", ")}</p>
+                    <p class="media-by">by <span class="media-author">${
+                      item.author || "EternityReady"
+                    }</span></p>
+                </div>
+            </div>
+          `;
+        contentGrid.appendChild(card);
+      });
+    }
+
+    const debouncedRender = debounce(renderContentGrid, 300);
+    nameFilter.addEventListener("input", debouncedRender);
+    mediaTypeFilter.addEventListener("change", renderContentGrid);
+    categoryFilter.addEventListener("change", renderContentGrid);
+
+    populateCategoryFilter();
+    renderContentGrid(); // Renderização inicial
   }
 
   // ─── CONTROLES DO PLAYER DE VÍDEO PRINCIPAL (HERO) ─────────────────────────────────
@@ -1021,7 +1128,6 @@ document.addEventListener("DOMContentLoaded", () => {
       .join('</span><span class="genre">');
     // const thumbnail = `${API_BASE_URL}${video.thumbnail.url}`;
     const thumbnail = new URL(video.thumbnail.url, API_BASE_URL);
-    console.log(thumbnail);
 
     return `
       <section class="hero-section">
@@ -1500,6 +1606,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     initializeHeroPlayer();
     initializeSearch();
+    initializeLocalContentGrid();
     initializeDynamicSliders();
     initializeGeneralUI();
     initializePlayerPreviews();
