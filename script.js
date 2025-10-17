@@ -15,6 +15,27 @@ function debounce(func, delay) {
   };
 }
 
+function setCookie(name, value, days) {
+  let expires = "";
+  if (days) {
+    const date = new Date();
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    expires = "; expires=" + date.toUTCString();
+  }
+  document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}
+
+function getCookie(name) {
+  const nameEQ = name + "=";
+  const ca = document.cookie.split(";");
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) === " ") c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+  }
+  return null;
+}
+
 fetch("https://beta.ourmanna.com/api/v1/get/?format=json&order=daily")
   .then((response) => response.json())
   .then((data) => {
@@ -283,6 +304,35 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    // --- LÓGICA DE COOKIES PARA A GRID ---
+    const GRID_FILTERS_COOKIE_NAME = "gridUserFilters";
+
+    function saveGridFiltersToCookie() {
+      const filters = {
+        name: nameFilter.value,
+        mediaType: mediaTypeFilter.value,
+        category: categoryFilter.value,
+      };
+      // Usando a função global que movemos
+      setCookie(GRID_FILTERS_COOKIE_NAME, JSON.stringify(filters), 7);
+    }
+
+    function loadGridFiltersFromCookie() {
+      const savedFilters = getCookie(GRID_FILTERS_COOKIE_NAME);
+      if (savedFilters) {
+        try {
+          const filters = JSON.parse(savedFilters);
+          nameFilter.value = filters.name || "";
+          mediaTypeFilter.value = filters.mediaType || "all";
+          return filters.category || "all";
+        } catch (e) {
+          console.error("Erro ao ler os filtros da grid do cookie:", e);
+          return "all";
+        }
+      }
+      return "all";
+    }
+
     // --- CONFIGURAÇÃO: Altere este valor como desejar ---
     const GRID_ITEMS_PER_PAGE = 12; // Itens para carregar inicialmente e a cada clique
     // ----------------------------------------------------
@@ -322,7 +372,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (itemsToAppend.length === 0 && fullFilteredData.length === 0) {
         contentGrid.innerHTML =
-          '<p class="loading-feedback">Nenhum resultado encontrado.</p>';
+          '<p class="loading-feedback">No results found.</p>';
       }
 
       itemsToAppend.forEach((item, index) => {
@@ -414,106 +464,29 @@ document.addEventListener("DOMContentLoaded", () => {
     loadMoreGridBtn.addEventListener("click", appendGridItems);
     gridContainer.appendChild(loadMoreGridBtn); // Adiciona o botão ao final do contêiner da grade
 
-    const debouncedRender = debounce(renderContentGrid, 300);
-    nameFilter.addEventListener("input", debouncedRender);
-    mediaTypeFilter.addEventListener("change", renderContentGrid);
-    categoryFilter.addEventListener("change", renderContentGrid);
+    // --- ATUALIZAÇÃO DOS EVENT LISTENERS ---
+    const savedCategory = loadGridFiltersFromCookie();
 
     populateCategoryFilter();
-    renderContentGrid(); // Renderização inicial
-  }
 
-  // ─── CONTROLES DO PLAYER DE VÍDEO PRINCIPAL (HERO) ─────────────────────────────────
-  // function initializeHeroPlayer() {
-  //   const heroVideo = document.querySelector(".hero-bg");
-  //   if (!heroVideo) return;
-  //   const playBtn = document.querySelector(".control-play");
-  //   const progress = document.querySelector(".control-progress");
-  //   const fsBtn = document.querySelector(".control-fullscreen");
-  //   const likeBtn = document.querySelector(".btn-like");
-  //   const settingsBtn = document.querySelector(".control-settings");
-  //   const settingsMenu = document.getElementById("settings-menu");
-  //   heroVideo.play().catch(() => {});
-  //   if (playBtn) {
-  //     const playIconPath = playBtn.querySelector("svg path");
-  //     const PLAY_D = "M8 5v14l11-7z";
-  //     const PAUSE_D = "M6 19h4V5H6v14zm8-14v14h4V5h-4z";
-  //     playBtn.addEventListener("click", () => {
-  //       if (heroVideo.paused) {
-  //         heroVideo.play();
-  //         playIconPath.setAttribute("d", PAUSE_D);
-  //       } else {
-  //         heroVideo.pause();
-  //         playIconPath.setAttribute("d", PLAY_D);
-  //       }
-  //     });
-  //   }
-  //   if (progress) {
-  //     heroVideo.addEventListener("timeupdate", () => {
-  //       progress.value =
-  //         (heroVideo.currentTime / heroVideo.duration) * 100 || 0;
-  //     });
-  //     progress.addEventListener("input", () => {
-  //       heroVideo.currentTime = (progress.value / 100) * heroVideo.duration;
-  //     });
-  //   }
-  //   const modal = document.getElementById("video-modal");
-  //   if (fsBtn && modal) {
-  //     const modalVideo = document.getElementById("modal-video");
-  //     const modalClose = document.getElementById("video-modal-close");
-  //     fsBtn.addEventListener("click", () => {
-  //       modalVideo.src = heroVideo.currentSrc || heroVideo.src;
-  //       modalVideo.currentTime = heroVideo.currentTime;
-  //       modal.classList.add("video-modal-open");
-  //       modalVideo.play();
-  //     });
-  //     const closeModal = () => {
-  //       modal.classList.remove("video-modal-open");
-  //       modalVideo.pause();
-  //       heroVideo.currentTime = modalVideo.currentTime;
-  //       if (!playBtn.querySelector("svg path[d*='M6']")) {
-  //         heroVideo.play();
-  //       }
-  //     };
-  //     modalClose.addEventListener("click", closeModal);
-  //     document.addEventListener("keydown", (e) => {
-  //       if (
-  //         e.key === "Escape" &&
-  //         modal.classList.contains("video-modal-open")
-  //       ) {
-  //         closeModal();
-  //       }
-  //     });
-  //   }
-  //   if (likeBtn) {
-  //     likeBtn.addEventListener("click", () =>
-  //       likeBtn.classList.toggle("liked")
-  //     );
-  //   }
-  //   if (settingsBtn && settingsMenu) {
-  //     settingsBtn.addEventListener("click", (e) => {
-  //       e.stopPropagation();
-  //       settingsMenu.style.display =
-  //         settingsMenu.style.display === "flex" ? "none" : "flex";
-  //     });
-  //     document.addEventListener("click", (e) => {
-  //       if (!settingsMenu.contains(e.target) && e.target !== settingsBtn) {
-  //         settingsMenu.style.display = "none";
-  //       }
-  //     });
-  //     settingsMenu.querySelectorAll(".setting-item").forEach((item) => {
-  //       item.addEventListener("click", () => {
-  //         if (item.dataset.speed) {
-  //           heroVideo.playbackRate = parseFloat(item.dataset.speed);
-  //         }
-  //         if (item.classList.contains("toggle-mute")) {
-  //           heroVideo.muted = !heroVideo.muted;
-  //           item.textContent = heroVideo.muted ? "Unmute" : "Mute";
-  //         }
-  //       });
-  //     });
-  //   }
-  // }
+    categoryFilter.value = savedCategory;
+
+    const debouncedRenderAndSave = debounce(() => {
+      renderContentGrid();
+      saveGridFiltersToCookie();
+    }, 300);
+
+    const renderAndSave = () => {
+      renderContentGrid();
+      saveGridFiltersToCookie();
+    };
+
+    nameFilter.addEventListener("input", debouncedRenderAndSave);
+    mediaTypeFilter.addEventListener("change", renderAndSave);
+    categoryFilter.addEventListener("change", renderAndSave);
+
+    renderContentGrid();
+  }
 
   // ─── LÓGICA DA BARRA DE PESQUISA DINÂMICA ──────────────────────────────────────────
   async function initializeSearch() {
@@ -913,6 +886,34 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    const FILTERS_COOKIE_NAME = "sliderUserFilters";
+
+    function saveFiltersToCookie() {
+      const filters = {
+        name: nameFilter.value,
+        mediaType: mediaTypeFilter.value,
+        category: categoryFilter.value,
+      };
+      setCookie(FILTERS_COOKIE_NAME, JSON.stringify(filters), 7); // Salva por 7 dias
+    }
+
+    function loadFiltersFromCookie() {
+      const savedFilters = getCookie(FILTERS_COOKIE_NAME);
+      if (savedFilters) {
+        try {
+          const filters = JSON.parse(savedFilters);
+          nameFilter.value = filters.name || "";
+          mediaTypeFilter.value = filters.mediaType || "all";
+          // A categoria será definida após o dropdown ser populado
+          return filters.category || "all";
+        } catch (e) {
+          console.error("Erro ao ler os filtros do cookie:", e);
+          return "all";
+        }
+      }
+      return "all";
+    }
+
     // --- CONFIGURAÇÃO ---
     const INITIAL_SLIDER_LIMIT = 5;
     const SLIDER_BATCH_SIZE = 5;
@@ -1190,13 +1191,26 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // --- FINALIZAÇÃO E CONFIGURAÇÃO DOS EVENTOS ---
+    const savedCategory = loadFiltersFromCookie();
+
     populateSliderCategoryFilter();
 
+    categoryFilter.value = savedCategory;
+
+    const debouncedFilterAndSave = debounce(() => {
+      applyFiltersAndRenderSliders();
+      saveFiltersToCookie();
+    }, 400);
+
+    const filterAndSave = () => {
+      applyFiltersAndRenderSliders();
+      saveFiltersToCookie();
+    };
+
     // Configura os listeners dos filtros
-    const debouncedFilter = debounce(applyFiltersAndRenderSliders, 400);
-    nameFilter.addEventListener("input", debouncedFilter);
-    mediaTypeFilter.addEventListener("change", applyFiltersAndRenderSliders);
-    categoryFilter.addEventListener("change", applyFiltersAndRenderSliders);
+    nameFilter.addEventListener("input", debouncedFilterAndSave);
+    mediaTypeFilter.addEventListener("change", filterAndSave);
+    categoryFilter.addEventListener("change", filterAndSave);
 
     // Primeira renderização
     applyFiltersAndRenderSliders();
