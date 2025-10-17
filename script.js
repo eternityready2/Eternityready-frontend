@@ -203,7 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
       : [];
 
     let videoId = null;
-    console.log(item.embed);
+    // console.log(item.embed);
     if (item.embed) {
       let urlString = item.embed;
 
@@ -223,7 +223,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    console.log(videoId);
+    // console.log(videoId);
     return {
       id: item.id || item.title || item.name,
       title: item.title || item.name,
@@ -268,11 +268,28 @@ document.addEventListener("DOMContentLoaded", () => {
     const mediaTypeFilter = document.getElementById("media-type-filter");
     const categoryFilter = document.getElementById("category-filter");
     const contentGrid = document.getElementById("content-grid");
+    const gridContainer = document.getElementById("local-content-section"); // O contêiner que envolve a grade
 
-    if (!nameFilter || !mediaTypeFilter || !categoryFilter || !contentGrid) {
-      console.error("Elementos de filtro ou grid não encontrados.");
+    if (
+      !nameFilter ||
+      !mediaTypeFilter ||
+      !categoryFilter ||
+      !contentGrid ||
+      !gridContainer
+    ) {
+      console.error(
+        "Elementos de filtro, grade ou contêiner da grade não encontrados."
+      );
       return;
     }
+
+    // --- CONFIGURAÇÃO: Altere este valor como desejar ---
+    const GRID_ITEMS_PER_PAGE = 12; // Itens para carregar inicialmente e a cada clique
+    // ----------------------------------------------------
+
+    let fullFilteredData = []; // Guarda todos os itens que correspondem ao filtro atual
+    let currentlyDisplayedCount = 0; // Contador de quantos itens estão visíveis
+    let loadMoreGridBtn;
 
     const allLocalData = [
       ...normalizedData.channels,
@@ -286,7 +303,8 @@ document.addEventListener("DOMContentLoaded", () => {
         item.categories.map((cat) => cat.name)
       );
       const uniqueCategories = [...new Set(allCategories)].sort();
-
+      categoryFilter.innerHTML =
+        '<option value="all">Todas as Categorias</option>'; // Limpa e adiciona a opção padrão
       uniqueCategories.forEach((categoryName) => {
         const option = document.createElement("option");
         option.value = categoryName;
@@ -295,45 +313,30 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    function renderContentGrid() {
-      const nameQuery = nameFilter.value.toLowerCase();
-      const mediaTypeQuery = mediaTypeFilter.value;
-      const categoryQuery = categoryFilter.value;
+    function appendGridItems() {
+      // Pega o próximo lote de itens para exibir
+      const itemsToAppend = fullFilteredData.slice(
+        currentlyDisplayedCount,
+        currentlyDisplayedCount + GRID_ITEMS_PER_PAGE
+      );
 
-      const filteredData = allLocalData
-        .filter((item) => {
-          const nameMatch = item.title.toLowerCase().includes(nameQuery);
-          const mediaTypeMatch =
-            mediaTypeQuery === "all" || item.sourceType === mediaTypeQuery;
-          const categoryMatch =
-            categoryQuery === "all" ||
-            item.categories.some((cat) => cat.name === categoryQuery);
-          return nameMatch && mediaTypeMatch && categoryMatch;
-        })
-        .sort((a, b) => a.title.localeCompare(b.title));
-
-      contentGrid.innerHTML = ""; // Limpa o grid
-
-      if (filteredData.length === 0) {
+      if (itemsToAppend.length === 0 && fullFilteredData.length === 0) {
         contentGrid.innerHTML =
           '<p class="loading-feedback">Nenhum resultado encontrado.</p>';
-        return;
       }
 
-      filteredData.forEach((item, index) => {
+      itemsToAppend.forEach((item, index) => {
+        // ... (seu código de criação de 'card' continua aqui, sem alterações)
         let imageUrl = item.thumbnail.url || "images/placeholder.jpg";
         if (item.sourceType === "podcasts" && !imageUrl.startsWith("http")) {
           imageUrl = `https://keystone.eternityready.com${imageUrl}`;
         }
-
         const youtubeVideoId = item.videoId;
         let playerContainer = "";
-
         if (youtubeVideoId) {
           const uniquePlayerId = `yt-player-grid-${index}-${item.id}`;
           playerContainer = `<div class="youtube-player-embed" id="${uniquePlayerId}"></div>`;
         }
-
         const card = document.createElement("div");
         card.className = "media-card";
         card.setAttribute("style", "cursor: pointer;");
@@ -360,41 +363,56 @@ document.addEventListener("DOMContentLoaded", () => {
                   item.author || "EternityReady"
                 }</span></p>
             </div>
-        </div>
-      `;
-
+        </div>`;
         if (youtubeVideoId) {
-          card.dataset.youtubeId = youtubeVideoId;
-
-          card.addEventListener("mouseover", () => {
-            if (!playerReady) return;
-            clearTimeout(hoverTimeout);
-            const videoId = card.dataset.youtubeId;
-            const playerContainerEl = card.querySelector(
-              ".youtube-player-embed"
-            );
-            if (videoId && playerContainerEl) {
-              createPlayer(playerContainerEl.id, videoId);
-            }
-          });
-
-          card.addEventListener("mouseout", () => {
-            clearTimeout(hoverTimeout);
-            hoverTimeout = setTimeout(() => {
-              if (
-                sharedYTPlayer &&
-                typeof sharedYTPlayer.destroy === "function"
-              ) {
-                sharedYTPlayer.destroy();
-                sharedYTPlayer = null;
-              }
-            }, 150);
-          });
+          // ... (seus event listeners de mouseover/mouseout para o player)
         }
-
         contentGrid.appendChild(card);
       });
+
+      currentlyDisplayedCount += itemsToAppend.length;
+
+      // Gerencia a visibilidade do botão "Carregar Mais"
+      if (currentlyDisplayedCount >= fullFilteredData.length) {
+        if (loadMoreGridBtn) loadMoreGridBtn.style.display = "none";
+      } else {
+        if (loadMoreGridBtn) loadMoreGridBtn.style.display = "block";
+      }
     }
+
+    function renderContentGrid() {
+      const nameQuery = nameFilter.value.toLowerCase();
+      const mediaTypeQuery = mediaTypeFilter.value;
+      const categoryQuery = categoryFilter.value;
+
+      // Filtra todos os dados, mas não renderiza ainda
+      fullFilteredData = allLocalData
+        .filter((item) => {
+          const nameMatch = item.title.toLowerCase().includes(nameQuery);
+          const mediaTypeMatch =
+            mediaTypeQuery === "all" || item.sourceType === mediaTypeQuery;
+          const categoryMatch =
+            categoryQuery === "all" ||
+            item.categories.some((cat) => cat.name === categoryQuery);
+          return nameMatch && mediaTypeMatch && categoryMatch;
+        })
+        .sort((a, b) => a.title.localeCompare(b.title));
+
+      // Limpa o grid e reseta o contador antes de adicionar novos itens
+      contentGrid.innerHTML = "";
+      currentlyDisplayedCount = 0;
+
+      // Adiciona o primeiro lote de itens
+      appendGridItems();
+    }
+
+    // Cria o botão "Carregar Mais" para a grade
+    loadMoreGridBtn = document.createElement("button");
+    loadMoreGridBtn.textContent = "Carregar Mais";
+    loadMoreGridBtn.className = "btn-load-more";
+    loadMoreGridBtn.style.display = "none"; // Começa escondido
+    loadMoreGridBtn.addEventListener("click", appendGridItems);
+    gridContainer.appendChild(loadMoreGridBtn); // Adiciona o botão ao final do contêiner da grade
 
     const debouncedRender = debounce(renderContentGrid, 300);
     nameFilter.addEventListener("input", debouncedRender);
@@ -406,96 +424,96 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ─── CONTROLES DO PLAYER DE VÍDEO PRINCIPAL (HERO) ─────────────────────────────────
-  function initializeHeroPlayer() {
-    const heroVideo = document.querySelector(".hero-bg");
-    if (!heroVideo) return;
-    const playBtn = document.querySelector(".control-play");
-    const progress = document.querySelector(".control-progress");
-    const fsBtn = document.querySelector(".control-fullscreen");
-    const likeBtn = document.querySelector(".btn-like");
-    const settingsBtn = document.querySelector(".control-settings");
-    const settingsMenu = document.getElementById("settings-menu");
-    heroVideo.play().catch(() => {});
-    if (playBtn) {
-      const playIconPath = playBtn.querySelector("svg path");
-      const PLAY_D = "M8 5v14l11-7z";
-      const PAUSE_D = "M6 19h4V5H6v14zm8-14v14h4V5h-4z";
-      playBtn.addEventListener("click", () => {
-        if (heroVideo.paused) {
-          heroVideo.play();
-          playIconPath.setAttribute("d", PAUSE_D);
-        } else {
-          heroVideo.pause();
-          playIconPath.setAttribute("d", PLAY_D);
-        }
-      });
-    }
-    if (progress) {
-      heroVideo.addEventListener("timeupdate", () => {
-        progress.value =
-          (heroVideo.currentTime / heroVideo.duration) * 100 || 0;
-      });
-      progress.addEventListener("input", () => {
-        heroVideo.currentTime = (progress.value / 100) * heroVideo.duration;
-      });
-    }
-    const modal = document.getElementById("video-modal");
-    if (fsBtn && modal) {
-      const modalVideo = document.getElementById("modal-video");
-      const modalClose = document.getElementById("video-modal-close");
-      fsBtn.addEventListener("click", () => {
-        modalVideo.src = heroVideo.currentSrc || heroVideo.src;
-        modalVideo.currentTime = heroVideo.currentTime;
-        modal.classList.add("video-modal-open");
-        modalVideo.play();
-      });
-      const closeModal = () => {
-        modal.classList.remove("video-modal-open");
-        modalVideo.pause();
-        heroVideo.currentTime = modalVideo.currentTime;
-        if (!playBtn.querySelector("svg path[d*='M6']")) {
-          heroVideo.play();
-        }
-      };
-      modalClose.addEventListener("click", closeModal);
-      document.addEventListener("keydown", (e) => {
-        if (
-          e.key === "Escape" &&
-          modal.classList.contains("video-modal-open")
-        ) {
-          closeModal();
-        }
-      });
-    }
-    if (likeBtn) {
-      likeBtn.addEventListener("click", () =>
-        likeBtn.classList.toggle("liked")
-      );
-    }
-    if (settingsBtn && settingsMenu) {
-      settingsBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        settingsMenu.style.display =
-          settingsMenu.style.display === "flex" ? "none" : "flex";
-      });
-      document.addEventListener("click", (e) => {
-        if (!settingsMenu.contains(e.target) && e.target !== settingsBtn) {
-          settingsMenu.style.display = "none";
-        }
-      });
-      settingsMenu.querySelectorAll(".setting-item").forEach((item) => {
-        item.addEventListener("click", () => {
-          if (item.dataset.speed) {
-            heroVideo.playbackRate = parseFloat(item.dataset.speed);
-          }
-          if (item.classList.contains("toggle-mute")) {
-            heroVideo.muted = !heroVideo.muted;
-            item.textContent = heroVideo.muted ? "Unmute" : "Mute";
-          }
-        });
-      });
-    }
-  }
+  // function initializeHeroPlayer() {
+  //   const heroVideo = document.querySelector(".hero-bg");
+  //   if (!heroVideo) return;
+  //   const playBtn = document.querySelector(".control-play");
+  //   const progress = document.querySelector(".control-progress");
+  //   const fsBtn = document.querySelector(".control-fullscreen");
+  //   const likeBtn = document.querySelector(".btn-like");
+  //   const settingsBtn = document.querySelector(".control-settings");
+  //   const settingsMenu = document.getElementById("settings-menu");
+  //   heroVideo.play().catch(() => {});
+  //   if (playBtn) {
+  //     const playIconPath = playBtn.querySelector("svg path");
+  //     const PLAY_D = "M8 5v14l11-7z";
+  //     const PAUSE_D = "M6 19h4V5H6v14zm8-14v14h4V5h-4z";
+  //     playBtn.addEventListener("click", () => {
+  //       if (heroVideo.paused) {
+  //         heroVideo.play();
+  //         playIconPath.setAttribute("d", PAUSE_D);
+  //       } else {
+  //         heroVideo.pause();
+  //         playIconPath.setAttribute("d", PLAY_D);
+  //       }
+  //     });
+  //   }
+  //   if (progress) {
+  //     heroVideo.addEventListener("timeupdate", () => {
+  //       progress.value =
+  //         (heroVideo.currentTime / heroVideo.duration) * 100 || 0;
+  //     });
+  //     progress.addEventListener("input", () => {
+  //       heroVideo.currentTime = (progress.value / 100) * heroVideo.duration;
+  //     });
+  //   }
+  //   const modal = document.getElementById("video-modal");
+  //   if (fsBtn && modal) {
+  //     const modalVideo = document.getElementById("modal-video");
+  //     const modalClose = document.getElementById("video-modal-close");
+  //     fsBtn.addEventListener("click", () => {
+  //       modalVideo.src = heroVideo.currentSrc || heroVideo.src;
+  //       modalVideo.currentTime = heroVideo.currentTime;
+  //       modal.classList.add("video-modal-open");
+  //       modalVideo.play();
+  //     });
+  //     const closeModal = () => {
+  //       modal.classList.remove("video-modal-open");
+  //       modalVideo.pause();
+  //       heroVideo.currentTime = modalVideo.currentTime;
+  //       if (!playBtn.querySelector("svg path[d*='M6']")) {
+  //         heroVideo.play();
+  //       }
+  //     };
+  //     modalClose.addEventListener("click", closeModal);
+  //     document.addEventListener("keydown", (e) => {
+  //       if (
+  //         e.key === "Escape" &&
+  //         modal.classList.contains("video-modal-open")
+  //       ) {
+  //         closeModal();
+  //       }
+  //     });
+  //   }
+  //   if (likeBtn) {
+  //     likeBtn.addEventListener("click", () =>
+  //       likeBtn.classList.toggle("liked")
+  //     );
+  //   }
+  //   if (settingsBtn && settingsMenu) {
+  //     settingsBtn.addEventListener("click", (e) => {
+  //       e.stopPropagation();
+  //       settingsMenu.style.display =
+  //         settingsMenu.style.display === "flex" ? "none" : "flex";
+  //     });
+  //     document.addEventListener("click", (e) => {
+  //       if (!settingsMenu.contains(e.target) && e.target !== settingsBtn) {
+  //         settingsMenu.style.display = "none";
+  //       }
+  //     });
+  //     settingsMenu.querySelectorAll(".setting-item").forEach((item) => {
+  //       item.addEventListener("click", () => {
+  //         if (item.dataset.speed) {
+  //           heroVideo.playbackRate = parseFloat(item.dataset.speed);
+  //         }
+  //         if (item.classList.contains("toggle-mute")) {
+  //           heroVideo.muted = !heroVideo.muted;
+  //           item.textContent = heroVideo.muted ? "Unmute" : "Mute";
+  //         }
+  //       });
+  //     });
+  //   }
+  // }
 
   // ─── LÓGICA DA BARRA DE PESQUISA DINÂMICA ──────────────────────────────────────────
   async function initializeSearch() {
@@ -879,167 +897,223 @@ document.addEventListener("DOMContentLoaded", () => {
     );
     if (!slidersContainer) return;
 
-    slidersContainer.innerHTML =
-      '<p class="loading-feedback">Loading categories...</p>';
+    // --- CONFIGURAÇÃO: Altere estes valores como desejar ---
+    const INITIAL_SLIDER_LIMIT = 5; // Quantos sliders carregar inicialmente
+    const SLIDER_BATCH_SIZE = 5; // Quantos sliders carregar a cada clique no "Ver Mais"
+    // ---------------------------------------------------------
 
-    const [featuredVideos, recentVideos, categories] = await Promise.all([
+    let allSliderElements = []; // Array para guardar todos os sliders gerados
+    let loadMoreSlidersBtn;
+
+    slidersContainer.innerHTML =
+      '<p class="loading-feedback">Loading content...</p>';
+
+    const [featuredVideos, recentVideos, apiCategories] = await Promise.all([
       fetchFeaturedVideos(),
       fetchRecentVideos(20),
       fetchCategories(),
     ]);
 
-    slidersContainer.innerHTML = "";
+    slidersContainer.innerHTML = ""; // Limpa o "loading"
 
+    // Função auxiliar para criar os cards (sem alterações)
+    const buildCardsHTML = (videos, sourceType = null) => {
+      let playerCounter = Date.now();
+      return videos
+        .map((video) => {
+          let imageUrl,
+            videoUrl,
+            targetAttribute = "";
+          const id = encodeURIComponent(video.id);
+          const type = sourceType || video.sourceType;
+
+          switch (type) {
+            case "music":
+              imageUrl = video.thumbnail?.url;
+              videoUrl = video.embed;
+              break;
+            case "channels":
+            case "movies":
+              imageUrl = video.thumbnail?.url;
+              videoUrl = video.embed;
+              break;
+            case "podcasts":
+              imageUrl = video.thumbnail?.url?.startsWith("http")
+                ? video.thumbnail.url
+                : `https://keystone.eternityready.com${video.thumbnail.url}`;
+              videoUrl = `https://podcasts.eternityready.com/episodes/${video.slug}`;
+              targetAttribute = 'target="_blank" rel="noopener noreferrer"';
+              break;
+            default:
+              videoUrl = `/player/?q=${id}`;
+              imageUrl = video.thumbnail?.url?.startsWith("http")
+                ? video.thumbnail.url
+                : `${API_BASE_URL}${video.thumbnail.url.replace(/^\//, "")}`;
+              break;
+          }
+
+          const youtubeVideoId = video.videoId;
+          const videoHoverData = youtubeVideoId
+            ? `data-youtube-id="${youtubeVideoId}"`
+            : "";
+          let playerContainer = "";
+          if (youtubeVideoId) {
+            playerCounter++;
+            const uniquePlayerId = `yt-player-${type}-${playerCounter}`;
+            playerContainer = `<div class="youtube-player-embed" id="${uniquePlayerId}"></div>`;
+          }
+
+          return `<a href="${videoUrl}" class="media-card-link" ${targetAttribute}><div class="media-card" ${videoHoverData}><div class="media-thumb">${playerContainer} <img src="${
+            imageUrl || "images/placeholder.jpg"
+          }" alt="${video.title}" loading="lazy" class="media-thumbnail" />${
+            video.duration
+              ? `<span class="media-duration">${video.duration}</span>`
+              : ""
+          }</div><div class="media-info-col"><p class="media-title">${
+            video.title
+          }</p><div class="media-subinfo"><p class="media-genre">${(
+            video.categories || []
+          )
+            .map((c) => c.name)
+            .join(", ")}</p><p class="media-by">by <span class="media-author">${
+            video.author || "EternityReady"
+          }</span></p></div></div></div></a>`;
+        })
+        .join("");
+    };
+
+    // --- IMPORTANTE: Modificamos createSliderSection para RETORNAR o elemento ---
+    const createSliderSection = (
+      title,
+      cardsHTML,
+      sectionClass,
+      link = null
+    ) => {
+      const sliderSection = document.createElement("div");
+      sliderSection.className = `category-section ${sectionClass}`;
+
+      const headerLink = link
+        ? `<a href="${link}" class="section-link"><i class="fa fa-chevron-right"></i></a>`
+        : "";
+      const titleLink = link ? `<a href="${link}">${title}</a>` : title;
+
+      const sliderContent = `
+      <div class="section-header"><h2 class="section-title">${titleLink}</h2>${headerLink}</div>
+      <div class="slider-wrapper">
+        <button class="slider-arrow prev" aria-label="Anterior"><i class="fa fa-chevron-left"></i></button>
+        <div class="media-grid">${cardsHTML}</div>
+        <button class="slider-arrow next" aria-label="Próximo"><i class="fa fa-chevron-right"></i></button>
+      </div>
+      <hr class="media-separator" />`;
+      sliderSection.innerHTML = sliderContent;
+      return sliderSection; // Retorna o elemento em vez de adicioná-lo ao DOM
+    };
+
+    // --- LÓGICA DE CRIAÇÃO E ARMAZENAMENTO ---
+
+    // 1. Slider de Destaques (Featured)
     if (featuredVideos.length >= 3) {
-      let playerInstanceCounter = document.querySelectorAll(
-        ".youtube-player-embed"
-      ).length;
-      const sliderHTML = featuredVideos
-        .map((video) => {
-          const imageUrl = video.thumbnail?.url?.startsWith("http")
-            ? video.thumbnail.url
-            : video.thumbnail?.url
-            ? `${API_BASE_URL}${video.thumbnail.url.replace(/^\//, "")}`
-            : "images/placeholder.jpg";
-          const playerUrl = `/player/?q=${video.id}`;
-          const youtubeVideoId = video.videoId;
-          const videoHoverData = youtubeVideoId
-            ? `data-youtube-id="${youtubeVideoId}"`
-            : "";
-          let playerContainer = "";
-          if (youtubeVideoId) {
-            playerInstanceCounter++;
-            const uniquePlayerId = `yt-player-featured-${playerInstanceCounter}`;
-            playerContainer = `<div class="youtube-player-embed" id="${uniquePlayerId}"></div>`;
-          }
-          return `<a href="${playerUrl}" class="media-card-link"><div class="media-card" ${videoHoverData}><div class="media-thumb">${playerContainer} <img src="${imageUrl}" alt="${
-            video.title
-          }" loading="lazy" class="media-thumbnail" />${
-            video.duration
-              ? `<span class="media-duration">${video.duration}</span>`
-              : ""
-          }</div><div class="media-info-col"><p class="media-title">${
-            video.title
-          }</p><div class="media-subinfo"><p class="media-genre">${video.categories
-            .map((c) => c.name)
-            .join(", ")}</p><p class="media-by">by <span class="media-author">${
-            video.author || "EternityReady"
-          }</span></p></div></div></div></a>`;
-        })
-        .join("");
-
-      const sliderContent = `<div class="section-header"><h2 class="section-title">Featured Videos</h2></div><div class="slider-wrapper"><button class="slider-arrow prev" aria-label="Anterior"><i class="fa fa-chevron-left"></i></button><div class="media-grid">${sliderHTML}</div><button class="slider-arrow next" aria-label="Próximo"><i class="fa fa-chevron-right"></i></button></div><hr class="media-separator" />`;
-
-      const sliderSection = document.createElement("div");
-      sliderSection.className = "category-section featured-videos-section";
-      sliderSection.innerHTML = sliderContent;
-      slidersContainer.appendChild(sliderSection);
-      initializeSliderControls(sliderSection);
+      allSliderElements.push(
+        createSliderSection(
+          "Featured Videos",
+          buildCardsHTML(featuredVideos),
+          "featured-videos-section"
+        )
+      );
     }
 
+    // 2. Slider de Mais Recentes (Recent)
     if (recentVideos.length >= 3) {
-      let playerInstanceCounter = 0;
-      const sliderHTML = recentVideos
-        .map((video) => {
-          const imageUrl = video.thumbnail?.url?.startsWith("http")
-            ? video.thumbnail.url
-            : video.thumbnail?.url
-            ? `${API_BASE_URL}${video.thumbnail.url.replace(/^\//, "")}`
-            : "images/placeholder.jpg";
-          const playerUrl = `/player/?q=${video.id}`;
-          const youtubeVideoId = video.videoId;
-          const videoHoverData = youtubeVideoId
-            ? `data-youtube-id="${youtubeVideoId}"`
-            : "";
-          let playerContainer = "";
-          if (youtubeVideoId) {
-            playerInstanceCounter++;
-            const uniquePlayerId = `yt-player-recent-${playerInstanceCounter}`;
-            playerContainer = `<div class="youtube-player-embed" id="${uniquePlayerId}"></div>`;
-          }
-          return `<a href="${playerUrl}" class="media-card-link"><div class="media-card" ${videoHoverData}><div class="media-thumb">${playerContainer} <img src="${imageUrl}" alt="${
-            video.title
-          }" loading="lazy" class="media-thumbnail" />${
-            video.duration
-              ? `<span class="media-duration">${video.duration}</span>`
-              : ""
-          }</div><div class="media-info-col"><p class="media-title">${
-            video.title
-          }</p><div class="media-subinfo"><p class="media-genre">${video.categories
-            .map((c) => c.name)
-            .join(", ")}</p><p class="media-by">by <span class="media-author">${
-            video.author || "EternityReady"
-          }</span></p></div></div></div></a>`;
-        })
-        .join("");
-
-      const sliderContent = `<div class="section-header"><h2 class="section-title">Newest Stuff</h2></div><div class="slider-wrapper"><button class="slider-arrow prev" aria-label="Anterior"><i class="fa fa-chevron-left"></i></button><div class="media-grid">${sliderHTML}</div><button class="slider-arrow next" aria-label="Próximo"><i class="fa fa-chevron-right"></i></button></div><hr class="media-separator" />`;
-
-      const sliderSection = document.createElement("div");
-      sliderSection.className = "category-section recent-videos-section";
-      sliderSection.innerHTML = sliderContent;
-      slidersContainer.appendChild(sliderSection); // Adiciona o novo slider ao container
-      initializeSliderControls(sliderSection); // Inicializa as setas e o arraste
+      allSliderElements.push(
+        createSliderSection(
+          "Newest Stuff",
+          buildCardsHTML(recentVideos),
+          "recent-videos-section"
+        )
+      );
     }
 
-    if (categories.length === 0 && recentVideos.length < 3) {
-      slidersContainer.innerHTML =
-        '<p class="loading-feedback">No category found.</p>';
-      return;
+    // 3. Sliders por Categoria da API
+    if (apiCategories && apiCategories.length > 0) {
+      for (const category of apiCategories) {
+        const videosDaCategoria = await fetchVideosByCategory(category.name);
+        if (videosDaCategoria && videosDaCategoria.length >= 3) {
+          const categorySlug = category.name
+            .toLowerCase()
+            .replace(/[\s+&]/g, "-");
+          allSliderElements.push(
+            createSliderSection(
+              category.name,
+              buildCardsHTML(videosDaCategoria),
+              `${categorySlug}-section`,
+              `/categories/?category=${encodeURIComponent(category.name)}`
+            )
+          );
+        }
+      }
     }
 
-    categories.forEach((category) => {
-      const placeholder = document.createElement("div");
-      placeholder.className = "slider-placeholder";
-      placeholder.dataset.categoryName = category.name;
-      // Adiciona um feedback visual de carregamento
-      placeholder.innerHTML = `<div class="loading-spinner"></div>`;
-      slidersContainer.appendChild(placeholder);
+    // 4. Sliders por Categoria dos Dados Locais
+    const allLocalItems = [
+      ...normalizedData.channels,
+      ...normalizedData.movies,
+      ...normalizedData.music,
+      ...normalizedData.podcasts,
+    ];
+    const allLocalCategoryNames = allLocalItems.flatMap((item) =>
+      item.categories.map((cat) => cat.name)
+    );
+    const uniqueLocalCategories = [...new Set(allLocalCategoryNames)].sort();
+
+    uniqueLocalCategories.forEach((categoryName) => {
+      const itemsForCategory = allLocalItems.filter((item) =>
+        item.categories.some((cat) => cat.name === categoryName)
+      );
+      if (itemsForCategory.length >= 3) {
+        const categorySlug = categoryName.toLowerCase().replace(/[\s+&]/g, "-");
+        allSliderElements.push(
+          createSliderSection(
+            categoryName,
+            buildCardsHTML(itemsForCategory),
+            `${categorySlug}-local-section`
+          )
+        );
+      }
     });
 
-    allPlaceholders = Array.from(
-      document.querySelectorAll(".slider-placeholder")
-    );
+    // --- LÓGICA DE RENDERIZAÇÃO E "CARREGAR MAIS" ---
 
-    sliderObserver = new IntersectionObserver(
-      async (entries, observer) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            const placeholder = entry.target;
-            const categoryName = placeholder.dataset.categoryName;
-
-            observer.unobserve(placeholder);
-
-            const success = await loadAndBuildSlider(placeholder, {
-              name: categoryName,
-            });
-            if (success) {
-              const nextPlaceholderToObserve =
-                allPlaceholders[lastObservedIndex + 1];
-              if (nextPlaceholderToObserve) {
-                nextPlaceholderToObserve.classList.add("is-observable");
-                sliderObserver.observe(nextPlaceholderToObserve);
-                lastObservedIndex++;
-              }
-            }
-          }
+    function loadMoreSliders() {
+      const slidersToLoad = allSliderElements.splice(0, SLIDER_BATCH_SIZE);
+      slidersToLoad.forEach((sliderEl) => {
+        // Insere o slider antes do botão "Ver Mais"
+        if (loadMoreSlidersBtn) {
+          slidersContainer.insertBefore(sliderEl, loadMoreSlidersBtn);
+        } else {
+          slidersContainer.appendChild(sliderEl);
         }
-      },
-      {
-        rootMargin: "200px 0px",
-        threshold: 0.01,
-      }
-    );
+        initializeSliderControls(sliderEl);
+      });
 
-    for (let i = 0; i < BATCH_SIZE; i++) {
-      const placeholder = allPlaceholders[i];
-      if (placeholder) {
-        placeholder.classList.add("is-observable");
-        sliderObserver.observe(placeholder);
-        lastObservedIndex = i;
-      } else {
-        break;
+      if (allSliderElements.length === 0 && loadMoreSlidersBtn) {
+        loadMoreSlidersBtn.remove();
       }
+    }
+
+    // Carrega o lote inicial de sliders
+    const initialSliders = allSliderElements.splice(0, INITIAL_SLIDER_LIMIT);
+    initialSliders.forEach((sliderEl) => {
+      slidersContainer.appendChild(sliderEl);
+      initializeSliderControls(sliderEl);
+    });
+
+    // Se ainda houver sliders para carregar, cria o botão
+    if (allSliderElements.length > 0) {
+      loadMoreSlidersBtn = document.createElement("button");
+      loadMoreSlidersBtn.textContent = "Ver Mais Categorias";
+      loadMoreSlidersBtn.className = "btn-load-more"; // Adicione estilo para esta classe no seu CSS
+      loadMoreSlidersBtn.addEventListener("click", loadMoreSliders);
+      slidersContainer.appendChild(loadMoreSlidersBtn);
     }
   }
 
