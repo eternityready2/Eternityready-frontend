@@ -1108,7 +1108,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Cria um novo botão se ainda houver sliders na fila
       if (allSliderElements.length > 0) {
         loadMoreSlidersBtn = document.createElement("button");
-        loadMoreSlidersBtn.textContent = "Ver Mais Categorias";
+        loadMoreSlidersBtn.textContent = "See More Category";
         loadMoreSlidersBtn.className = "btn-load-more";
         loadMoreSlidersBtn.addEventListener("click", () =>
           loadMoreSliders(false)
