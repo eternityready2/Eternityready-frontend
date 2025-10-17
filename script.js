@@ -408,7 +408,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Cria o botão "Carregar Mais" para a grade
     loadMoreGridBtn = document.createElement("button");
-    loadMoreGridBtn.textContent = "Carregar Mais";
+    loadMoreGridBtn.textContent = "Load More Content";
     loadMoreGridBtn.className = "btn-load-more";
     loadMoreGridBtn.style.display = "none"; // Começa escondido
     loadMoreGridBtn.addEventListener("click", appendGridItems);
@@ -895,29 +895,38 @@ document.addEventListener("DOMContentLoaded", () => {
     const slidersContainer = document.getElementById(
       "dynamic-sliders-container"
     );
-    if (!slidersContainer) return;
+    const nameFilter = document.getElementById("sliders-name-filter");
+    const mediaTypeFilter = document.getElementById(
+      "sliders-media-type-filter"
+    );
+    const categoryFilter = document.getElementById("sliders-category-filter");
 
-    // --- CONFIGURAÇÃO: Altere estes valores como desejar ---
-    const INITIAL_SLIDER_LIMIT = 5; // Quantos sliders carregar inicialmente
-    const SLIDER_BATCH_SIZE = 5; // Quantos sliders carregar a cada clique no "Ver Mais"
-    // ---------------------------------------------------------
+    if (
+      !slidersContainer ||
+      !nameFilter ||
+      !mediaTypeFilter ||
+      !categoryFilter
+    ) {
+      console.error(
+        "Um ou mais elementos de filtro ou o contêiner de sliders não foram encontrados."
+      );
+      return;
+    }
 
-    let allSliderElements = []; // Array para guardar todos os sliders gerados
+    // --- CONFIGURAÇÃO ---
+    const INITIAL_SLIDER_LIMIT = 5;
+    const SLIDER_BATCH_SIZE = 5;
+    const MIN_ITEMS_PER_SLIDER = 3; // Mínimo de itens para um slider ser exibido
+    // --------------------
+
+    let masterSliderData = []; // Guarda os DADOS de todos os sliders possíveis
+    let allSliderElements = []; // Guarda os ELEMENTOS HTML dos sliders filtrados
     let loadMoreSlidersBtn;
 
-    slidersContainer.innerHTML =
-      '<p class="loading-feedback">Loading content...</p>';
+    slidersContainer.innerHTML = "";
 
-    const [featuredVideos, recentVideos, apiCategories] = await Promise.all([
-      fetchFeaturedVideos(),
-      fetchRecentVideos(20),
-      fetchCategories(),
-    ]);
-
-    slidersContainer.innerHTML = ""; // Limpa o "loading"
-
-    // Função auxiliar para criar os cards (sem alterações)
-    const buildCardsHTML = (videos, sourceType = null) => {
+    // Funções auxiliares (buildCardsHTML, createSliderSection) permanecem as mesmas de antes
+    const buildCardsHTML = (videos) => {
       let playerCounter = Date.now();
       return videos
         .map((video) => {
@@ -925,17 +934,17 @@ document.addEventListener("DOMContentLoaded", () => {
             videoUrl,
             targetAttribute = "";
           const id = encodeURIComponent(video.id);
-          const type = sourceType || video.sourceType;
+          const type = video.sourceType || "youtube";
 
           switch (type) {
             case "music":
               imageUrl = video.thumbnail?.url;
-              videoUrl = video.embed;
+              videoUrl = `/radio/?id=${id}`;
               break;
             case "channels":
             case "movies":
               imageUrl = video.thumbnail?.url;
-              videoUrl = video.embed;
+              videoUrl = `/tv/?id=${id}`;
               break;
             case "podcasts":
               imageUrl = video.thumbnail?.url?.startsWith("http")
@@ -944,7 +953,7 @@ document.addEventListener("DOMContentLoaded", () => {
               videoUrl = `https://podcasts.eternityready.com/episodes/${video.slug}`;
               targetAttribute = 'target="_blank" rel="noopener noreferrer"';
               break;
-            default:
+            default: // 'youtube'
               videoUrl = `/player/?q=${id}`;
               imageUrl = video.thumbnail?.url?.startsWith("http")
                 ? video.thumbnail.url
@@ -982,7 +991,6 @@ document.addEventListener("DOMContentLoaded", () => {
         .join("");
     };
 
-    // --- IMPORTANTE: Modificamos createSliderSection para RETORNAR o elemento ---
     const createSliderSection = (
       title,
       cardsHTML,
@@ -1006,54 +1014,156 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
       <hr class="media-separator" />`;
       sliderSection.innerHTML = sliderContent;
-      return sliderSection; // Retorna o elemento em vez de adicioná-lo ao DOM
+      return sliderSection; // Retorna o ELEMENTO HTML, não undefined
     };
 
-    // --- LÓGICA DE CRIAÇÃO E ARMAZENAMENTO ---
-
-    // 1. Slider de Destaques (Featured)
-    if (featuredVideos.length >= 3) {
-      allSliderElements.push(
-        createSliderSection(
-          "Featured Videos",
-          buildCardsHTML(featuredVideos),
-          "featured-videos-section"
-        )
+    // --- NOVA FUNÇÃO: Popula o filtro de categorias ---
+    function populateSliderCategoryFilter() {
+      const allCategories = masterSliderData.flatMap((slider) =>
+        slider.items.flatMap((item) => item.categories.map((cat) => cat.name))
       );
+      const uniqueCategories = [...new Set(allCategories)].sort();
+
+      // Limpa opções antigas, mantendo a primeira
+      categoryFilter.innerHTML = '<option value="all">All categories</option>';
+
+      uniqueCategories.forEach((catName) => {
+        const option = document.createElement("option");
+        option.value = catName;
+        option.textContent = catName;
+        categoryFilter.appendChild(option);
+      });
     }
 
-    // 2. Slider de Mais Recentes (Recent)
-    if (recentVideos.length >= 3) {
-      allSliderElements.push(
+    // --- NOVA FUNÇÃO: O coração da lógica de filtragem e renderização ---
+    function applyFiltersAndRenderSliders() {
+      const nameQuery = nameFilter.value.toLowerCase().trim();
+      const mediaTypeQuery = mediaTypeFilter.value;
+      const categoryQuery = categoryFilter.value;
+
+      // 1. Filtra os sliders
+      const filteredSlidersData = masterSliderData
+        .map((slider) => {
+          const filteredItems = slider.items.filter((item) => {
+            // Condição do nome
+            const nameMatch =
+              nameQuery === "" || item.title.toLowerCase().includes(nameQuery);
+
+            // Condição do tipo de mídia
+            const itemType = item.sourceType || "youtube"; // API é 'youtube', locais têm seu próprio tipo
+            const mediaTypeMatch =
+              mediaTypeQuery === "all" || itemType === mediaTypeQuery;
+
+            // Condição da categoria
+            const categoryMatch =
+              categoryQuery === "all" ||
+              item.categories.some((cat) => cat.name === categoryQuery);
+
+            return nameMatch && mediaTypeMatch && categoryMatch;
+          });
+
+          // Retorna o slider apenas se ele ainda tiver itens suficientes
+          if (filteredItems.length >= MIN_ITEMS_PER_SLIDER) {
+            return { ...slider, items: filteredItems };
+          }
+          return null;
+        })
+        .filter((slider) => slider !== null); // Remove os sliders que ficaram vazios (null)
+
+      // 2. Prepara para renderizar
+      slidersContainer.innerHTML = ""; // Limpa completamente o contêiner
+      allSliderElements = filteredSlidersData.map((slider) =>
         createSliderSection(
-          "Newest Stuff",
-          buildCardsHTML(recentVideos),
-          "recent-videos-section"
+          slider.title,
+          buildCardsHTML(slider.items),
+          slider.sectionClass,
+          slider.link
         )
       );
+
+      if (allSliderElements.length === 0) {
+        slidersContainer.innerHTML =
+          '<p class="loading-feedback">No results found for the selected filters.</p>';
+        return;
+      }
+
+      // 3. Renderiza com lógica de "Carregar Mais"
+      loadMoreSliders();
     }
 
-    // 3. Sliders por Categoria da API
+    function loadMoreSliders(isInitialLoad = false) {
+      const batchSize = isInitialLoad
+        ? INITIAL_SLIDER_LIMIT
+        : SLIDER_BATCH_SIZE;
+      const slidersToLoad = allSliderElements.splice(0, batchSize);
+
+      slidersToLoad.forEach((sliderEl) => {
+        slidersContainer.appendChild(sliderEl);
+        initializeSliderControls(sliderEl);
+      });
+
+      // Remove o botão antigo se existir
+      if (loadMoreSlidersBtn) loadMoreSlidersBtn.remove();
+
+      // Cria um novo botão se ainda houver sliders na fila
+      if (allSliderElements.length > 0) {
+        loadMoreSlidersBtn = document.createElement("button");
+        loadMoreSlidersBtn.textContent = "Ver Mais Categorias";
+        loadMoreSlidersBtn.className = "btn-load-more";
+        loadMoreSlidersBtn.addEventListener("click", () =>
+          loadMoreSliders(false)
+        );
+        slidersContainer.appendChild(loadMoreSlidersBtn);
+      }
+    }
+
+    // --- ETAPA DE CARREGAMENTO INICIAL DOS DADOS ---
+    const [featuredVideos, recentVideos, apiCategories] = await Promise.all([
+      fetchFeaturedVideos(),
+      fetchRecentVideos(20),
+      fetchCategories(),
+    ]);
+
+    // 1. Destaques (Featured)
+    if (featuredVideos.length >= MIN_ITEMS_PER_SLIDER) {
+      masterSliderData.push({
+        title: "Featured Videos",
+        items: featuredVideos,
+        sectionClass: "featured-videos-section",
+      });
+    }
+
+    // 2. Recentes (Recent)
+    if (recentVideos.length >= MIN_ITEMS_PER_SLIDER) {
+      masterSliderData.push({
+        title: "Newest Stuff",
+        items: recentVideos,
+        sectionClass: "recent-videos-section",
+      });
+    }
+
+    // 3. Categorias da API ('youtube')
     if (apiCategories && apiCategories.length > 0) {
       for (const category of apiCategories) {
         const videosDaCategoria = await fetchVideosByCategory(category.name);
-        if (videosDaCategoria && videosDaCategoria.length >= 3) {
+        if (
+          videosDaCategoria &&
+          videosDaCategoria.length >= MIN_ITEMS_PER_SLIDER
+        ) {
           const categorySlug = category.name
             .toLowerCase()
             .replace(/[\s+&]/g, "-");
-          allSliderElements.push(
-            createSliderSection(
-              category.name,
-              buildCardsHTML(videosDaCategoria),
-              `${categorySlug}-section`,
-              `/categories/?category=${encodeURIComponent(category.name)}`
-            )
-          );
+          masterSliderData.push({
+            title: category.name,
+            items: videosDaCategoria,
+            sectionClass: `${categorySlug}-section`,
+            link: `/categories/?category=${encodeURIComponent(category.name)}`,
+          });
         }
       }
     }
 
-    // 4. Sliders por Categoria dos Dados Locais
+    // 4. Categorias dos Dados Locais
     const allLocalItems = [
       ...normalizedData.channels,
       ...normalizedData.movies,
@@ -1069,52 +1179,28 @@ document.addEventListener("DOMContentLoaded", () => {
       const itemsForCategory = allLocalItems.filter((item) =>
         item.categories.some((cat) => cat.name === categoryName)
       );
-      if (itemsForCategory.length >= 3) {
+      if (itemsForCategory.length >= MIN_ITEMS_PER_SLIDER) {
         const categorySlug = categoryName.toLowerCase().replace(/[\s+&]/g, "-");
-        allSliderElements.push(
-          createSliderSection(
-            categoryName,
-            buildCardsHTML(itemsForCategory),
-            `${categorySlug}-local-section`
-          )
-        );
+        masterSliderData.push({
+          title: categoryName,
+          items: itemsForCategory,
+          sectionClass: `${categorySlug}-local-section`,
+        });
       }
     });
 
-    // --- LÓGICA DE RENDERIZAÇÃO E "CARREGAR MAIS" ---
+    // --- FINALIZAÇÃO E CONFIGURAÇÃO DOS EVENTOS ---
+    populateSliderCategoryFilter();
 
-    function loadMoreSliders() {
-      const slidersToLoad = allSliderElements.splice(0, SLIDER_BATCH_SIZE);
-      slidersToLoad.forEach((sliderEl) => {
-        // Insere o slider antes do botão "Ver Mais"
-        if (loadMoreSlidersBtn) {
-          slidersContainer.insertBefore(sliderEl, loadMoreSlidersBtn);
-        } else {
-          slidersContainer.appendChild(sliderEl);
-        }
-        initializeSliderControls(sliderEl);
-      });
+    // Configura os listeners dos filtros
+    const debouncedFilter = debounce(applyFiltersAndRenderSliders, 400);
+    nameFilter.addEventListener("input", debouncedFilter);
+    mediaTypeFilter.addEventListener("change", applyFiltersAndRenderSliders);
+    categoryFilter.addEventListener("change", applyFiltersAndRenderSliders);
 
-      if (allSliderElements.length === 0 && loadMoreSlidersBtn) {
-        loadMoreSlidersBtn.remove();
-      }
-    }
-
-    // Carrega o lote inicial de sliders
-    const initialSliders = allSliderElements.splice(0, INITIAL_SLIDER_LIMIT);
-    initialSliders.forEach((sliderEl) => {
-      slidersContainer.appendChild(sliderEl);
-      initializeSliderControls(sliderEl);
-    });
-
-    // Se ainda houver sliders para carregar, cria o botão
-    if (allSliderElements.length > 0) {
-      loadMoreSlidersBtn = document.createElement("button");
-      loadMoreSlidersBtn.textContent = "Ver Mais Categorias";
-      loadMoreSlidersBtn.className = "btn-load-more"; // Adicione estilo para esta classe no seu CSS
-      loadMoreSlidersBtn.addEventListener("click", loadMoreSliders);
-      slidersContainer.appendChild(loadMoreSlidersBtn);
-    }
+    // Primeira renderização
+    applyFiltersAndRenderSliders();
+    loadMoreSliders(true); // Carrega o lote inicial
   }
 
   // ─── INICIALIZAÇÃO DOS COMPONENTES DE UI E FUNÇÃO PRINCIPAL ─────────

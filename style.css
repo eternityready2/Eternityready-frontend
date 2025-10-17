@@ -2824,7 +2824,7 @@ a {
 }
 
 /* Container dos filtros */
-#filters-container {
+.filters-container {
   display: flex;
   flex-wrap: wrap; /* Permite que os filtros quebrem para a linha de baixo em telas menores */
   gap: 1rem; /* Espaçamento entre os filtros */
@@ -2833,8 +2833,8 @@ a {
 }
 
 /* Estilo base para os campos de input e select */
-#filters-container input[type="text"],
-#filters-container select {
+.filters-container input[type="text"],
+.filters-container select {
   font-family: "Poppins", sans-serif;
   background-color: #1f2937; /* Fundo escuro, similar à barra de busca */
   color: #e0e0e0;
@@ -2847,12 +2847,12 @@ a {
 }
 
 /* Estilo para o campo de texto do nome */
-#filters-container input[type="text"] {
+.filters-container input[type="text"] {
   flex: 1 1 300px; /* Permite que o campo cresça, com uma base de 300px */
 }
 
 /* Estilo para os menus suspensos (select) */
-#filters-container select {
+.filters-container select {
   flex: 1 1 200px; /* Permite que cresçam, com uma base de 200px */
   -webkit-appearance: none; /* Remove a aparência padrão no Chrome/Safari */
   appearance: none; /* Remove a aparência padrão */
@@ -2864,10 +2864,10 @@ a {
 }
 
 /* Efeito de foco para todos os filtros */
-#filters-container input[type="text"]:focus,
-#filters-container select:focus {
-  border-color: #3b82f6; /* Cor de destaque ao focar */
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+.filters-container input[type="text"]:focus,
+.filters-container select:focus {
+  border-color: #ff3c3c;
+  box-shadow: 0 0 0 3px rgba(246, 59, 59, 0.3);
 }
 
 /* Estilo para o texto de placeholder */
@@ -2959,18 +2959,19 @@ a {
 
 .btn-load-more {
   display: block;
-  margin: 2rem auto; /* Centraliza o botão com margem */
-  padding: 10px 25px;
+  margin: 2rem auto;
+  font-family: "Poppins", sans-serif;
+  background-color: #1f2937;
+  color: #e0e0e0;
+  border: 1px solid #4b5563;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
   font-size: 1rem;
-  font-weight: bold;
-  color: #fff;
-  background-color: #e50914; /* Cor temática, ajuste se necessário */
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
 }
 
 .btn-load-more:hover {
-  background-color: #f40612;
+  border-color: #ff3c3c;
+  box-shadow: 0 0 0 3px rgba(246, 59, 59, 0.3);
 }
