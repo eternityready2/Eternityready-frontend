@@ -200,7 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         normalizedData[key] = localData[key].map((item) => {
           const normalizedItem = normalizeLocalItem(item);
-          normalizedItem.sourceType = key; // Atribui o tipo de mídia (channels, movies, etc.)
+          normalizedItem.sourceType = key;
           return normalizedItem;
         });
       }
@@ -210,13 +210,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function normalizeLocalItem(item) {
-    // Ajustado para usar `logo` como fallback para `thumbnail`
     let thumbnail = item.logo || item.thumbnail;
     if (thumbnail && !thumbnail.startsWith("http")) {
       thumbnail = new URL(thumbnail, API_BASE_URL).href;
     }
 
-    // Normaliza o campo de categorias
     const categories = Array.isArray(item.categories)
       ? item.categories.map((name) =>
           typeof name === "string" ? { name } : name
@@ -224,7 +222,6 @@ document.addEventListener("DOMContentLoaded", () => {
       : [];
 
     let videoId = null;
-    // console.log(item.embed);
     if (item.embed) {
       let urlString = item.embed;
 
@@ -244,18 +241,15 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // console.log(videoId);
     return {
       id: item.id || item.title || item.name,
       title: item.title || item.name,
       description: item.description || "",
-      // Garante que thumbnail seja um objeto com a propriedade `url`
       thumbnail: { url: thumbnail },
       categories: categories,
       author: item.author || "EternityReady",
       duration: item.duration || null,
       videoId: videoId,
-      // `sourceType` será adicionado na função `normalizeAllLocalData`
     };
   }
 
@@ -460,9 +454,9 @@ document.addEventListener("DOMContentLoaded", () => {
     loadMoreGridBtn = document.createElement("button");
     loadMoreGridBtn.textContent = "Load More Content";
     loadMoreGridBtn.className = "btn-load-more";
-    loadMoreGridBtn.style.display = "none"; // Começa escondido
+    loadMoreGridBtn.style.display = "none";
     loadMoreGridBtn.addEventListener("click", appendGridItems);
-    gridContainer.appendChild(loadMoreGridBtn); // Adiciona o botão ao final do contêiner da grade
+    gridContainer.appendChild(loadMoreGridBtn);
 
     // --- ATUALIZAÇÃO DOS EVENT LISTENERS ---
     const savedCategory = loadGridFiltersFromCookie();
@@ -894,7 +888,7 @@ document.addEventListener("DOMContentLoaded", () => {
         mediaType: mediaTypeFilter.value,
         category: categoryFilter.value,
       };
-      setCookie(FILTERS_COOKIE_NAME, JSON.stringify(filters), 7); // Salva por 7 dias
+      setCookie(FILTERS_COOKIE_NAME, JSON.stringify(filters), 7);
     }
 
     function loadFiltersFromCookie() {
@@ -904,7 +898,6 @@ document.addEventListener("DOMContentLoaded", () => {
           const filters = JSON.parse(savedFilters);
           nameFilter.value = filters.name || "";
           mediaTypeFilter.value = filters.mediaType || "all";
-          // A categoria será definida após o dropdown ser populado
           return filters.category || "all";
         } catch (e) {
           console.error("Erro ao ler os filtros do cookie:", e);
@@ -917,16 +910,15 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- CONFIGURAÇÃO ---
     const INITIAL_SLIDER_LIMIT = 5;
     const SLIDER_BATCH_SIZE = 5;
-    const MIN_ITEMS_PER_SLIDER = 3; // Mínimo de itens para um slider ser exibido
+    const MIN_ITEMS_PER_SLIDER = 3;
     // --------------------
 
-    let masterSliderData = []; // Guarda os DADOS de todos os sliders possíveis
-    let allSliderElements = []; // Guarda os ELEMENTOS HTML dos sliders filtrados
+    let masterSliderData = [];
+    let allSliderElements = [];
     let loadMoreSlidersBtn;
 
     slidersContainer.innerHTML = "";
 
-    // Funções auxiliares (buildCardsHTML, createSliderSection) permanecem as mesmas de antes
     const buildCardsHTML = (videos) => {
       let playerCounter = Date.now();
       return videos
@@ -1018,14 +1010,12 @@ document.addEventListener("DOMContentLoaded", () => {
       return sliderSection; // Retorna o ELEMENTO HTML, não undefined
     };
 
-    // --- NOVA FUNÇÃO: Popula o filtro de categorias ---
     function populateSliderCategoryFilter() {
       const allCategories = masterSliderData.flatMap((slider) =>
         slider.items.flatMap((item) => item.categories.map((cat) => cat.name))
       );
       const uniqueCategories = [...new Set(allCategories)].sort();
 
-      // Limpa opções antigas, mantendo a primeira
       categoryFilter.innerHTML = '<option value="all">All categories</option>';
 
       uniqueCategories.forEach((catName) => {
@@ -1036,26 +1026,21 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    // --- NOVA FUNÇÃO: O coração da lógica de filtragem e renderização ---
     function applyFiltersAndRenderSliders() {
       const nameQuery = nameFilter.value.toLowerCase().trim();
       const mediaTypeQuery = mediaTypeFilter.value;
       const categoryQuery = categoryFilter.value;
 
-      // 1. Filtra os sliders
       const filteredSlidersData = masterSliderData
         .map((slider) => {
           const filteredItems = slider.items.filter((item) => {
-            // Condição do nome
             const nameMatch =
               nameQuery === "" || item.title.toLowerCase().includes(nameQuery);
 
-            // Condição do tipo de mídia
-            const itemType = item.sourceType || "youtube"; // API é 'youtube', locais têm seu próprio tipo
+            const itemType = item.sourceType || "youtube";
             const mediaTypeMatch =
               mediaTypeQuery === "all" || itemType === mediaTypeQuery;
 
-            // Condição da categoria
             const categoryMatch =
               categoryQuery === "all" ||
               item.categories.some((cat) => cat.name === categoryQuery);
@@ -1063,16 +1048,14 @@ document.addEventListener("DOMContentLoaded", () => {
             return nameMatch && mediaTypeMatch && categoryMatch;
           });
 
-          // Retorna o slider apenas se ele ainda tiver itens suficientes
           if (filteredItems.length >= MIN_ITEMS_PER_SLIDER) {
             return { ...slider, items: filteredItems };
           }
           return null;
         })
-        .filter((slider) => slider !== null); // Remove os sliders que ficaram vazios (null)
+        .filter((slider) => slider !== null);
 
-      // 2. Prepara para renderizar
-      slidersContainer.innerHTML = ""; // Limpa completamente o contêiner
+      slidersContainer.innerHTML = "";
       allSliderElements = filteredSlidersData.map((slider) =>
         createSliderSection(
           slider.title,
@@ -1088,7 +1071,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // 3. Renderiza com lógica de "Carregar Mais"
       loadMoreSliders();
     }
 
@@ -1103,10 +1085,8 @@ document.addEventListener("DOMContentLoaded", () => {
         initializeSliderControls(sliderEl);
       });
 
-      // Remove o botão antigo se existir
       if (loadMoreSlidersBtn) loadMoreSlidersBtn.remove();
 
-      // Cria um novo botão se ainda houver sliders na fila
       if (allSliderElements.length > 0) {
         loadMoreSlidersBtn = document.createElement("button");
         loadMoreSlidersBtn.textContent = "See More Category";
@@ -1118,19 +1098,18 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // --- ETAPA DE CARREGAMENTO INICIAL DOS DADOS ---
     const [featuredVideos, recentVideos, apiCategories] = await Promise.all([
       fetchFeaturedVideos(),
       fetchRecentVideos(20),
       fetchCategories(),
     ]);
 
-    // 1. Destaques (Featured)
     if (featuredVideos.length >= MIN_ITEMS_PER_SLIDER) {
       masterSliderData.push({
         title: "Featured Videos",
         items: featuredVideos,
         sectionClass: "featured-videos-section",
+        link: "/categories?category=featured",
       });
     }
 
@@ -1140,6 +1119,7 @@ document.addEventListener("DOMContentLoaded", () => {
         title: "Newest Stuff",
         items: recentVideos,
         sectionClass: "recent-videos-section",
+        link: "/categories?category=newer",
       });
     }
 
@@ -1171,6 +1151,18 @@ document.addEventListener("DOMContentLoaded", () => {
       ...normalizedData.music,
       ...normalizedData.podcasts,
     ];
+
+    // =======================================================================
+    const localContentPageLinks = {
+      channels: "/tv",
+      Movies: "/tv",
+      Music: "/radio",
+      Podcasts: "https://podcasts.eternityready.com/",
+    };
+
+    const defaultCategoryPage = "/categories";
+    // =======================================================================
+
     const allLocalCategoryNames = allLocalItems.flatMap((item) =>
       item.categories.map((cat) => cat.name)
     );
@@ -1182,15 +1174,20 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       if (itemsForCategory.length >= MIN_ITEMS_PER_SLIDER) {
         const categorySlug = categoryName.toLowerCase().replace(/[\s+&]/g, "-");
+
+        const headerLink = localContentPageLinks[categoryName]
+          ? localContentPageLinks[categoryName]
+          : `${defaultCategoryPage}?q=${encodeURIComponent(categoryName)}`;
+
         masterSliderData.push({
           title: categoryName,
           items: itemsForCategory,
           sectionClass: `${categorySlug}-local-section`,
+          link: headerLink,
         });
       }
     });
 
-    // --- FINALIZAÇÃO E CONFIGURAÇÃO DOS EVENTOS ---
     const savedCategory = loadFiltersFromCookie();
 
     populateSliderCategoryFilter();
