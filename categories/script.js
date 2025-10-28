@@ -62,42 +62,164 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  async function loadLocalDataSources() {
+    const promises = [
+      fetch("data/channels.json"),
+      fetch("data/movies.json"),
+      fetch("data/music.json"),
+      fetch(PODCAST_API_URL),
+    ];
+    const results = await Promise.allSettled(promises);
+    const localData = { channels: [], movies: [], music: [], podcasts: [] };
+
+    const fileKeys = ["channels", "movies", "music"];
+    results.slice(0, 3).forEach((result, index) => {
+      const key = fileKeys[index];
+      if (result.status === "fulfilled" && result.value.ok) {
+        result.value.json().then((data) => (localData[key] = data[key] || []));
+      } else {
+        console.error(`Falha ao carregar /data/${key}.json`);
+      }
+    });
+
+    if (results[3].status === "fulfilled" && results[3].value.ok) {
+      const podcastJson = await results[3].value.json();
+      localData.podcasts = podcastJson.data || [];
+    } else {
+      console.error("Falha ao carregar dados de podcasts.");
+    }
+    return localData;
+  }
+
+  /**
+   * Normaliza um item de podcast para um formato consistente.
+   */
+  function normalizePodcastItem(item) {
+    return {
+      id: item.slug || item.id,
+      slug: item.slug,
+      title: item.title,
+      description: item.description || "",
+      thumbnail: { url: item.imageUrl },
+      categories: (item.podcastCategories || []).map((cat) => ({
+        name: cat.name || cat,
+      })),
+      author: item.author || "EternityReady",
+      duration: item.duration || null,
+      sourceType: "podcasts",
+      videoId: null,
+    };
+  }
+
+  /**
+   * Normaliza um item de dados locais (channel, movie, music) para um formato consistente.
+   */
+  function normalizeLocalItem(item) {
+    let thumbnail = item.logo || item.thumbnail;
+    if (thumbnail && !thumbnail.startsWith("http")) {
+      thumbnail = new URL(thumbnail, API_BASE_URL).href;
+    }
+    return {
+      id: item.id || item.title || item.name,
+      title: item.title || item.name,
+      description: item.description || "",
+      thumbnail: { url: thumbnail },
+      categories: (item.categories || []).map((name) => ({ name })),
+      author: item.author || "EternityReady",
+      duration: item.duration || null,
+      videoId: item.embed, // Simplificado, pode precisar de mais lógica se o embed variar
+    };
+  }
+
+  /**
+   * Carrega, normaliza e armazena em cache todos os dados locais.
+   * @returns {Promise<Array>} Uma promessa que resolve para um array com todos os itens locais normalizados.
+   */
+  async function getAllNormalizedLocalData() {
+    if (normalizedLocalDataCache) {
+      return normalizedLocalDataCache;
+    }
+
+    const localData = await loadLocalDataSources();
+    const allItems = [];
+
+    (localData.channels || []).forEach((item) =>
+      allItems.push({ ...normalizeLocalItem(item), sourceType: "channels" })
+    );
+    (localData.movies || []).forEach((item) =>
+      allItems.push({ ...normalizeLocalItem(item), sourceType: "movies" })
+    );
+    (localData.music || []).forEach((item) =>
+      allItems.push({ ...normalizeLocalItem(item), sourceType: "music" })
+    );
+    (localData.podcasts || []).forEach((item) =>
+      allItems.push(normalizePodcastItem(item))
+    );
+
+    normalizedLocalDataCache = allItems;
+    return allItems;
+  }
+
   /**
    * Cria o HTML para um único card de vídeo.
    * @param {object} video O objeto de vídeo da API.
    * @returns {string} A string HTML do card.
    */
   function createVideoCard(video) {
-    const imageUrl = video.thumbnail?.url
-      ? `${API_BASE_URL}${video.thumbnail.url.replace(/^\//, "")}`
-      : "images/placeholder.jpg";
-    const playerUrl = `/player.html?q=${video.id}`;
+    let imageUrl,
+      playerUrl,
+      targetAttribute = "";
+    const id = encodeURIComponent(item.id);
+
+    switch (item.sourceType) {
+      case "music":
+        imageUrl = item.thumbnail?.url;
+        playerUrl = `/radio/?id=${id}`;
+        break;
+      case "channels":
+      case "movies":
+        imageUrl = item.thumbnail?.url;
+        playerUrl = `/tv/?id=${id}`;
+        break;
+      case "podcasts":
+        imageUrl = item.thumbnail?.url?.startsWith("http")
+          ? item.thumbnail.url
+          : `https://keystone.eternityready.com${item.thumbnail.url}`;
+        playerUrl = `https://podcasts.eternityready.com/episodes/${item.slug}`;
+        targetAttribute = 'target="_blank" rel="noopener noreferrer"';
+        break;
+      default: // Vídeos da API
+        imageUrl = item.thumbnail?.url
+          ? `${API_BASE_URL}${item.thumbnail.url.replace(/^\//, "")}`
+          : "images/placeholder.jpg";
+        playerUrl = `/player/?q=${id}`;
+        break;
+    }
 
     return `
-      <a href="${playerUrl}" class="media-card-link">
+      <a href="${playerUrl}" class="media-card-link" ${targetAttribute}>
         <div class="media-card">
           <div class="media-thumb">
-            <img src="${imageUrl}" alt="${video.title}" loading="lazy" />
+            <img src="${imageUrl}" alt="${item.title}" loading="lazy" />
             ${
-              video.duration
-                ? `<span class="media-duration">${video.duration}</span>`
+              item.duration
+                ? `<span class="media-duration">${item.duration}</span>`
                 : ""
             }
           </div>
           <div class="media-info-col">
-            <p class="media-title">${video.title}</p>
+            <p class="media-title">${item.title}</p>
             <div class="media-subinfo">
-              <p class="media-genre">${video.categories
+              <p class="media-genre">${(item.categories || [])
                 .map((c) => c.name)
                 .join(", ")}</p>
               <p class="media-by">by <span class="media-author">${
-                video.author || "EternityReady"
+                item.author || "EternityReady"
               }</span></p>
             </div>
           </div>
         </div>
-      </a>
-    `;
+      </a>`;
   }
 
   //
@@ -409,152 +531,143 @@ document.addEventListener("DOMContentLoaded", () => {
   //
   async function handleCategoryPage() {
     const dynamicContentArea = document.getElementById("dynamic-content-area");
-
-    if (!dynamicContentArea) {
-      return;
-    }
+    if (!dynamicContentArea) return;
 
     const urlParams = new URLSearchParams(window.location.search);
-    const category = urlParams.get("category");
+    const categoryQuery = urlParams.get("category");
 
-    if (!category) {
+    if (!categoryQuery) {
       dynamicContentArea.innerHTML =
-        "<p>O ID da categoria não foi fornecido na URL.</p>";
+        "<p>Nenhuma categoria foi fornecida na URL.</p>";
       return;
     }
 
-    dynamicContentArea.innerHTML = `<p class="loading-feedback">Loading videos for ${category}...</p>`;
+    dynamicContentArea.innerHTML = `<p class="loading-feedback">Carregando vídeos para ${categoryQuery}...</p>`;
 
-    let allVideos = [];
-    let currentFilters = {
-      name: "",
-      genre: "all",
-      sort: "title-asc",
-    };
+    let allMedia = [];
+    let currentFilters = { name: "", genre: "all", sort: "title-asc" };
 
-    const videos = await fetchVideosByCategory(category);
-    allVideos = videos;
+    // Lista de categorias que devem ser buscadas nos dados locais
+    const localCategories = ["Channels", "Movies", "Music", "Podcasts"];
 
-    if (videos.length === 0) {
-      dynamicContentArea.innerHTML = `<p>No videos were found for this category.</p>`;
+    if (localCategories.includes(categoryQuery)) {
+      console.log("teste local");
+      // Busca em dados locais
+      const allLocalData = await getAllNormalizedLocalData();
+      allMedia = allLocalData.filter((item) =>
+        item.categories.some((cat) => cat.name === categoryQuery)
+      );
+    } else {
+      console.log("teste api");
+      const apiVideos = await fetchVideosByCategory(categoryQuery);
+      // Adicionamos sourceType para consistência, embora não seja estritamente necessário aqui
+      allMedia = apiVideos.map((video) => ({
+        ...video,
+        sourceType: "youtube",
+      }));
+    }
+
+    if (allMedia.length === 0) {
+      dynamicContentArea.innerHTML = `<p>Nenhum vídeo foi encontrado para esta categoria.</p>`;
       return;
     }
 
     const uniqueGenres = [
       ...new Set(
-        allVideos.flatMap((videos) => videos.categories.map((c) => c.name))
+        allMedia.flatMap((item) => item.categories.map((c) => c.name))
       ),
-    ];
+    ].sort();
 
-    function renderVideos(videosToRender) {
-      const dynamicContentArea = document.querySelector(
-        ".media-grid.all-videos-grid"
-      );
-      if (!dynamicContentArea) return; // Sai se a grade não existir
+    function renderMedia(mediaToRender) {
+      const grid = document.querySelector(".media-grid.all-videos-grid");
+      if (!grid) return;
 
-      // Atualiza o contador de vídeos
       const videoCountSpan = document.getElementById("video-count");
-      if (videoCountSpan) {
-        videoCountSpan.textContent = videosToRender.length;
-      }
+      if (videoCountSpan) videoCountSpan.textContent = mediaToRender.length;
 
-      if (videosToRender.length === 0) {
-        dynamicContentArea.innerHTML =
-          '<p class="no-results-feedback">Nenhum vídeo corresponde aos filtros aplicados.</p>';
+      if (mediaToRender.length === 0) {
+        grid.innerHTML =
+          '<p class="no-results-feedback">Nenhum item corresponde aos filtros aplicados.</p>';
         return;
       }
-      dynamicContentArea.innerHTML = videosToRender
-        .map(createVideoCard)
-        .join("");
+      grid.innerHTML = mediaToRender.map(createMediaCard).join("");
     }
 
-    // 4. Função que aplica todos os filtros e re-renderiza a lista
     function applyFiltersAndRender() {
-      let filteredVideos = [...allVideos];
+      let filteredMedia = [...allMedia];
 
-      // Filtro por nome (título)
       if (currentFilters.name) {
-        filteredVideos = filteredVideos.filter((video) =>
-          video.title.toLowerCase().includes(currentFilters.name)
+        filteredMedia = filteredMedia.filter((item) =>
+          item.title.toLowerCase().includes(currentFilters.name)
         );
       }
 
-      // Filtro por Gênero
       if (currentFilters.genre !== "all") {
-        filteredVideos = filteredVideos.filter((video) =>
-          video.categories.some((cat) => cat.name === currentFilters.genre)
+        filteredMedia = filteredMedia.filter((item) =>
+          item.categories.some((cat) => cat.name === currentFilters.genre)
         );
       }
 
-      // Ordenação
       switch (currentFilters.sort) {
         case "title-asc":
-          filteredVideos.sort((a, b) => a.title.localeCompare(b.title));
+          filteredMedia.sort((a, b) => a.title.localeCompare(b.title));
           break;
         case "title-desc":
-          filteredVideos.sort((a, b) => b.title.localeCompare(a.title));
+          filteredMedia.sort((a, b) => b.title.localeCompare(a.title));
           break;
-        // Adicione mais casos de ordenação se necessário (ex: por data)
       }
 
-      renderVideos(filteredVideos);
+      renderMedia(filteredMedia);
     }
 
-    // 5. Montar o HTML da página, incluindo os filtros
-    const categoryName = category || "Categoria";
     const genreOptions = uniqueGenres
       .map((genre) => `<option value="${genre}">${genre}</option>`)
       .join("");
-
     dynamicContentArea.innerHTML = `
-    <a class="backHome-Button" href="/">Back Home</a>
-    <h1 class="section-title">${categoryName} <span><span id="video-count">${allVideos.length}</span> Vídeos</span></h1>
-
-    <div class="filters-container">
+      <a class="backHome-Button" href="/">Back Home</a>
+      <h1 class="section-title">${categoryQuery} <span><span id="video-count">${allMedia.length}</span> Vídeos</span></h1>
+      <div class="filters-container">
         <div class="filter-group">
-            <label for="name-filter">Filter by name:</label>
-            <input type="text" id="name-filter" placeholder="Insert video name..." autocomplete="off">
+          <label for="name-filter">Filtrar por nome:</label>
+          <input type="text" id="name-filter" placeholder="Digite o nome do vídeo..." autocomplete="off">
         </div>
         <div class="filter-group">
-            <label for="genre-filter">Genre:</label>
-            <select id="genre-filter">
-                <option value="all">All genres</option>
-                ${genreOptions}
-            </select>
+          <label for="genre-filter">Gênero:</label>
+          <select id="genre-filter">
+            <option value="all">Todos os gêneros</option>
+            ${genreOptions}
+          </select>
         </div>
         <div class="filter-group">
-            <label for="sort-filter">Order for:</label>
-            <select id="sort-filter">
-                <option value="title-asc">Name (A-Z)</option>
-                <option value="title-desc">Name (Z-A)</option>
-            </select>
+          <label for="sort-filter">Ordenar por:</label>
+          <select id="sort-filter">
+            <option value="title-asc">Nome (A-Z)</option>
+            <option value="title-desc">Nome (Z-A)</option>
+          </select>
         </div>
-    </div>
-
-    <section class="media-section">
+      </div>
+      <section class="media-section">
         <div class="all-videos-section">
-            <div class="media-grid all-videos-grid">
-                </div>
+          <div class="media-grid all-videos-grid"></div>
         </div>
-    </section>`;
+      </section>`;
 
-    // 6. Adicionar os "escutadores" de eventos aos filtros
-    document.getElementById("name-filter").addEventListener("input", (e) => {
-      currentFilters.name = e.target.value.toLowerCase();
-      applyFiltersAndRender();
-    });
-
+    document.getElementById("name-filter").addEventListener(
+      "input",
+      debounce((e) => {
+        currentFilters.name = e.target.value.toLowerCase();
+        applyFiltersAndRender();
+      }, 300)
+    );
     document.getElementById("genre-filter").addEventListener("change", (e) => {
       currentFilters.genre = e.target.value;
       applyFiltersAndRender();
     });
-
     document.getElementById("sort-filter").addEventListener("change", (e) => {
       currentFilters.sort = e.target.value;
       applyFiltersAndRender();
     });
 
-    // 7. Renderização inicial com todos os vídeos
     applyFiltersAndRender();
   }
 
@@ -710,15 +823,13 @@ document.addEventListener("DOMContentLoaded", () => {
   // ─── PONTO DE ENTRADA PRINCIPAL ───────────────────────────────────────────────────
   //
   async function main() {
-    // Funções que rodam em todas as páginas
     initializeHeroPlayer();
     initializeSearch();
-    initializeAllSlidersAndUI(); // Roda uma vez para UI estática
+    initializeAllSlidersAndUI();
 
-    // Lógica condicional baseada na página atual
-    if (window.location.pathname.includes("/categories")) {
+    if (document.getElementById("dynamic-content-area")) {
       handleCategoryPage();
-    } else {
+    } else if (document.getElementById("dynamic-sliders-container")) {
       await initializeDynamicSliders();
       initializeAllSlidersAndUI();
     }

@@ -1109,7 +1109,7 @@ document.addEventListener("DOMContentLoaded", () => {
         title: "Featured Videos",
         items: featuredVideos,
         sectionClass: "featured-videos-section",
-        link: "/categories?category=featured",
+        link: "/categories/?category=featured",
       });
     }
 
@@ -1119,7 +1119,7 @@ document.addEventListener("DOMContentLoaded", () => {
         title: "Newest Stuff",
         items: recentVideos,
         sectionClass: "recent-videos-section",
-        link: "/categories?category=newer",
+        link: "/categories/?category=newer",
       });
     }
 
@@ -1160,7 +1160,7 @@ document.addEventListener("DOMContentLoaded", () => {
       Podcasts: "https://podcasts.eternityready.com/",
     };
 
-    const defaultCategoryPage = "/categories";
+    const defaultCategoryPage = "/categories/";
     // =======================================================================
 
     const allLocalCategoryNames = allLocalItems.flatMap((item) =>
@@ -1177,7 +1177,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const headerLink = localContentPageLinks[categoryName]
           ? localContentPageLinks[categoryName]
-          : `${defaultCategoryPage}?q=${encodeURIComponent(categoryName)}`;
+          : `${defaultCategoryPage}?category=${encodeURIComponent(
+              categoryName
+            )}`;
 
         masterSliderData.push({
           title: categoryName,
