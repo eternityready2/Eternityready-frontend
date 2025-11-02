@@ -2363,6 +2363,34 @@ header .cta-button a {
   .service-thumbs .thumb img {
     border-radius: 7px;
   }
+
+  /* People Section */
+  .people-section {
+    padding: 50px 0;
+  }
+
+  .people-slider {
+    grid-auto-columns: 54vw;
+    gap: 8px 12px;
+    padding-bottom: 6px;
+  }
+
+  .person-card {
+    padding: 8px 10px;
+    min-height: 48px;
+    font-size: 0.8rem;
+  }
+
+  .person-card .avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
+    margin-right: 6px;
+  }
+
+  .person-card .name {
+    font-size: 0.85rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -2617,4 +2645,113 @@ header .cta-button a {
   padding: 2px 4px;
   font-size: 0.7rem;
   border-radius: 3px;
+}
+
+/* ====================================
+   FIFTH SECTION: POPULAR ACTORS & DIRECTORS
+   ==================================== */
+.people-section {
+  background: #060d17;
+  padding: 80px 0;
+}
+
+.people-section .section-header {
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.people-section .section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.people-section .section-link {
+  color: #fff;
+  font-size: 1.2rem;
+  text-decoration: none;
+}
+
+.people-section .section-link:hover {
+  color: #d32f2f;
+}
+
+/* GRID‐BASED SLIDER: 2 rows, horizontal scroll */
+/* Hide scrollbar by default */
+.people-slider {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(2, auto);
+  grid-auto-columns: 300px;
+  gap: 20px 24px;
+  overflow-x: auto;
+  padding-bottom: 16px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+
+  /* Firefox */
+  scrollbar-width: none;
+}
+
+/* WebKit */
+.people-slider::-webkit-scrollbar {
+  display: none;
+}
+
+.people-slider:hover::-webkit-scrollbar {
+  display: block;
+  height: 6px;
+}
+
+.people-slider:hover::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.people-slider:hover::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+/* Person Card */
+.person-card {
+  scroll-snap-align: start;
+  background: #161d25;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  min-height: 64px;
+}
+
+/* Avatar */
+.person-card .avatar {
+  flex-shrink: 0;
+  width: 44px;
+  /* bigger circle */
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  /* bigger initials */
+  font-weight: 500;
+  color: #fff;
+  margin-right: 16px;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #6e00ff, #9e00ff);
+  /* fallback */
+}
+
+/* Name */
+.person-card .name {
+  margin: 0;
+  font-size: 0.9rem;
+  /* slightly larger text */
+  font-weight: 200;
+  color: #fff;
+  white-space: normal;
+  overflow: visible;
+  line-height: 1.3;
 }
