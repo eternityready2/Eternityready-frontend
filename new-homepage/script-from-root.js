@@ -371,7 +371,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       itemsToAppend.forEach((item, index) => {
         // ... (seu código de criação de 'card' continua aqui, sem alterações)
-        let imageUrl = item.thumbnail.url || "images/placeholder.jpg";
+        let imageUrl = item.thumbnail.url || "/images/placeholder.jpg";
         if (item.sourceType === "podcasts" && !imageUrl.startsWith("http")) {
           imageUrl = `https://keystone.eternityready.com${imageUrl}`;
         }
@@ -810,7 +810,7 @@ document.addEventListener("DOMContentLoaded", () => {
           ? video.thumbnail.url
           : video.thumbnail?.url
           ? `${API_BASE_URL}${video.thumbnail.url.replace(/^\//, "")}`
-          : "images/placeholder.jpg";
+          : "/images/placeholder.jpg";
 
         const playerUrl = `/player/?q=${video.id}`;
         const youtubeVideoId = video.videoId;
@@ -966,7 +966,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
 
           return `<a href="${videoUrl}" class="media-card-link" ${targetAttribute}><div class="media-card" ${videoHoverData}><div class="media-thumb">${playerContainer} <img src="${
-            imageUrl || "images/placeholder.jpg"
+            imageUrl || "/images/placeholder.jpg"
           }" alt="${video.title}" loading="lazy" class="media-thumbnail" />${
             video.duration
               ? `<span class="media-duration">${video.duration}</span>`
@@ -1426,7 +1426,7 @@ document.addEventListener("DOMContentLoaded", () => {
               <div class="video-info">
                 <div class="info-bubble">
                   <img
-                    src="images/toppng.com-donna-picarro-dummy-avatar-768x768.png"
+                    src="/images/toppng.com-donna-picarro-dummy-avatar-768x768.png"
                     alt=""
                     class="info-avatar"
                   />
