@@ -1817,7 +1817,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     //initializeHeroPlayer();
     initializeSearch();
-    //initializeLocalContentGrid();
+    initializeLocalContentGrid();
     initializeDynamicSliders();
     //initializeGeneralUI();
     //initializePlayerPreviews();
