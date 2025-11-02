@@ -2342,6 +2342,27 @@ header .cta-button a {
     padding: 6px 2px;
     font-size: 0.98rem;
   }
+
+
+  /* Browse Slider: Service Cards */
+  .browse-slider {
+    gap: 12px;
+    padding-bottom: 7px;
+  }
+
+  .service-card {
+    width: 68vw;
+    min-width: 120px;
+    padding: 10px;
+  }
+
+  .service-title {
+    font-size: 1rem;
+  }
+
+  .service-thumbs .thumb img {
+    border-radius: 7px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -2423,4 +2444,177 @@ header .cta-button a {
 .btn-load-more:hover {
   border-color: #ff3c3c;
   box-shadow: 0 0 0 3px rgba(246, 59, 59, 0.3);
+}
+
+/* ====================================
+   FOURTH SECTION: BROWSE BY SERVICE
+   ==================================== */
+.browse-section {
+  background: #060d17;
+}
+
+.browse-section .section-header {
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.browse-section .section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.browse-section .section-link {
+  color: #fff;
+  font-size: 1.2rem;
+  text-decoration: none;
+}
+
+.browse-section .section-link:hover {
+  color: #d32f2f;
+}
+
+/* Horizontal snapping slider */
+.browse-slider {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+
+  /* hide in Firefox */
+  scrollbar-width: none;
+}
+
+/* hide in WebKit */
+.browse-slider::-webkit-scrollbar {
+  display: none;
+}
+
+.browse-slider:hover::-webkit-scrollbar {
+  display: block;
+  height: 6px;
+}
+
+.browse-slider:hover::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.browse-slider:hover::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+/* Individual Service Card */
+.service-card {
+  flex: 0 0 auto;
+  width: 280px;
+  background: #161d25;
+  border-radius: 12px;
+  padding: 16px;
+  scroll-snap-align: start;
+}
+
+/* — Header row: label + title — */
+.service-card .service-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+/* Label styles */
+.service-label {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.service-label.free {
+  background: linear-gradient(135deg, #7332bf, #44208c);
+  color: #fff;
+}
+
+.service-label.netflix {
+  background: #fff;
+  color: #000;
+}
+
+.service-label.netflix img {
+  height: 16px;
+  margin-right: 6px;
+}
+
+.service-label.hulu {
+  background: #1ce783;
+  color: #000;
+}
+
+.service-label.hulu img {
+  height: 16px;
+  margin-right: 6px;
+}
+
+.service-label.primevideo {
+  background: #0073e6;
+  color: #fff;
+}
+
+.service-label.primevideo img {
+  height: 16px;
+  margin-right: 6px;
+}
+
+.service-label.directv {
+  background: #fff;
+  color: #000;
+}
+
+.service-label.directv img {
+  height: 16px;
+  margin-right: 6px;
+}
+
+/* Title sits on the right of the header row */
+.service-title {
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0;
+  color: #fff;
+  text-align: right;
+}
+
+/* Thumbnails row */
+.service-thumbs {
+  display: flex;
+  gap: 8px;
+}
+
+.service-thumbs .thumb {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  flex: 1;
+}
+
+.service-thumbs .thumb img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.service-thumbs .tv-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  padding: 2px 4px;
+  font-size: 0.7rem;
+  border-radius: 3px;
 }
