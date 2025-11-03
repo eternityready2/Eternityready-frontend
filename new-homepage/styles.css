@@ -17,7 +17,7 @@
   --text-muted: #9ca3af;
 }
 
-body {
+html body {
   margin: 0;
   font-family: "Poppins", sans-serif;
   background-color: var(--bg-dark) !important;
