@@ -2100,6 +2100,7 @@ header .cta-button a {
   font-size: 1rem;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
   outline: none; /* Remove a borda padrão do navegador ao focar */
+  margin-bottom: 0px !important;
 }
 
 /* Estilo para o campo de texto do nome */
@@ -2242,10 +2243,12 @@ header .cta-button a {
    ============================== */
 
 @media (max-width: 768px) {
+  /*
   #filters-container {
-    flex-direction: column; /* Empilha os filtros verticalmente */
-    align-items: stretch; /* Faz com que todos ocupem a largura total */
+    flex-direction: column;
+    align-items: stretch;
   }
+  */
 
   #content-grid {
     /* Ajusta o tamanho mínimo dos cards para telas menores */
