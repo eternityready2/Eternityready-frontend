@@ -1792,6 +1792,7 @@ header .cta-button a {
   border: none;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   margin: 24px 0;
+  opacity: 1 !important;
 }
 
 /* 5-column grid */
