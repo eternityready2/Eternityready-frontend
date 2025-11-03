@@ -1507,6 +1507,7 @@ header .cta-button a {
 
 .discover-section .container {
   text-align: center;
+  padding: 0;
 }
 
 .section-title {
@@ -1514,6 +1515,11 @@ header .cta-button a {
   margin: 0 auto 8px;
   display: inline-block;
   position: relative;
+  font-weight: 700;
+}
+
+.discover-section .container .section-title {
+  margin-bottom: 32px;
 }
 
 .section-subtitle {
@@ -1565,8 +1571,8 @@ header .cta-button a {
 
 .eternity-card.gradient.green h3 {
   background: linear-gradient(135deg, #eaff8c 0%, #8cbe00 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
 }
 
 .eternity-card.gradient.gold h3 {
@@ -1705,6 +1711,7 @@ header .cta-button a {
 .eternity-card.media h4 {
   margin: 4px 0;
   font-size: 1.2rem;
+  font-weight: 700;
 }
 
 .eternity-card.media p {
@@ -1738,6 +1745,7 @@ header .cta-button a {
   height: 100%;
   z-index: 0;
   transition: transform 500ms cubic-bezier(0.4, 0, 0.2, 1);
+  object-fit: fill;
 }
 
 .eternity-card.media:hover img {
