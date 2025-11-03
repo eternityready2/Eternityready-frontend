@@ -1,23 +1,43 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
 
+
+/* ================================
+   RESET & BASE
+   ================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+
 :root {
-  --bg-dark: #0f0f0f;
+  --bg-dark: #060d17;
   --text-light: #ffffff;
   --text-muted: #9ca3af;
 }
 
 body {
   margin: 0;
-  font-family: "Montserrat", sans-serif;
-  background-color: var(--bg-dark);
-  color: var(--text-light);
+  font-family: "Poppins", sans-serif;
+  background-color: var(--bg-dark) !important;
+  color: var(--text-light) !important;
   min-height: 100vh;
+  line-height: 1.5;
 }
 
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ================================
+   CONTAINER UTILS
+   ================================ */
 .container {
-  margin: 0 auto;
-  max-width: 1400px;
   width: 90%;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .button-container {
@@ -31,7 +51,7 @@ header {
   top: 0;
   left: 0;
   width: 100%;
-  background-color: #000;
+  background-color: var(--bg-dark);
   z-index: 1000;
   padding: 10px 0;
   transition: all 0.3s ease;
@@ -130,7 +150,7 @@ header .container {
   top: 20px;
   right: 20px;
   font-size: 20px;
-  color: #000;
+  color: var(--bg-dark);
   border: none;
   cursor: pointer;
   padding: 4px 12px;
@@ -145,7 +165,7 @@ header .container {
   font-size: 17px;
   transition: all 0.3s ease;
   float: right;
-  border: 1px solid #000;
+  border: 1px solid var(--bg-dark);
   border-radius: 15px;
   padding: 4px 15px;
   color: #777;
@@ -222,7 +242,7 @@ dropdown-section li > a {
   position: absolute;
   top: 1.5rem;
   left: 0;
-  background-color: #000;
+  background-color: var(--bg-dark);
   list-style: none;
   padding: 10px 0;
   margin: 0;
@@ -285,7 +305,7 @@ dropdown-section li > a {
   position: absolute;
   top: 1.5rem;
   left: 0;
-  background-color: #000;
+  background-color: var(--bg-dark);
   list-style: none;
   padding: 10px 0;
   margin: 0;
@@ -318,7 +338,7 @@ dropdown-section li > a {
   position: absolute;
   top: 1.5rem;
   left: 0;
-  background-color: #000;
+  background-color: var(--bg-dark);
   list-style: none;
   padding: 10px 0;
   margin: 0;
@@ -376,7 +396,7 @@ dropdown-section li > a {
     transform: scale(1);
   }
   .vertizontal-dropdown {
-    background-color: #000;
+    background-color: var(--bg-dark);
     position: absolute !important;
     opacity: 0;
   }
@@ -396,7 +416,7 @@ dropdown-section li > a {
   position: absolute;
   top: 0;
   left: 0;
-  background-color: #000;
+  background-color: var(--bg-dark);
   list-style: none;
   padding: 10px 0;
   margin: 0;
@@ -470,7 +490,7 @@ dropdown-section li > a {
     line-height: 1.5em;
   }
   span.closex {
-    color: #000;
+    color: var(--bg-dark);
     font-size: 20px;
     padding: 5px;
   }
@@ -535,7 +555,7 @@ header .cta-button a {
   .button-container {
     display: flex;
     gap: 6px;
-    background: #000;
+    background: var(--bg-dark);
     margin-top: -3px;
     justify-content: center;
     padding: 10px 0;
@@ -1076,7 +1096,7 @@ header .cta-button a {
   left: 0;
   width: 100%;
   height: 100%;
-  background: #000;
+  background: var(--bg-dark);
   border: none;
   border-top-right-radius: 10px;
 }
@@ -1481,7 +1501,7 @@ header .cta-button a {
    DISCOVER CONTENT STYLES
    ================================ */
 .discover-section {
-  background: #060d17;
+  background: var(--bg-dark);
   padding: 50px 0;
 }
 
@@ -1730,7 +1750,7 @@ header .cta-button a {
    THIRD SECTION: MEDIA CAROUSELS
    ==================================== */
 .media-section {
-  background: #060d17;
+  background: var(--bg-dark);
   padding: 60px 0;
 }
 
@@ -2478,7 +2498,7 @@ header .cta-button a {
    FOURTH SECTION: BROWSE BY SERVICE
    ==================================== */
 .browse-section {
-  background: #060d17;
+  background: var(--bg-dark);
 }
 
 .browse-section .section-header {
@@ -2570,7 +2590,7 @@ header .cta-button a {
 
 .service-label.netflix {
   background: #fff;
-  color: #000;
+  color: var(--bg-dark);
 }
 
 .service-label.netflix img {
@@ -2580,7 +2600,7 @@ header .cta-button a {
 
 .service-label.hulu {
   background: #1ce783;
-  color: #000;
+  color: var(--bg-dark);
 }
 
 .service-label.hulu img {
@@ -2600,7 +2620,7 @@ header .cta-button a {
 
 .service-label.directv {
   background: #fff;
-  color: #000;
+  color: var(--bg-dark);
 }
 
 .service-label.directv img {
@@ -2651,7 +2671,7 @@ header .cta-button a {
    FIFTH SECTION: POPULAR ACTORS & DIRECTORS
    ==================================== */
 .people-section {
-  background: #060d17;
+  background: var(--bg-dark);
   padding: 80px 0;
 }
 
