@@ -1820,7 +1820,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initializeLocalContentGrid();
     initializeDynamicSliders();
     //initializeGeneralUI();
-    //initializePlayerPreviews();
+    initializePlayerPreviews();
   }
 
   main();
