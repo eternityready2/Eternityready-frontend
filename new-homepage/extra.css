@@ -78,7 +78,8 @@ body.scrolled #main_header {
 }
 
 #main_header .logo {
-  width: 132px;
+  width: 100%;
+  max-width: 132px;
 }
 
 #main_header .centered_menu {
