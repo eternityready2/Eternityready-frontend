@@ -705,5 +705,39 @@ document.addEventListener("DOMContentLoaded", () => {
     return savedChannels.includes(channelName);
   }
 
+  // =================================================================================
+  // 10. LÓGICA DO SWIPER
+  // =================================================================================
+  const swiper = new Swiper('.mySwiper', {
+    // --- Configurações Essenciais ---
+
+    // Efeito: 'fade' (esmaecer) é ótimo para hero sliders. 
+    // O padrão é 'slide'.
+    effect: 'fade',
+
+    // Loop: Faz o slider voltar ao primeiro slide depois do último
+    loop: true,
+
+    // Autoplay: Troca de slide automática
+    autoplay: {
+      delay: 5000, // 5000ms = 5 segundos
+      disableOnInteraction: false, // Continua tocando mesmo se o usuário mexer
+    },
+
+    // --- Módulos de Controle ---
+
+    // Paginação: As "bolinhas" (você já tem no HTML)
+    pagination: {
+      el: '.swiper-pagination', // O seletor do seu HTML
+      clickable: true, // Permite clicar nas bolinhas
+    },
+
+    // Navegação: As "setas" de Próximo/Anterior
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+  });
+
   init();
 });
