@@ -762,7 +762,7 @@ header .cta-button a {
   position: relative !important;
   width: 500px !important;
   max-width: 500px !important;
-  margin: 0 24px !important;
+  margin: 0px 6px 0px 0px !important;
 }
 
 .search-container input {
@@ -2575,7 +2575,7 @@ header .cta-button a {
   }
 
   .search-container {
-    margin: 0 6px 0 12px !important;
+    margin: 0 6px 0 4px !important;
     min-width: 0 !important;
     max-width: 100vw !important;
   }
