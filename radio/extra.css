@@ -80,7 +80,7 @@ button {
   padding: 12px;
   justify-content: space-between;
   align-items: center;
-  z-index: 50;
+  z-index: 30;
   transition: all 0.3s;
 }
 

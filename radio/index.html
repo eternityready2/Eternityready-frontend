@@ -4,6 +4,9 @@
 <head>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="bottomtoolbar-style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -40,6 +43,16 @@
           } 
       </script>
     <!-- bootstrap -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-51PVB4LLT7"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){
+	    dataLayer.push(arguments);
+	  }
+	  gtag('js', new Date());
+	  gtag('config', 'G-51PVB4LLT7');
+	</script>
+
   <link href="main-epics/assets/css/bootstrap.min.css" rel="stylesheet" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -71,7 +84,7 @@
   
   <!-- style -->
   <link rel="stylesheet" href="main-epics/assets/css/style.css" />
-            <link rel="stylesheet" href="extra.css" />
+            <link rel="stylesheet" href="extra3.css" />
 <style>
     @media (max-width: 480px){
         .swiperr .swiper{
@@ -100,7 +113,7 @@
 </head>
 
 <body>
-
+        <div id="root"></div>
         <div id="main_header" class="free-container">
          <div class="logo" onClick="window.open('https://www.eternityready.com/', '_self')">
             <img src="public/logo1USE-THIS.png" alt="logo" width="420" height="140" />
@@ -1371,10 +1384,11 @@
 
   </script>
  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
- <script src ="script.js"></script>
-    
-    
-   
-</body>
+<script type="module">
+   import { EternityRadioPlayerMounter } from './dist19/ui.es.js';
+   EternityRadioPlayerMounter('root', './dist19/output.css', './dist19/er-radio-player-bar.css');
+ </script>
 
+ <script type="module" src="script3.js"></script>
+ </body>
 </html>
