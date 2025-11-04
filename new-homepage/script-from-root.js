@@ -1229,20 +1229,30 @@ document.addEventListener("DOMContentLoaded", () => {
         slider = wrapper.querySelector(".browse-slider");
       }
 
+      else if (context.id === "browse-by-people") {
+        slider = wrapper.querySelector(".people-slider");
+      }
+
       else {
         slider = wrapper.querySelector(".media-grid");
       }
 
       const prevBtn = wrapper.querySelector(".slider-arrow.prev");
       const nextBtn = wrapper.querySelector(".slider-arrow.next");
-      console.log(slider, prevBtn, nextBtn);
       if (!slider || !prevBtn || !nextBtn) return;
 
-      const itemCount = slider.querySelectorAll(
-        (context.id === "browse-by-service") 
-          ? ".service-card"
-          : ".media-card-link"
-      ).length;
+      let itemCount;
+      if (context.id === "browse-by-service") {
+        itemCount = slider.querySelectorAll(".service-card").length;
+      }
+
+      else if (context.id === "browse-by-people") {
+        itemCount = slider.querySelectorAll(".person-card").length;
+      }
+
+      else {
+        itemCount = slider.querySelectorAll(".media-card-link").length;
+      }
 
       if (itemCount > (context.id === "browse-by-service" ? 4 : 5)) {
         const scrollAmount = slider.clientWidth * 0.8;
@@ -1837,6 +1847,7 @@ document.addEventListener("DOMContentLoaded", () => {
     //initializeGeneralUI();
     initializePlayerPreviews();
     initializeSliderControls(document.getElementById("browse-by-service"));
+    initializeSliderControls(document.getElementById("browse-by-people"));
   }
 
   main();
