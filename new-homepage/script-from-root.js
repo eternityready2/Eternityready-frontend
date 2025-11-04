@@ -852,6 +852,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .toLowerCase()
       .replace(/[\s+&]/g, "-")}-section`;
     sliderSection.innerHTML = sliderContent;
+    sliderSection.id = "top-shows-browser";
 
     placeholder.replaceWith(sliderSection);
     initializeSliderControls(sliderSection);
@@ -1222,14 +1223,28 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   function initializeSliderControls(context = document) {
     context.querySelectorAll(".slider-wrapper").forEach((wrapper) => {
-      const slider = wrapper.querySelector(".media-grid");
+
+      let slider;
+      if (context.id === "browse-by-service") {
+        slider = wrapper.querySelector(".browse-slider");
+      }
+
+      else {
+        slider = wrapper.querySelector(".media-grid");
+      }
+
       const prevBtn = wrapper.querySelector(".slider-arrow.prev");
       const nextBtn = wrapper.querySelector(".slider-arrow.next");
+      console.log(slider, prevBtn, nextBtn);
       if (!slider || !prevBtn || !nextBtn) return;
 
-      const itemCount = slider.querySelectorAll(".media-card-link").length;
+      const itemCount = slider.querySelectorAll(
+        (context.id === "browse-by-service") 
+          ? ".service-card"
+          : ".media-card-link"
+      ).length;
 
-      if (itemCount > 5) {
+      if (itemCount > (context.id === "browse-by-service" ? 4 : 5)) {
         const scrollAmount = slider.clientWidth * 0.8;
         prevBtn.addEventListener("click", () =>
           slider.scrollBy({ left: -scrollAmount, behavior: "smooth" })
@@ -1821,6 +1836,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initializeDynamicSliders();
     //initializeGeneralUI();
     initializePlayerPreviews();
+    initializeSliderControls(document.getElementById("browse-by-service"));
   }
 
   main();
