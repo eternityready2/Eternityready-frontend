@@ -2846,3 +2846,7 @@ header .cta-button a {
 #verse-of-the-day .container {
   width: 85%;
 }
+
+#verse-of-the-day {  
+  padding-top: 60px;
+}
