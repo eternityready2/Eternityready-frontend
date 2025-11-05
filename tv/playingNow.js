@@ -122,15 +122,20 @@ function findAndDisplayCurrentPrograms(scheduleData, timezoneOffset = 0) {
     if (end < start) end.setDate(end.getDate() + 1);
 
     if (currentTime >= start && currentTime < end) {
-      const selector = `[data-channel-name="${CSS.escape(entry.channel.toLowerCase())}"]`;
-      const channelElement = document.querySelector(selector);
+      const selector = `p[data-channel-name="${CSS.escape(entry.channel.toLowerCase())}"]`;
+      const channelElements = $(selector);
 
-      if (channelElement) {
-        channelElement.innerHTML = `<span>On now: </span>${entry.program}`;
-      } else {
-        console.log(
-          `Channel "${entry.channel}" not found on DOM. (This might be intentional if the channel is not displayed).`
-        );
+      if (channelElements.length == 0) 
+	  {
+        console.log(`Channel "${entry.channel}" not found on DOM. (This might be intentional if the channel is not displayed).`);
+      } 
+	  else 
+	  {
+		channelElements.each(
+			function() 
+			{
+				$(this).html(`<span>On now: </span>${entry.program}`);
+			});
       }
     }
   });
