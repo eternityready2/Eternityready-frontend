@@ -108,3 +108,9 @@ form#login button:hover {
 form#login > a {
   text-align: right;
 }
+
+form#login > section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
