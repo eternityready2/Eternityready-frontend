@@ -44,6 +44,12 @@ button {
   margin: 0 auto;
 }
 
+.container-hero-section {
+  max-width: 1140px;
+  margin: 0;
+  padding: 1rem;
+}
+
 .button-container {
   display: none;
 }
