@@ -20,6 +20,14 @@ main {
   display: flex;
 }
 
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
 #left, #right {
   width: 50%;
 }
@@ -97,5 +105,6 @@ form#login button:hover {
   object-fit: cover;
 }
 
-#right {
+form#login > a {
+  text-align: right;
 }
