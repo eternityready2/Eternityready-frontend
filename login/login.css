@@ -18,6 +18,7 @@ html body {
 
 main {
   display: flex;
+  padding: 2rem;
 }
 
 a {
@@ -28,9 +29,6 @@ a:hover {
   text-decoration: underline;
 }
 
-#left, #right {
-  width: 50%;
-}
 
 #right {
   background-color: #131e44;
@@ -47,7 +45,7 @@ a:hover {
 form#login {
   display: flex;
   flex-direction: column;
-  width: 60%;
+  width: 100%;
   gap: 1.25rem;
 }
 
@@ -114,3 +112,42 @@ form#login > section {
   flex-direction: column;
   gap: 0.25rem;
 }
+
+
+
+/* Xs */
+
+#left {
+  width: 100%;
+}
+
+#right {
+  width: 0
+}
+
+/* Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) {
+  main {
+    padding: 0rem;
+  }
+
+  form#login {
+    width: 60%;
+  }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) {}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {}
+
+/* X-Large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+  #left, #right {
+    width: 50%;
+  }
+}
+
+/* XX-Large devices (larger desktops, 1400px and up) */
+@media (min-width: 1400px) {}
