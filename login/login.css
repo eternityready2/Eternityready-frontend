@@ -1,0 +1,86 @@
+/* Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background-color: #060d17;
+  color: #ffffff;
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* Login css */
+
+main {
+  display: flex;
+}
+
+#left, #right {
+  width: 50%;
+}
+
+#right {
+  background-color: #131e44;
+  min-height: 100vh;
+}
+
+#left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+form#login {
+  display: flex;
+  flex-direction: column;
+  width: 60%;
+  gap: 1.25rem;
+}
+
+form#login section {
+  display: flex;
+  flex-direction: column;
+}
+
+form#login section input, 
+form#login button {
+  padding: 0.75rem;
+}
+
+form#login section input {
+  background-color: #1f2937;
+  border: none;
+  border-radius: 0.5rem;
+  color: #e0e0e0;
+  outline: none;
+}
+
+form#login section input:focus {
+  outline: 1px solid red;
+}
+
+form#login section label {
+  color: #e0e0e0;
+}
+
+form#login button {
+  background-color: #d32f2f;
+  border: none;
+  border-radius: 0.5rem;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+form#login button:hover {
+  cursor: pointer;
+}
+
+#left a {
+  color: #d32f2f;
+}

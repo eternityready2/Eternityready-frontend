@@ -1,15 +1,35 @@
+<meta>
+    <link rel="stylesheet" href="./login.css" />
+</meta>
 <body>
     <main>
-        <h1> Welcome to EternityReady </h1>
-        <form id = "login">
-            <label for="email">Email: </label>
-            <input type="text" id="email" name="email" required/>
-
-            <label for="password">Password: </label>
-            <input type="password" id="password" name="password" required/>
-
-            <button type="submit">Log In</button>
-        </form>
-        <p> Don't have an account? <a href="/register">Sign Up!</a> </p>
+        <div id="left">
+            <h1> Welcome to EternityReady </h1>
+            <form id = "login">
+                <section>
+                    <label for="email">Email</label>
+                    <input
+                        type="text"
+                        id="email"
+                        name="email"
+                        placeholder="Type your email"
+                        required
+                    />
+                </section>
+                <section>
+                    <label for="password">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Type your password"
+                        required
+                    />
+                </section>
+                <button type="submit">Log In</button>
+            </form>
+            <p> Don't have an account? <a href="/register">Sign Up!</a> </p>
+        </div>
+        <div id="right"></div>
     </main>
 </body>
