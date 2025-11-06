@@ -84,3 +84,18 @@ form#login button:hover {
 #left a {
   color: #d32f2f;
 }
+
+#left img {
+  width: 12rem;
+  height: 6rem;
+}
+
+#right img {
+  display: block;
+  max-width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#right {
+}
