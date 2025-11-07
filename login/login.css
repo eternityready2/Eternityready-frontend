@@ -113,6 +113,11 @@ form#login > section {
   gap: 0.25rem;
 }
 
+form#login #check-and-forgot-password {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
 
 
 /* Xs */
