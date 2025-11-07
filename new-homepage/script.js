@@ -719,12 +719,10 @@ document.addEventListener("DOMContentLoaded", () => {
     loop: true,
 
     // Autoplay: Troca de slide automática
-    /*
     autoplay: {
       delay: 5000, // 5000ms = 5 segundos
       disableOnInteraction: false, // Continua tocando mesmo se o usuário mexer
     },
-    */ 
 
     // --- Módulos de Controle ---
 
