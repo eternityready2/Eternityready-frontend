@@ -14,7 +14,9 @@
             "rating": 5,
             "categories": [
                 "Eternity Ready Radio",
-                "Family Friendly"
+                "Family Friendly",
+                "Christian Radio",
+                "Christian Mix"
             ]
         },
         {
@@ -373,21 +375,6 @@
             "categories": [
                 "Christian",
                 "Talk"
-            ]
-        },
-        {
-            "name": "WFPR-DB",
-            "description": "Faith based radio",
-            "src": "https://streaming.live365.com/a46781",
-            "logo": " https://www.eternityready.com/radio/img/WFPR-DB.png",
-            "tags": [
-                "",
-                ""
-            ],
-            "rating": 5,
-            "categories": [
-                "Christian",
-                "Praise/Worship"
             ]
         },
         {
@@ -2857,24 +2844,7 @@
                 "Christian"
             ]
         },
-        {
-            "name": "Praise Radio",
-            "description": "Praise & Worship Music",
-            "src": "https://streaming.live365.com/a45228",
-            "logo": " https://www.eternityready.com/radio/img/Praise Radio.png",
-            "tags": [
-                "",
-                ""
-            ],
-            "rating": 5,
-            "categories": [
-                "Christian Contemporary",
-                "Christian",
-                "Contemporary Gospel",
-                "Praise/Worship"
-            ]
-        },
-        {
+         {
             "name": "WMJP 102.7 LION OF JUDAH RADIO",
             "description": "CHRISTIAN BROADCASTING APOSTOLIC AND PROPHETIC NETWORK.",
             "src": "https://das-edge15-live365-dal02.cdnstream.com/a18260",
@@ -3886,25 +3856,7 @@
                 "Talk"
             ]
         },
-        {
-            "name": "Woo Wee Praise Radio WWPR-DB",
-            "description": "Ready to Praise the Lord? Woo Wee Praise Radio is here to help you do just that. Your day will be filled with the best upbeat Christian Music from the 70s, 80s & 90s! Helping you celebrate the goodness of the Lord while preserving lost or forgotten Contemporary Christian Music is what WWPR is all about! It's great music from a bygone era referred to as \"Music Ministry\". Let's fill our lives with praise! WOO WEE! ",
-            "src": "https://das-edge09-live365-dal03.cdnstream.com/a75551",
-            "logo": " https://www.eternityready.com/radio/img/Woo Wee Praise Radio WWPR-DB.png",
-            "tags": [
-                "",
-                ""
-            ],
-            "rating": 5,
-            "categories": [
-                "Christian Contemporary",
-                "Christian",
-                "Classic Christian",
-                "Praise/Worship",
-                "Spiritual"
-            ]
-        },
-        {
+         {
             "name": "InSpiritRadio",
             "description": "Christian Praise and Worship",
             "src": "https://das-edge13-live365-dal02.cdnstream.com/a82469",
@@ -5294,20 +5246,6 @@
             "categories": [
                 "Christian",
                 "Talk"
-            ]
-        },
-        {
-            "name": "Eternity Ready Radio",
-            "description": "A Light for the lost. Eternity Ready Radio is a family friendly Radio station.",
-            "src": "https://streaming.live365.com/a25765",
-            "logo": " https://www.eternityready.com/radio/img/Eternity Ready Radio.png",
-            "tags": [
-                "",
-                ""
-            ],
-            "rating": 5,
-            "categories": [
-                "Christian"
             ]
         },
         {
