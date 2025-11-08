@@ -55,4 +55,51 @@
             <img src="./public/media.jpg"/>
         </div>
     </main>
+    <script>
+        const form = document.getElementById('register');
+        form.addEventListener('submit', async (event) => {
+          event.preventDefault();
+
+          const firstName = document.getElementById('firstName').value;
+          const lastName = document.getElementById('lastName').value;
+          const email = document.getElementById('email').value;
+          const password = document.getElementById('password').value;
+
+          const query = `
+            mutation CreateUser(
+            $firstName: String!,
+            $lastName: String!,
+            $email: String!,
+            $password: String!) {
+              createUser(data: { firstName: $firstName, lastName: $lastName, email: $email, password: $password }) {
+                id
+                firstName
+                email
+              }
+            }
+          `;
+
+          const variables = { firstName, lastName, email, password };
+
+          try {
+            const response = await fetch('http://api.eternityready.com/api/graphql', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ query, variables }),
+            });
+
+            const result = await response.json();
+
+            if (result.errors) {
+              console.error('Error creating user:', result.errors);
+              alert('Error creating user: ' + result.errors[0].message);
+            } else {
+              alert('User created successfully: ' + result.data.createUser.email);
+            }
+          } catch (error) {
+            console.error('Network error:', error);
+            alert('Network error: ' + error.message);
+          }
+        });
+    </script>
 </body>
