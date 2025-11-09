@@ -33,6 +33,10 @@
   font-weight: 900;
 }
 
+.sf-toast-right:hover {
+  cursor: pointer;
+}
+
 .sf-toast .sf-toast-right {
   font-weight: 900;
   color: black;
