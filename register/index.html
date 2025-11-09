@@ -95,22 +95,22 @@
 
             if (result.errors) {
               console.error('Error creating user:', result.errors);
-              document.body.appendChild(sfToast(
+              addToastAndRemoveLast(
                 "Error", `Error creating user: ${result.errors[0].message}`, "error"
-              ));
+              );
 
             } else {
-              document.body.appendChild(sfToast(
+              addToastAndRemoveLast(
                 "Success", `User created successfully: ${email}. Redirecting...`, "success"
-              ));
+              );
               window.location.assign("https://eternityready.com/login");
 
             }
           } catch (error) {
             console.error('Network error:', error);
-            document.body.appendChild(sfToast(
+            addToastAndRemoveLast(
               "Error", error.message, "error"
-            ));
+            );
           }
         });
     </script>

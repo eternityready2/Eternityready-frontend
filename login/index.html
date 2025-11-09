@@ -86,37 +86,36 @@
 
             if (result.errors) {
               console.error('Error login user:', result.errors);
-              document.body.appendChild(sfToast(
+              addToastAndRemoveLast(
                 "Error", result.errors[0].message, "error"
-              ));
+              );
             } else {
               const authResult = result.data.authenticateUserWithPassword;
               console.log(authResult);
               if (authResult.item) {
-                document.body.appendChild(sfToast(
+                addToastAndRemoveLast(
                   "Success",
                   `Logged In successfully: ${authResult.item.email}. Redirecting...`,
                   "success"
-                ));
+                );
                 window.location.assign("https://eternityready.com/new-homepage");
 
               } else if (authResult.message) {
-                document.body.appendChild(sfToast(
+                addToastAndRemoveLast(
                   "Error", authResult.message, "error"
-                ));
+                );
 
               } else {
-                document.body.appendChild(sfToast(
+                addToastAndRemoveLast(
                   "Error", "Unexpected login response", "error"
-                ));
+                );
               }
             }
           } catch (error) {
             console.error('Network error:', error);
-            alert('Network error: ' + error.message);
-            document.body.appendChild(sfToast(
+            addToastAndRemoveLast(
               "Error", error.message, "error"
-            ));
+            );
           }
         });
     </script>
