@@ -45,4 +45,60 @@
             <img src="./public/media.jpg"/>
         </div>
     </main>
+    <script>
+        const form = document.getElementById('login');
+        form.addEventListener('submit', async (event) => {
+          event.preventDefault();
+
+          const email = document.getElementById('email').value;
+          const password = document.getElementById('password').value;
+
+          const query = `
+            mutation Login($email: String!, $password: String!) {
+              authenticateUserWithPassword(email: $email, password: $password) {
+                ... on UserAuthenticationWithPasswordSuccess {
+                  sessionToken
+                  item {
+                    id
+                    email
+                    privilege
+                  }
+                }
+                ... on UserAuthenticationWithPasswordFailure {
+                  message
+                }
+              }
+            }
+          `;
+          const variables = { email, password };
+
+          try {
+            const response = await fetch('http://127.0.0.1:3000/api/graphql', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ query, variables }),
+            });
+
+            const result = await response.json();
+
+            if (result.errors) {
+              console.error('Error login user:', result.errors);
+              alert('Error loggin in user: ' + result.errors[0].message);
+            } else {
+              const authResult = result.data.authenticateUserWithPassword;
+              if (authResult.item) {
+                console.log(authResult);
+                alert('User logged in successfully: ' + authResult.item.email);
+              } else if (authResult.message) {
+                alert('Login failed: ' + authResult.message);
+              } else {
+                alert('Unexpected login response');
+              }
+            }
+          } catch (error) {
+            console.error('Network error:', error);
+            alert('Network error: ' + error.message);
+          }
+        });
+    </script>
 </body>
