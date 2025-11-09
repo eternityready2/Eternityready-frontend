@@ -1,6 +1,8 @@
 <head>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <link rel="stylesheet" href="./register.css" />
+    <link rel="stylesheet" href="/lib/toast.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 <body>
     <main>
@@ -55,6 +57,7 @@
             <img src="./public/media.jpg"/>
         </div>
     </main>
+    <script src="/lib/toast.js"></script>
     <script>
         const form = document.getElementById('register');
         form.addEventListener('submit', async (event) => {
@@ -92,13 +95,22 @@
 
             if (result.errors) {
               console.error('Error creating user:', result.errors);
-              alert('Error creating user: ' + result.errors[0].message);
+              document.body.appendChild(sfToast(
+                "Error", `Error creating user: ${result.errors[0].message}`, "error"
+              ));
+
             } else {
-              alert('User created successfully: ' + result.data.createUser.email);
+              document.body.appendChild(sfToast(
+                "Success", `User created successfully: ${email}. Redirecting...`, "success"
+              ));
+              window.location.assign("https://eternityready.com/login");
+
             }
           } catch (error) {
             console.error('Network error:', error);
-            alert('Network error: ' + error.message);
+            document.body.appendChild(sfToast(
+              "Error", error.message, "error"
+            ));
           }
         });
     </script>

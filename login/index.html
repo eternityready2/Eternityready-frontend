@@ -1,6 +1,8 @@
 <head>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <link rel="stylesheet" href="./login.css" />
+    <link rel="stylesheet" href="/lib/toast.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 <body>
     <main>
@@ -45,6 +47,7 @@
             <img src="./public/media.jpg"/>
         </div>
     </main>
+    <script src="/lib/toast.js"></script>
     <script>
         const form = document.getElementById('login');
         form.addEventListener('submit', async (event) => {
@@ -83,21 +86,37 @@
 
             if (result.errors) {
               console.error('Error login user:', result.errors);
-              alert('Error loggin in user: ' + result.errors[0].message);
+              document.body.appendChild(sfToast(
+                "Error", result.errors[0].message, "error"
+              ));
             } else {
               const authResult = result.data.authenticateUserWithPassword;
+              console.log(authResult);
               if (authResult.item) {
-                console.log(authResult);
-                alert('User logged in successfully: ' + authResult.item.email);
+                document.body.appendChild(sfToast(
+                  "Success",
+                  `Logged In successfully: ${authResult.item.email}. Redirecting...`,
+                  "success"
+                ));
+                window.location.assign("https://eternityready.com/new-homepage");
+
               } else if (authResult.message) {
-                alert('Login failed: ' + authResult.message);
+                document.body.appendChild(sfToast(
+                  "Error", authResult.message, "error"
+                ));
+
               } else {
-                alert('Unexpected login response');
+                document.body.appendChild(sfToast(
+                  "Error", "Unexpected login response", "error"
+                ));
               }
             }
           } catch (error) {
             console.error('Network error:', error);
             alert('Network error: ' + error.message);
+            document.body.appendChild(sfToast(
+              "Error", error.message, "error"
+            ));
           }
         });
     </script>
