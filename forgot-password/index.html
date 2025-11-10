@@ -1,0 +1,236 @@
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="stylesheet" href="./forgot-password.css" />
+    <link rel="stylesheet" href="/lib/toast.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+<body>
+    <main>
+        <div id="left">
+            <img
+                src="./public/logo.png"
+            />
+            <h1>In case you forgot your password</h1>
+            <form id="forgot-password">
+                <button type="submit">Submit</button>
+            </form>
+            <p> Don't have an account? <a href="/register">Sign Up!</a> </p>
+        </div>
+        <div id="right">
+            <img src="./public/media.jpg"/>
+        </div>
+    </main>
+    <script src="/lib/session.js"></script>
+    <script src="/lib/toast.js"></script>
+    <script>
+      async function loadSecurityQuestions() {
+        const query = `
+          query {
+            securityQuestions {
+              id
+              question
+            }
+          }
+        `;
+
+        try {
+          const response = await fetch('http://127.0.0.1:3000/api/graphql', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query }),
+          });
+
+          const result = await response.json();
+
+          if (result.errors) {
+            console.error('Error getting questions:', result.errors);
+            addToastAndRemoveLast(
+              "Error", result.errors[0].message, "error"
+            );
+          } else {
+            console.log(result);
+            for (let idx = 3; idx > 0; idx--) {
+              let section = document.createElement("section");
+              let content = `
+                <label for="security-question-${idx}">Security question ${idx}</label>
+                <select id="security-question-${idx}" autofocus="true" required>
+                  <option value="">Please choose an option</option>
+              `;
+              for (const question of result?.data?.securityQuestions) {
+                content += `
+                  <option value="${question?.id}">${question?.question}</option>
+                `;
+              }
+
+              content += "</select>";
+              content += `
+                <input
+                    type="text"
+                    id="security-answer-${idx}"
+                    placeholder="Answer"
+                    required
+                />
+              `;
+              section.innerHTML = content;
+              document.getElementById("forgot-password").insertAdjacentElement(
+                "afterbegin", section
+              );
+            }
+          }
+
+        } catch (error) {
+          console.error('Network error:', error);
+          addToastAndRemoveLast(
+            "Error", error.message, "error"
+          );
+        }
+      }
+      loadSecurityQuestions();
+    </script>
+    <script>
+      const form = document.getElementById('forgot-password');
+
+      async function getUserIdFromSessionToken(sessionToken) {
+        const query = `
+          query {
+            authenticatedItem {
+              ... on User {
+                id
+                email
+                firstName
+                lastName
+              }
+            }
+          }
+        `;
+
+        try {
+          const response = await fetch('http://127.0.0.1:3000/api/graphql', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${sessionToken}`,
+            },
+            body: JSON.stringify({ query }),
+          });
+
+          const result = await response.json();
+
+          if (result.errors) {
+            console.error('GraphQL errors:', result.errors);
+            return null;
+          }
+          console.log(result);
+
+          const user = result.data?.authenticatedItem;
+          if (!user) {
+            console.warn('No authenticated user found for the given session token');
+            return null;
+          }
+
+          return user.id;
+        } catch (error) {
+          console.error('Network or other error:', error);
+          return null;
+        }
+      }
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const sessionToken = getSession();
+
+        if (!sessionToken) {
+          addToastAndRemoveLast(
+            "Error",
+            'User not authenticated. Please log in.',
+            "error"
+          );
+          return;
+        }
+
+        const userId = await getUserIdFromSessionToken(sessionToken);
+
+        if (!userId) {
+          addToastAndRemoveLast(
+            "Error",
+            'Failed to get user ID from session. Please log in again.',
+            "error"
+          );
+          return;
+        }
+
+        const securityQuestion1 = document.getElementById('security-question-1').value;
+        const securityAnswer1 = document.getElementById('security-answer-1').value;
+        const securityQuestion2 = document.getElementById('security-question-2').value;
+        const securityAnswer2 = document.getElementById('security-answer-2').value;
+        const securityQuestion3 = document.getElementById('security-question-3').value;
+        const securityAnswer3 = document.getElementById('security-answer-3').value;
+
+
+        const mutation = `
+          mutation SaveSecurityAnswers($answers: [SecurityAnswerCreateInput!]!) {
+            createSecurityAnswers(data: $answers) {
+              id
+            }
+          }
+        `;
+
+        const variables = {
+          answers: [
+            {
+              answer: securityAnswer1,
+              question: { connect: { id: securityQuestion1 } },
+              user: { connect: { id: userId } },
+            },
+            {
+              answer: securityAnswer2,
+              question: { connect: { id: securityQuestion2 } },
+              user: { connect: { id: userId } },
+            },
+            {
+              answer: securityAnswer3,
+              question: { connect: { id: securityQuestion3 } },
+              user: { connect: { id: userId } },
+            },
+          ],
+        };
+
+        try {
+          const response = await fetch('http://127.0.0.1:3000/api/graphql', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${sessionToken}`,
+            },
+            body: JSON.stringify({ query: mutation, variables }),
+          });
+
+          const result = await response.json();
+
+          if (result.errors) {
+            console.error('Error saving answers:', result.errors);
+            addToastAndRemoveLast(
+              "Error",
+              result.errors[0].message,
+              "error"
+            );
+          } else {
+            addToastAndRemoveLast(
+              "Success",
+              "Security Answers saved successfully. Redirecting...",
+              "success"
+            );
+            window.location.assign("https://0.0.0.0:8000/profile");
+          }
+        } catch (error) {
+          console.error('Network error:', error);
+          addToastAndRemoveLast(
+            "Error",
+            error.message,
+            "error"
+          );
+        }
+      });
+    </script>
+</body>
