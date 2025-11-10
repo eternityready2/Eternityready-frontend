@@ -47,6 +47,7 @@
             <img src="./public/media.jpg"/>
         </div>
     </main>
+    <script src="/lib/session.js"></script>
     <script src="/lib/toast.js"></script>
     <script>
         const form = document.getElementById('login');
@@ -98,6 +99,7 @@
                   `Logged In successfully: ${authResult.item.email}. Redirecting...`,
                   "success"
                 );
+                setSession(authResult.sessionToken)
                 window.location.assign("https://eternityready.com/new-homepage");
 
               } else if (authResult.message) {
