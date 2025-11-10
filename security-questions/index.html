@@ -118,7 +118,7 @@
                     type="text"
                     id="security-answer-${idx}"
                     placeholder="Answer"
-                    value="${questionsWithAnswers[idx-1].userAnswer.answer}"
+                    value="${questionsWithAnswers[idx-1]?.userAnswer?.answer ?? ""}"
                     required
                 />
               `;
