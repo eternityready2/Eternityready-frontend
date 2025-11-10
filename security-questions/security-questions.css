@@ -46,26 +46,26 @@ a:hover {
   font-size: 1.25rem;
 }
 
-form#forgot-password {
+form#security-questions {
   display: flex;
   flex-direction: column;
   width: 100%;
   gap: 1.25rem;
 }
 
-form#forgot-password section {
+form#security-questions section {
   display: flex;
   flex-direction: column;
 }
 
-form#forgot-password section input, 
-form#forgot-password section select, 
-form#forgot-password button {
+form#security-questions section input, 
+form#security-questions section select, 
+form#security-questions button {
   padding: 0.75rem;
 }
 
-form#forgot-password section input,
-form#forgot-password section select {
+form#security-questions section input,
+form#security-questions section select {
   background-color: #1f2937;
   border: none;
   border-radius: 0.5rem;
@@ -73,15 +73,15 @@ form#forgot-password section select {
   outline: none;
 }
 
-form#forgot-password section input:focus {
+form#security-questions section input:focus {
   outline: 1px solid red;
 }
 
-form#forgot-password section label {
+form#security-questions section label {
   color: #e0e0e0;
 }
 
-form#forgot-password button {
+form#security-questions button {
   background-color: #d32f2f;
   border: none;
   border-radius: 0.5rem;
@@ -89,7 +89,7 @@ form#forgot-password button {
   font-weight: 700;
 }
 
-form#forgot-password button:hover {
+form#security-questions button:hover {
   cursor: pointer;
 }
 
@@ -109,17 +109,17 @@ form#forgot-password button:hover {
   object-fit: cover;
 }
 
-form#forgot-password > a {
+form#security-questions > a {
   text-align: right;
 }
 
-form#forgot-password > section {
+form#security-questions > section {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
 }
 
-form#forgot-password #check-and-forgot-password {
+form#security-questions #check-and-security-questions {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -139,7 +139,7 @@ form#forgot-password #check-and-forgot-password {
 /* Small devices (landscape phones, 576px and up) */
 @media (min-width: 576px) {
   
-  form#forgot-password {
+  form#security-questions {
     max-width: 576px;
   }
 }
