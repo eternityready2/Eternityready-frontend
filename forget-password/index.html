@@ -30,82 +30,31 @@
             <img src="./public/media.jpg"/>
         </div>
     </main>
+    <script src="/lib/constants.js"></script>
     <script src="/lib/session.js"></script>
     <script src="/lib/toast.js"></script>
-    <script>
-      async function loadSecurityQuestions() {
-        const query = `
-          query {
-            securityQuestions {
-              id
-              question
-            }
-          }
-        `;
-
-        try {
-          const response = await fetch('http://api.eternityready.com/api/graphql', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ query }),
-          });
-
-          const result = await response.json();
-
-          if (result.errors) {
-            console.error('Error getting questions:', result.errors);
-            addToastAndRemoveLast(
-              "Error", result.errors[0].message, "error"
-            );
-          } else {
-            console.log(result);
-            for (let idx = 3; idx > 0; idx--) {
-              let section = document.createElement("section");
-              let content = `
-                <label for="security-question-${idx}">Security question ${idx}</label>
-                <select id="security-question-${idx}" autofocus="true" required>
-                  <option value="">Please choose an option</option>
-              `;
-              for (const question of result?.data?.securityQuestions) {
-                content += `
-                  <option value="${question?.id}">${question?.question}</option>
-                `;
-              }
-
-              content += "</select>";
-              content += `
-                <input
-                    type="text"
-                    id="security-answer-${idx}"
-                    placeholder="Answer"
-                    required
-                />
-              `;
-              section.innerHTML = content;
-              document.getElementById("email").closest("section").insertAdjacentElement(
-                "afterEnd", section
-              );
-            }
-          }
-
-        } catch (error) {
-          console.error('Network error:', error);
-          addToastAndRemoveLast(
-            "Error", error.message, "error"
-          );
-        }
-      }
-      loadSecurityQuestions();
-    </script>
     <script>
       const form = document.getElementById('forget-password');
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
-        addToastAndRemoveLast(
-          "Success",
-          "Work In progress - Forget password",
-          "success"
-        );
+
+        const email = document.getElementById('email').value;
+        try {
+          const userId = await getUserIdByEmail(email);
+          if (!userId) {
+            addToastAndRemoveLast(
+              "Error", `No user found with the email: ${email}`, "error"
+            );
+          }
+          else {
+            console.log('success');
+          }
+        } catch (error) {
+          console.error("Network error:", error);
+          addToastAndRemoveLast(
+            "Error", error.message, "error"
+          );
+        }
       });
     </script>
 </body>
