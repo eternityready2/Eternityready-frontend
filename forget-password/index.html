@@ -13,6 +13,16 @@
             <h1>Reset your password</h1>
             <p>Answer these questions correctly to be able to reset your password</p>
             <form id="forget-password">
+                <section>
+                  <label for="email">Email</label>
+                  <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      placeholder="Your email"
+                      required
+                  />
+                </section>
                 <button type="submit">Submit</button>
             </form>
         </div>
@@ -72,8 +82,8 @@
                 />
               `;
               section.innerHTML = content;
-              document.getElementById("forget-password").insertAdjacentElement(
-                "afterbegin", section
+              document.getElementById("email").closest("section").insertAdjacentElement(
+                "afterEnd", section
               );
             }
           }
