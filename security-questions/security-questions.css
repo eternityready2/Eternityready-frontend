@@ -91,10 +91,6 @@ form#security-questions button {
 
 form#security-questions button:hover {
   cursor: pointer;
-}
-
-form#security-questions button:hover {
-  cursor: pointer;
   filter: brightness(0.90);
 }
 
