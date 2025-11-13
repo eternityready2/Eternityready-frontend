@@ -80,6 +80,12 @@ form#register button {
 
 form#register button:hover {
   cursor: pointer;
+  filter: brightness(0.90);
+}
+
+form#register button:active {
+  cursor: pointer;
+  filter: brightness(0.80);
 }
 
 #left a {

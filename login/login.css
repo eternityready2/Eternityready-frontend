@@ -85,6 +85,12 @@ form#login button {
 
 form#login button:hover {
   cursor: pointer;
+  filter: brightness(0.90);
+}
+
+form#login button:active {
+  cursor: pointer;
+  filter: brightness(0.80);
 }
 
 #left a {

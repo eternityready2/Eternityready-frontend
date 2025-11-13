@@ -93,6 +93,16 @@ form#security-questions button:hover {
   cursor: pointer;
 }
 
+form#security-questions button:hover {
+  cursor: pointer;
+  filter: brightness(0.90);
+}
+
+form#security-questions button:active {
+  cursor: pointer;
+  filter: brightness(0.80);
+}
+
 #left a {
   color: #d32f2f;
 }
