@@ -23,6 +23,16 @@
                       required
                   />
                 </section>
+                <section>
+                  <label for="password">Password</label>
+                  <input
+                      type="password"
+                      id="password"
+                      name="password"
+                      placeholder="Your password"
+                      required
+                  />
+                </section>
                 <button type="submit">Submit</button>
             </form>
         </div>
@@ -34,28 +44,125 @@
     <script src="/lib/session.js"></script>
     <script src="/lib/toast.js"></script>
     <script>
-      const form = document.getElementById('forget-password');
-      form.addEventListener('submit', async (event) => {
-        event.preventDefault();
+      async function loadSecurityQuestions() {
+        const query = `
+          query {
+            securityQuestions {
+              id
+              question
+            }
+          }
+        `;
 
-        const email = document.getElementById('email').value;
         try {
-          const userId = await getUserIdByEmail(email);
-          if (!userId) {
+          const response = await fetch(`${API_BASE_URL}/api/graphql`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query }),
+          });
+
+          const result = await response.json();
+
+          if (result.errors) {
+            console.error('Error getting questions:', result.errors);
             addToastAndRemoveLast(
-              "Error", `No user found with the email: ${email}`, "error"
+              "Error", result.errors[0].message, "error"
             );
+          } else {
+            console.log(result);
+            for (let idx = 3; idx > 0; idx--) {
+              let section = document.createElement("section");
+              let content = `
+                <label for="security-question-${idx}">Security question ${idx}</label>
+                <select id="security-question-${idx}" autofocus="true" required>
+                  <option value="">Please choose an option</option>
+              `;
+              for (const question of result?.data?.securityQuestions) {
+                content += `
+                  <option value="${question?.id}">${question?.question}</option>
+                `;
+              }
+
+              content += "</select>";
+              content += `
+                <input
+                    type="text"
+                    id="security-answer-${idx}"
+                    placeholder="Answer"
+                    required
+                />
+              `;
+              section.innerHTML = content;
+              document.getElementById("password").closest("section").insertAdjacentElement(
+                "afterEnd", section
+              );
+            }
           }
-          else {
-            console.log('success');
-          }
+
         } catch (error) {
-          console.error("Network error:", error);
+          console.error('Network error:', error);
           addToastAndRemoveLast(
             "Error", error.message, "error"
           );
         }
-      });
+      }
+      loadSecurityQuestions();
     </script>
-</body>
+    <script>
+      const form = document.getElementById('forget-password');
+      form.addEventListener('submit', async (event) => {
+          event.preventDefault();
+          const email = document.getElementById('email').value;
+          const password = document.getElementById('password').value;
 
+          const securityQuestions = [
+            {
+              questionId: document.getElementById('security-question-1')?.value,
+              answer: document.getElementById('security-answer-1')?.value
+            },
+            {
+              questionId: document.getElementById('security-question-2')?.value,
+              answer: document.getElementById('security-answer-2')?.value
+            },
+            {
+              questionId: document.getElementById('security-question-3')?.value,
+              answer: document.getElementById('security-answer-3')?.value
+            },
+          ];
+
+          try {
+            const response = await fetch(`${API_BASE_URL}/api/password-reset`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                email,
+                newPassword: password,
+                security: securityQuestions
+              }),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+              addToastAndRemoveLast(
+                "Error",
+                result.error || "Failed to reset password",
+                "error"
+              );
+            } else {
+              addToastAndRemoveLast(
+                "Success",
+                "Password reset successful! You may now log in.",
+                "success"
+              );
+              window.location.assign(`${ETERNITY_BASE_URL}/login`);
+            }
+          } catch (error) {
+            console.error("Network error:", error);
+            addToastAndRemoveLast(
+              "Error", error.message, "error"
+            );
+          }
+        });
+  </script>
+</body>
