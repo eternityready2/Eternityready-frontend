@@ -1,18 +1,23 @@
 /* Default toast */
+
 .sf-toast {
   position: fixed;
-  bottom: 1rem;
-  right: 1rem;
+  bottom: 0rem;
+  right: 0rem;
   display: flex;
   padding: 1.5rem;
   gap: 2rem;
   background-color: white;
   color: black;
   border-left: 5px solid gray;
+  width: 100%;
 }
 
 .sf-toast-content {
-  width: 16rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow-wrap: anywhere;
 }
 
 .sf-toast-content h1, .sf-toast-content p {
@@ -65,3 +70,38 @@
   background-color: red;
   color: white;
 }
+
+
+/* Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) {
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+  
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {}
+
+/* X-Large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+  .sf-toast {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    display: flex;
+    padding: 1.5rem;
+    gap: 2rem;
+    width: auto;
+  }
+
+  .sf-toast-content {
+    display: block;
+    width: 16rem;
+  }
+
+}
+
+/* XX-Large devices (larger desktops, 1400px and up) */
+@media (min-width: 1400px) {}
