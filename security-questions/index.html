@@ -47,7 +47,7 @@
 
         try {
           const response = await fetch(
-            `https://${API_BASE_URL}/api/graphql`, {
+            `${API_BASE_URL}/api/graphql`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -207,7 +207,7 @@
 
         try {
           const response = await fetch(
-            `https://${API_BASE_URL}/api/graphql`, {
+            `${API_BASE_URL}/api/graphql`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -231,7 +231,7 @@
               "Security Answers saved successfully. Redirecting...",
               "success"
             );
-            window.location.assign("https://eternityready.com/profile");
+            window.location.assign(`${ETERNITY_BASE_URL}/profile`);
           }
         } catch (error) {
           console.error('Network error:', error);
