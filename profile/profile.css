@@ -202,8 +202,17 @@ nav#profileSidebar .navLink.navLinkActive {
 }
 
 
+
+
 nav#profileSidebar .navLink.navLinkActive > span {
   color: red;
+}
+
+nav#profileSidebar .navLink:hover {
+  background-color: #f6e7ef;
+  border-radius: 0.5rem;
+  color: red;
+  cursor: pointer;
 }
 
 #closeProfileSidebar:hover,
