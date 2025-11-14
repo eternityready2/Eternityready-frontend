@@ -143,9 +143,14 @@
                       document.getElementById("lastName").value = user.lastName;
                       document.getElementById("email").value = user.email;
                       document.getElementById("profileId").value = user.id;
-                      document.getElementById("profileImage").src = `${API_BASE_URL}${user?.profileImage?.url ?? "/profile/public/profileImage.png"}`;
-                      document.getElementById("navUserImage").src = `${API_BASE_URL}${user?.profileImage?.url ?? "/profile/public/profileImage.png"}`;
-                      document.getElementById("profileMobileNavImage").src = `${API_BASE_URL}${user?.profileImage?.url ?? "/profile/public/profileImage.png"}`;
+                      
+                      const imageUrl = user?.profileImage?.url == null
+                          ? `${ETERNITY_BASE_URL}/profile/public/profileImage.png`
+                          : `${API_BASE_URL}${user?.profileImage?.url}`
+
+                      document.getElementById("profileImage").src = imageUrl;
+                      document.getElementById("navUserImage").src = imageUrl;
+                      document.getElementById("profileMobileNavImage").src = imageUrl;
                       document.getElementById("navUserName").textContent = `${user.firstName} ${user.lastName}`
                   }
               }
@@ -347,9 +352,15 @@
 
             console.log("Profile updated:", result.data.updateUser);
               const user = result.data.updateUser;
-              document.getElementById("profileImage").src = `${API_BASE_URL}${user?.profileImage?.url ?? "/profile/public/profileImage.png"}`;
-              document.getElementById("navUserImage").src = `${API_BASE_URL}${user?.profileImage?.url ?? "/profile/public/profileImage.png"}`;
-              document.getElementById("profileMobileNavImage").src = `${API_BASE_URL}${user?.profileImage?.url ?? "/profile/public/profileImage.png"}`;
+              const imageUrl = user?.profileImage?.url == null
+                  ? `${ETERNITY_BASE_URL}/profile/public/profileImage.png`
+                  : `${API_BASE_URL}${user?.profileImage?.url}`
+
+
+              document.getElementById("profileImage").src = imageUrl;
+              document.getElementById("navUserImage").src = imageUrl;
+              document.getElementById("profileMobileNavImage").src = imageUrl;
+
               document.getElementById("navUserName").textContent = `${user.firstName} ${user.lastName}`
 
             addToastAndRemoveLast(
