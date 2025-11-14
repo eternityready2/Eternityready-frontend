@@ -135,7 +135,7 @@ nav#profileSidebar > div {
 }
 
 
-nav#profileSidebar > div > img {
+nav#profileSidebar > div > a > img {
   width: 8rem;
 }
 
