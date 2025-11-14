@@ -1,0 +1,361 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./profile.css" />
+    <link rel="stylesheet" href="/lib/toast.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+<body>
+    <nav id="profileSidebar">
+        <div>
+            <img
+                src="https://eternityready.com/images/logo1USE-THIS.png"
+            />
+            <span id="closeProfileSidebar" class="material-icons">close</span>
+        </div>
+        <section id="navUser">
+            <img
+                id="navUserImage"
+                src="/profile/public/profileImage.png"
+            />
+            <h1 id="navUserName">Loading...</h1>
+        </section>
+        <section class="navLink navLinkActive">
+            <span class="material-icons">person</span>
+            <h1>Profile</h1>
+        </section>
+        <a href="/security-questions" class="navLink">
+            <span class="material-icons">security</span>
+            <h1>Security Questions</h1>
+        </a>
+        <a href="/forget-password" class="navLink">
+            <span class="material-icons">password</span>
+            <h1>Reset Password</h1>
+        </a>
+    </nav>
+    <nav id="profileMobileNav">
+        <span id="expandMobileNav" class="material-icons">menu</span>
+        <img
+            id="profileMobileNavImage"
+            src="/profile/public/profileImage.png"
+        />
+    </nav>
+    <main>
+        <form id="profile">
+            <input type="hidden" id="profileId" />
+            <div class="image-uploader">
+                <input
+                    type="file"
+                    id="hiddenImageInput"
+                    accept="image/*"
+                    style="display:none"
+                />
+                <img
+                    id="profileImage"
+                    src="/profile/public/profileImage.png"
+                    alt="Upload image"
+                />
+                <div id="image-edit">
+                    <span class="material-icons">edit</span>
+                </div>
+            </div>
+            <section>
+                <fieldset>
+                    <legend>First Name</legend>
+                    <input
+                        type="text"
+                        placeholder="Loading..."
+                        id="firstName"
+                        name="firstName"
+                        required
+                    />
+                </fieldset>
+                <fieldset>
+                    <legend>Last Name</legend>
+                    <input
+                        type="text"
+                        placeholder="Loading..."
+                        id="lastName"
+                        name="lastName"
+                        required
+                    />
+                </fieldset>
+                <fieldset>
+                    <legend for="email">Email</legend>
+                    <input
+                        type="text"
+                        placeholder="Loading..."
+                        id="email"
+                        name="email"
+                        required
+                    />
+                </fieldset>
+
+            </section>
+            <button type="submit">Save changes</button>
+        </form>
+    </main>
+    <script src="/lib/constants.js"></script>
+    <script src="/lib/session.js"></script>
+    <script src="/lib/toast.js"></script>
+    <script>
+        async function fetchUser() {
+            const sessionToken = getSession();
+            const query = `
+            query {
+                authenticatedItem {
+                    ... on User {
+                    id
+                    firstName
+                    lastName
+                    email
+                    profileImage {
+                      url
+                    }
+                  }
+                }
+              }
+            `;
+            try {
+              const response = await fetch(`${API_BASE_URL}/api/graphql`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${sessionToken}`,
+                },
+                body: JSON.stringify({ query }),
+              });
+              const result = await response.json();
+              if (result.errors) {
+                console.error('Error getting profile:', result.errors);
+                addToastAndRemoveLast(
+                  "Error", result.errors[0].message, "error"
+                );
+              } else {
+                  const user = result.data.authenticatedItem;
+                  if (user) {
+                      document.getElementById("firstName").value = user.firstName;
+                      document.getElementById("lastName").value = user.lastName;
+                      document.getElementById("email").value = user.email;
+                      document.getElementById("profileId").value = user.id;
+                      document.getElementById("profileImage").src = `${API_BASE_URL}${user?.profileImage?.url ?? "/profile/public/profileImage.png"}`;
+                      document.getElementById("navUserImage").src = `${API_BASE_URL}${user?.profileImage?.url ?? "/profile/public/profileImage.png"}`;
+                      document.getElementById("profileMobileNavImage").src = `${API_BASE_URL}${user?.profileImage?.url ?? "/profile/public/profileImage.png"}`;
+                      document.getElementById("navUserName").textContent = `${user.firstName} ${user.lastName}`
+                  }
+              }
+            } catch (error) {
+              console.error('Network error:', error);
+              addToastAndRemoveLast(
+                "Error", error.message, "error"
+              );
+            }
+        }
+        fetchUser();
+    </script>
+    <script>
+        const hiddenImageInput = document.getElementById('hiddenImageInput');
+        document.getElementById('profileImage').addEventListener(
+            'click', () => hiddenImageInput.click()
+        );
+
+        document.getElementById('hiddenImageInput').addEventListener(
+        'change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.getElementById('profileImage');
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+          const profileSidebar = document.getElementById("profileSidebar");
+          const width = profileSidebar.offsetWidth;
+          if (profileSidebar) {
+              profileSidebar.style.left = `-${width}`;
+          }
+        });
+    </script>
+    <script>
+        document.getElementById("expandMobileNav").addEventListener(
+            'click', () => {
+                const profileSidebar = document.getElementById("profileSidebar");
+                const width = profileSidebar.offsetWidth;
+                profileSidebar.style.left = "0px";
+            }
+        );
+        document.getElementById("closeProfileSidebar").addEventListener(
+            'click', () => {
+                const profileSidebar = document.getElementById("profileSidebar");
+                const width = profileSidebar.offsetWidth;
+                if (profileSidebar) {
+                    profileSidebar.style.left = `-${width}`;
+                }
+
+            }
+        );
+
+    </script>
+    <script>
+        document.getElementById("profile").addEventListener("submit", async (event) => {
+          event.preventDefault();
+
+          const form = event.target;
+          const firstName = form.firstName.value;
+          const lastName = form.lastName.value;
+          const email = form.email.value;
+          const userId = form.profileId.value;
+          const imageInput = document.getElementById("hiddenImageInput");
+          const imageFile = imageInput.files[0];
+
+          const sessionToken = getSession();
+
+          const mutationWithFile = `
+            mutation UpdateUserWithFile(
+              $id: ID!
+              $firstName: String
+              $lastName: String
+              $email: String
+              $file: Upload!
+            ) {
+              updateUser(
+                where: { id: $id }
+                data: {
+                  firstName: $firstName
+                  lastName: $lastName
+                  email: $email
+                  profileImage: { upload: $file }
+                }
+              ) {
+                id
+                firstName
+                lastName
+                email
+                profileImage {
+                  id
+                  url
+                }
+              }
+            }
+          `;
+
+          const mutationWithoutFile = `
+            mutation UpdateUserNoFile(
+              $id: ID!
+              $firstName: String
+              $lastName: String
+              $email: String
+            ) {
+              updateUser(
+                where: { id: $id }
+                data: {
+                  firstName: $firstName
+                  lastName: $lastName
+                  email: $email
+                }
+              ) {
+                id
+                firstName
+                lastName
+                email
+                profileImage {
+                  id
+                  url
+                }
+              }
+            }
+          `;
+
+          try {
+            let response;
+
+            if (imageFile) {
+              const variables = {
+                id: userId,
+                firstName,
+                lastName,
+                email,
+                file: null,
+              };
+
+              const operations = JSON.stringify({
+                query: mutationWithFile,
+                variables,
+              });
+
+              const map = JSON.stringify({
+                "0": ["variables.file"],
+              });
+
+              const formData = new FormData();
+              formData.append("operations", operations);
+              formData.append("map", map);
+              formData.append("0", imageFile, imageFile.name);
+
+              response = await fetch(`${API_BASE_URL}/api/graphql`, {
+                method: "POST",
+                headers: {
+                  "Authorization": `Bearer ${sessionToken}`,
+                  "x-apollo-operation-name": "UpdateUserWithFile",
+                },
+                body: formData,
+              });
+            } else {
+              const variables = {
+                id: userId,
+                firstName,
+                lastName,
+                email,
+              };
+
+              const body = JSON.stringify({
+                query: mutationWithoutFile,
+                variables,
+              });
+
+              response = await fetch(`${API_BASE_URL}/api/graphql`, {
+                method: "POST",
+                headers: {
+                  "Authorization": `Bearer ${sessionToken}`,
+                  "Content-Type": "application/json",
+                  "x-apollo-operation-name": "UpdateUserNoFile",
+                },
+                body,
+              });
+            }
+
+            const result = await response.json();
+
+            if (result.errors) {
+              console.error("Error updating profile:", result.errors);
+              addToastAndRemoveLast(
+                "Error", result.errors[0].message, "error"
+              );
+              return;
+            }
+
+            console.log("Profile updated:", result.data.updateUser);
+              const user = result.data.updateUser;
+              document.getElementById("profileImage").src = `${API_BASE_URL}${user?.profileImage?.url ?? "/profile/public/profileImage.png"}`;
+              document.getElementById("navUserImage").src = `${API_BASE_URL}${user?.profileImage?.url ?? "/profile/public/profileImage.png"}`;
+              document.getElementById("profileMobileNavImage").src = `${API_BASE_URL}${user?.profileImage?.url ?? "/profile/public/profileImage.png"}`;
+              document.getElementById("navUserName").textContent = `${user.firstName} ${user.lastName}`
+
+            addToastAndRemoveLast(
+               "Success", "Profile updated", "success",
+            );
+
+          } catch (error) {
+            console.error('Network error:', error);
+            addToastAndRemoveLast(
+                "Error", error.message, "error"
+            );
+          }
+        });
+    </script>
+</body>
