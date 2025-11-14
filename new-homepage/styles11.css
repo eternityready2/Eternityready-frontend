@@ -2860,6 +2860,8 @@ header .cta-button a {
 #userProfileLink {
   width: 2.5rem;
   height: 2.5rem;
+  max-width: 2.5rem;
+  max-height: 2.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -2868,6 +2870,8 @@ header .cta-button a {
 #userProfileImage {
   object-fit: cover;
   border-radius: 100%;
+  max-width: 2.5rem;
+  max-height: 2.5rem;
   width: 100%;
   height: 100%;
 }
