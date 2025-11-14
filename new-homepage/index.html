@@ -1614,7 +1614,10 @@
                 const user = result.data.authenticatedItem;
                 if (user) {
                     document.getElementById("userProfileLink").href = "/profile";
-                    document.getElementById("userProfileImage").src = `${API_BASE_URL}${user?.profileImage?.url ?? "/profile/public/profileImage.png"}`;
+                    const imageUrl = (user?.profileImage?.url == null
+                        ? `${ETERNITY_BASE_URL}/profile/public/profileImage.png`
+                        : `${API_BASE_URL}${user?.profileImage?.url}`);
+                    document.getElementById("userProfileImage").src = imageUrl;
                 }
             }
           } catch (error) {
