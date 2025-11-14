@@ -2856,3 +2856,18 @@ header .cta-button a {
 #verse-of-the-day {  
   padding-top: 60px;
 }
+
+#userProfileLink {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#userProfileImage {
+  object-fit: cover;
+  border-radius: 100%;
+  width: 100%;
+  height: 100%;
+}

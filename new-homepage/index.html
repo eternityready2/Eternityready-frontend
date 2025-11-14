@@ -59,10 +59,13 @@
   <!-- icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   
   <!-- style -->
   <link rel="stylesheet" href="bottomtoolbar-style.css">
   <link href="main-epics/assets/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/lib/toast.css" />
   <link rel="stylesheet" href="styles11.css" />
   <link rel="stylesheet" href="main11.css" />
   <!-- <link rel="stylesheet" href="footer.css" /> -->
@@ -569,6 +572,12 @@
           </div>
         </div>
          <div class="right">
+            <a href="/login" id="userProfileLink">
+              <img
+                  id="userProfileImage"
+                  src="/profile/public/profileImage.png"
+              />
+            </a>
             <button onClick="window.open('https://eternityreadyradio.com/', '_self')">Radio</button>
             <div id="burger_menu">
                <svg
@@ -1564,6 +1573,59 @@
   </div>
   
   <!-- end -->
+
+    <script src="/lib/constants.js"></script>
+    <script src="/lib/session.js"></script>
+    <script src="/lib/toast.js"></script>
+    <script>
+        async function fetchUser() {
+          const sessionToken = getSession();
+          const query = `
+          query {
+              authenticatedItem {
+                  ... on User {
+                  id
+                  firstName
+                  lastName
+                  email
+                  profileImage {
+                    url
+                  }
+                }
+              }
+            }
+          `;
+          try {
+            const response = await fetch(`${API_BASE_URL}/api/graphql`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${sessionToken}`,
+              },
+              body: JSON.stringify({ query }),
+            });
+            const result = await response.json();
+            if (result.errors) {
+              console.error('Error getting profile:', result.errors);
+              addToastAndRemoveLast(
+                "Error", result.errors[0].message, "error"
+              );
+            } else {
+                const user = result.data.authenticatedItem;
+                if (user) {
+                    document.getElementById("userProfileLink").href = "/profile";
+                    document.getElementById("userProfileImage").src = `${API_BASE_URL}${user?.profileImage?.url ?? "/profile/public/profileImage.png"}`;
+                }
+            }
+          } catch (error) {
+            console.error('Network error:', error);
+            addToastAndRemoveLast(
+              "Error", error.message, "error"
+            );
+          }
+      }
+      fetchUser();
+    </script>
   <script async src="https://www.youtube.com/iframe_api"></script>
 <script src="playingNow.js?v=1"></script>
 <script src ="script-from-root2.js"></script>
