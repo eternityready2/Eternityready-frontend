@@ -54,6 +54,8 @@
       <link
     href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
     rel="stylesheet" />
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <!-- plugin -->
   <script src="main-epics/plugin/jquery.min.js"></script>
   <!-- icons -->
@@ -572,12 +574,37 @@
           </div>
         </div>
          <div class="right">
-            <a href="/login" id="userProfileLink">
+            <div href="/login" id="userProfileLink">
               <img
                   id="userProfileImage"
                   src="/profile/public/profileImage.png"
               />
-            </a>
+              <div id="userProfileDropdown">
+                <div>
+                  <img
+                      src="/profile/public/profileImage.png"
+                  />
+                  <h1>James Aldrino</h1>
+                </div>
+                <hr />
+                <a href="/profile">
+                  <span class="material-icons">settings</span>
+                  <h2>Edit profile</h2>
+                </a>
+                <a href="/security-questions">
+                  <span class="material-icons">security</span>
+                  <h2>Security questions</h2>
+                </a>
+                <a href="/forget-password">
+                  <span class="material-icons">password</span>
+                  <h2>Reset password</h2>
+                </a>
+                <a id="profileLogout">
+                  <span class="material-icons">meeting_room</span>
+                  <h2>Logout</h2>
+                </a>
+              </div>
+            </div>
             <button onClick="window.open('https://eternityreadyradio.com/', '_self')">Radio</button>
             <div id="burger_menu">
                <svg
@@ -1574,6 +1601,10 @@
     <script src="/lib/session.js"></script>
     <script src="/lib/toast.js"></script>
     <script>
+        const redirectToLogin = () => window.location.assign('/login');
+        document.getElementById("userProfileImage").addEventListener(
+          'click', redirectToLogin
+        );
         async function fetchUser() {
           const sessionToken = getSession();
           const query = `
@@ -1613,7 +1644,31 @@
                     const imageUrl = (user?.profileImage?.url == null
                         ? `${ETERNITY_BASE_URL}/profile/public/profileImage.png`
                         : `${API_BASE_URL}${user?.profileImage?.url}`);
+                    
                     document.getElementById("userProfileImage").src = imageUrl;
+                    
+                    const changeDropdownVisibility = () => {
+                      const dropdown = document.getElementById(
+                        "userProfileDropdown"
+                      );
+                      dropdown.style.display = (
+                        dropdown.style.display == "flex"
+                        ? "none"
+                        : "flex"
+                      );
+                    }
+                    document.getElementById("userProfileImage").removeEventListener(
+                      'click', redirectToLogin
+                    )
+                    document.getElementById("userProfileImage").addEventListener(
+                      'click', changeDropdownVisibility
+                    )
+                    document.getElementById("profileLogout").addEventListener(
+                      'click', () => {
+                        localStorage.removeItem("session");
+                        window.location.assign('/new-homepage');
+                      }
+                    )
                 }
             }
           } catch (error) {
