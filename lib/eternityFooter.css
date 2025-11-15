@@ -1,0 +1,214 @@
+#eternityFooter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem 6rem 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+#eternityFooter img {
+  display: block;
+}
+
+#eternityFooter > h1 {
+  letter-spacing: 0.25rem;
+  color: white;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 2.5rem;
+  margin-bottom: 32px;
+}
+
+#eternityFooter > ul {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  list-style: none;
+  padding: 0;
+}
+
+#eternityFooter > ul {
+  margin: 0 0 3rem;
+}
+
+#eternityFooter > ul > li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  cursor: pointer;
+  border-radius: 2rem;
+  transition: all 0.9s;
+  margin-right: 1rem;
+}
+
+#eternityFooter > ul > li:hover {
+  background: #fff;
+}
+
+#eternityFooter > ul > li > div {
+  width: 1.25rem;
+}
+
+#eternityFooter > ul > li > div > svg {
+  width: 100%;
+  height: 100%;
+  font-size: 1.5rem;
+  height: 1.5rem;
+}
+
+#eternityFooter > ul > li > span {
+  line-height: 1.75rem;
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+#eternityFooter .facebook {
+  color: rgb(87, 110, 238);
+}
+
+#eternityFooter .youtube {
+  color: #e7000b;
+}
+
+#eternityFooter .instagram {
+  color: #f8079a;
+}
+
+#eternityFooter .twitter {
+  color: #fff;
+}
+
+#eternityFooter .twitter span {
+  color: #51a2ff;
+}
+
+#eternityFooter > ul > li.twitter:hover > div {
+  color: #111;
+}
+
+#eternityFooter hr {
+  width: 80%;
+  height: 1px;
+  margin: 0 0 40px;
+  background: #555;
+  border: none;
+}
+
+#eternityFooter .two_main_columns {
+  flex-wrap: wrap;
+  display: flex;
+  max-width: 1367px;
+  margin: 0 auto;
+  line-height: 24px;
+  margin-bottom: 48px;
+  gap: 80px;
+}
+
+#eternityFooter #erOurApps img {
+  width: 192px;
+  border-radius: 8px;
+  overflow: clip;
+  border: 1px solid #e2e8f0;
+  cursor: pointer;
+}
+
+#eternityFooter #erOurApps img:last-child {
+  margin-top: 12px;
+}
+
+#eternityFooter h2 {
+  color: #33c3a5;
+  letter-spacing: 0.01rem;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 28px;
+  margin-bottom: 16px;
+}
+
+#eternityFooter #erLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 80px;
+}
+
+#eternityFooter #erLinks ul {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+}
+
+#eternityFooter #erLinks ul li {
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+#eternityFooter #erLinks ul li:hover {
+  color: #33c3a5;
+}
+
+#eternityFooter .copyright_row {
+  display: flex;
+  justify-content: space-between;
+  line-height: 24px;
+  margin: 16px 0;
+  gap: 208px;
+  color: #ebe6e7;
+  letter-spacing: 0.01rem;
+  align-items: center;
+  font-size: 15px;
+}
+
+#eternityFooter .copyright_row img {
+  width: 208px;
+  height: auto;
+  object-fit: cover;
+}
+
+@media (max-width: 1024px) {
+  #eternityFooter {
+    padding: 40px 20px 0;
+  }
+
+  #eternityFooter hr {
+    margin: 0 0 1rem;
+  }
+
+  #eternityFooter .two_main_columns {
+    margin-bottom: 1rem;
+    gap: 2.5rem;
+  }
+
+  #eternityFooter .two_main_columns #erOurApps {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #eternityFooter .two_main_columns #erLinks {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 40px;
+  }
+
+  #eternityFooter .copyright_row {
+    margin: 16px auto 88px;
+    flex-direction: column;
+    gap: 9px;
+    font-size: 13px;
+  }
+}
+
+
+@media (max-width: 640px) {
+  #eternityFooter .two_main_columns {
+    justify-content: center;
+  }
+}

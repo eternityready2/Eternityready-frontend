@@ -5,104 +5,108 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 <body>
-    <nav id="profileSidebar">
-        <div>
-          <a href="/new-homepage">
+    <div>
+        <nav id="profileSidebar">
+            <div>
+              <a href="/new-homepage">
+                <img
+                    src="https://eternityready.com/images/logo1USE-THIS.png"
+                />
+              </a>
+                <span id="closeProfileSidebar" class="material-icons">close</span>
+            </div>
+            <section id="navUser">
+                <img
+                    id="navUserImage"
+                    src="/profile/public/profileImage.png"
+                />
+                <h1 id="navUserName">Loading...</h1>
+            </section>
+            <section class="navLink navLinkActive">
+                <span class="material-icons">person</span>
+                <h1>Profile</h1>
+            </section>
+            <a href="/security-questions" class="navLink">
+                <span class="material-icons">security</span>
+                <h1>Security Questions</h1>
+            </a>
+            <a href="/forget-password" class="navLink">
+                <span class="material-icons">password</span>
+                <h1>Reset Password</h1>
+            </a>
+            <a id="profileSignOut" class="navLink">
+                <span class="material-icons">logout</span>
+                <h1>Sign out</h1>
+            </a>
+        </nav>
+        <nav id="profileMobileNav">
+            <span id="expandMobileNav" class="material-icons">menu</span>
             <img
-                src="https://eternityready.com/images/logo1USE-THIS.png"
-            />
-          </a>
-            <span id="closeProfileSidebar" class="material-icons">close</span>
-        </div>
-        <section id="navUser">
-            <img
-                id="navUserImage"
+                id="profileMobileNavImage"
                 src="/profile/public/profileImage.png"
             />
-            <h1 id="navUserName">Loading...</h1>
-        </section>
-        <section class="navLink navLinkActive">
-            <span class="material-icons">person</span>
-            <h1>Profile</h1>
-        </section>
-        <a href="/security-questions" class="navLink">
-            <span class="material-icons">security</span>
-            <h1>Security Questions</h1>
-        </a>
-        <a href="/forget-password" class="navLink">
-            <span class="material-icons">password</span>
-            <h1>Reset Password</h1>
-        </a>
-        <a id="profileSignOut" class="navLink">
-            <span class="material-icons">logout</span>
-            <h1>Sign out</h1>
-        </a>
-    </nav>
-    <nav id="profileMobileNav">
-        <span id="expandMobileNav" class="material-icons">menu</span>
-        <img
-            id="profileMobileNavImage"
-            src="/profile/public/profileImage.png"
-        />
-    </nav>
-    <main>
-        <form id="profile">
-            <input type="hidden" id="profileId" />
-            <div class="image-uploader">
-                <input
-                    type="file"
-                    id="hiddenImageInput"
-                    accept="image/*"
-                    style="display:none"
-                />
-                <img
-                    id="profileImage"
-                    src="/profile/public/profileImage.png"
-                    alt="Upload image"
-                />
-                <div id="image-edit">
-                    <span class="material-icons">edit</span>
+        </nav>
+        <main>
+            <form id="profile">
+                <input type="hidden" id="profileId" />
+                <div class="image-uploader">
+                    <input
+                        type="file"
+                        id="hiddenImageInput"
+                        accept="image/*"
+                        style="display:none"
+                    />
+                    <img
+                        id="profileImage"
+                        src="/profile/public/profileImage.png"
+                        alt="Upload image"
+                    />
+                    <div id="image-edit">
+                        <span class="material-icons">edit</span>
+                    </div>
                 </div>
-            </div>
-            <section>
-                <fieldset>
-                    <legend>First Name</legend>
-                    <input
-                        type="text"
-                        placeholder="Loading..."
-                        id="firstName"
-                        name="firstName"
-                        required
-                    />
-                </fieldset>
-                <fieldset>
-                    <legend>Last Name</legend>
-                    <input
-                        type="text"
-                        placeholder="Loading..."
-                        id="lastName"
-                        name="lastName"
-                        required
-                    />
-                </fieldset>
-                <fieldset>
-                    <legend for="email">Email</legend>
-                    <input
-                        type="text"
-                        placeholder="Loading..."
-                        id="email"
-                        name="email"
-                        required
-                    />
-                </fieldset>
+                <section>
+                    <fieldset>
+                        <legend>First Name</legend>
+                        <input
+                            type="text"
+                            placeholder="Loading..."
+                            id="firstName"
+                            name="firstName"
+                            required
+                        />
+                    </fieldset>
+                    <fieldset>
+                        <legend>Last Name</legend>
+                        <input
+                            type="text"
+                            placeholder="Loading..."
+                            id="lastName"
+                            name="lastName"
+                            required
+                        />
+                    </fieldset>
+                    <fieldset>
+                        <legend for="email">Email</legend>
+                        <input
+                            type="text"
+                            placeholder="Loading..."
+                            id="email"
+                            name="email"
+                            required
+                        />
+                    </fieldset>
 
-            </section>
-            <button type="submit">Save changes</button>
-        </form>
-    </main>
+                </section>
+                <button type="submit">Save changes</button>
+            </form>
+        </main>
+    </div>
+    <eternity-footer />
     <script src="/lib/constants.js"></script>
     <script src="/lib/session.js"></script>
     <script src="/lib/toast.js"></script>
+    <script src="/lib/eternityFooter.js"></script>
     <script>
         async function fetchUser() {
             const sessionToken = getSession();
