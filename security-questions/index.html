@@ -47,7 +47,8 @@
           }
         `;
 
-        const userId = await getUserIdFromSessionToken(getSession());
+        const sessionToken = getSession();
+        const userId = await getUserIdFromSessionToken(sessionToken);
         const variables = { userId };
 
         try {
@@ -55,6 +56,7 @@
             `${API_BASE_URL}/api/graphql`, {
             method: 'POST',
             headers: {
+              "Authorization": `Bearer ${sessionToken}`,
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({ query, variables }),
