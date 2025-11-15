@@ -582,9 +582,10 @@
               <div id="userProfileDropdown">
                 <div>
                   <img
+                      id="userDropdownImage"
                       src="/profile/public/profileImage.png"
                   />
-                  <h1>James Aldrino</h1>
+                  <h1 id="userDropdownName">James Aldrino</h1>
                 </div>
                 <hr />
                 <a href="/profile">
@@ -1646,6 +1647,8 @@
                         : `${API_BASE_URL}${user?.profileImage?.url}`);
                     
                     document.getElementById("userProfileImage").src = imageUrl;
+                    document.getElementById("userDropdownImage").src = imageUrl;
+                    document.getElementById("userDropdownName").textContent = `${user.firstName} ${user.lastName}`
                     
                     const changeDropdownVisibility = () => {
                       const dropdown = document.getElementById(
