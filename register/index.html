@@ -128,9 +128,11 @@
 
             } else {
               addToastAndRemoveLast(
-                "Success", `User created successfully: ${email}. Redirecting...`, "success"
+                "Success", `User created successfully: ${email}. Redirecting to login...`, "success"
               );
-              window.location.assign(`${ETERNITY_BASE_URL}/login`);
+              setTimeout(() => {
+                window.location.assign(`${ETERNITY_BASE_URL}/login`);
+              }, 2500);
             }
           } catch (error) {
             console.error('Network error:', error);

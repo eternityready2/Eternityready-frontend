@@ -123,11 +123,13 @@
               if (authResult.item) {
                 addToastAndRemoveLast(
                   "Success",
-                  `Logged In successfully: ${authResult.item.email}. Redirecting...`,
+                  `Logged In successfully: ${authResult.item.email}. Redirecting to eternityready.com/new-homepage...`,
                   "success"
                 );
                 setSession(authResult.sessionToken)
-                window.location.assign(`${ETERNITY_BASE_URL}/new-homepage`);
+                setTimeout(() => {
+                  window.location.assign(`${ETERNITY_BASE_URL}/new-homepage`);
+                }, 2500);
 
               } else if (authResult.message) {
                 addToastAndRemoveLast(
