@@ -16,7 +16,7 @@ html body {
   flex-direction: column;
 }
 
-html body > div {
+#mainAndNav{
   display: flex;
   width: 100%;
   flex-direction: column;
@@ -291,7 +291,7 @@ nav#profileSidebar {
     gap: 1rem;
   }
 
-  html body > div {
+  #mainAndNav {
     display: flex;
     flex-direction: row;
   }
