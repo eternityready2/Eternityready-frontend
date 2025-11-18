@@ -1,0 +1,81 @@
+#eternity-ad-header {
+  position: fixed;
+  top: 4rem;
+  left: 50%;
+  width: 45.5rem;
+  height: 5.625rem;
+  z-index: 99999999;
+  transform: translateX(-50%)
+}
+
+#eternity-ad-footer {
+  position: fixed;
+  bottom: 0rem;
+  left: 50%;
+  width: 45.5rem;
+  height: 5.625rem;
+  z-index: 99999999;
+  transform: translateX(-50%)
+}
+
+#eternity-ad-sidebar {
+  position: fixed;
+  top: 4rem;
+  right: 0;
+  width: 10.0rem;
+  height: 37.5rem;
+  z-index: 99999999;
+}
+
+#eternity-ad-sidebar img,
+#eternity-ad-footer img,
+#eternity-ad-header img
+{
+  object-fit: fill;
+  width: 100%;
+  height: 100%;
+}
+
+
+#eternity-ad-sidebar img:hover,
+#eternity-ad-footer img:hover,
+#eternity-ad-header img:hover
+{
+  cursor: pointer;
+  filter: brightness(0.9);
+}
+
+#eternity-ad-sidebar > div,
+#eternity-ad-footer > div,
+#eternity-ad-header > div
+{
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 2rem;
+  height: 2rem;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+#eternity-ad-sidebar > div,
+#eternity-ad-footer > div,
+#eternity-ad-header > div
+{
+  width: 1.5rem;
+  height: 1.5rem;
+  font-size: 1.5rem;
+  color: black;
+}
+
+
+#eternity-ad-sidebar > div:hover,
+#eternity-ad-footer > div:hover,
+#eternity-ad-header > div:hover
+
+{
+  cursor: pointer;
+}

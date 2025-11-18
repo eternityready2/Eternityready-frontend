@@ -124,9 +124,13 @@
     />
     <link rel="icon" href="/public/favicon.ico" />
     <link rel="manifest" href="/public/site.webmanifest" />
+    <link rel="stylesheet" href="/lib/ads.css" />
 </head>
 
 <body>
+  <div id="eternity-ad-header"></div>
+  <div id="eternity-ad-footer"></div>
+  <div id="eternity-ad-sidebar"></div>
 
           <div id="main_header" class="free-container">
          <div class="logo" onClick="window.open('https://www.eternityready.com', '_self')">
@@ -1601,6 +1605,7 @@
     <script src="/lib/constants.js"></script>
     <script src="/lib/session.js"></script>
     <script src="/lib/toast.js"></script>
+    <script src="/lib/ads.js"></script>
     <script>
         const redirectToLogin = () => window.location.assign('/login');
         document.getElementById("userProfileImage").addEventListener(

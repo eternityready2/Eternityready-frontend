@@ -1607,6 +1607,7 @@ document.addEventListener("DOMContentLoaded", () => {
             heroVideo.currentTime = (progress.value / 100) * heroVideo.duration;
           });
         }
+
         // Lógica para o botão de fullscreen, etc.
         const modal = document.getElementById("video-modal");
         if (fsBtn && modal) {
