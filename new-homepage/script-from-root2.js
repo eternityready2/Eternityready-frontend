@@ -348,7 +348,7 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       const uniqueCategories = [...new Set(allCategories)].sort();
       categoryFilter.innerHTML =
-        '<option value="all">Todas as Categorias</option>'; // Limpa e adiciona a opção padrão
+        '<option value="all">All Categories</option>'; // Limpa e adiciona a opção padrão
       uniqueCategories.forEach((categoryName) => {
         const option = document.createElement("option");
         option.value = categoryName;

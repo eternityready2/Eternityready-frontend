@@ -1,1 +1,5 @@
 lib/constants.js
+.sync-download.sh
+.sync-upload-player-categories.sh
+.sync-upload.sh
+

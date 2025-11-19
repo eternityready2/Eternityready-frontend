@@ -16,11 +16,81 @@ function debounce(func, delay) {
   };
 }
 
+/**
+ * Cria o HTML para um único card de vídeo.
+ * @param {object} video O objeto de vídeo da API.
+ * @returns {string} A string HTML do card.
+ */
+function createVideoCard(video) {
+  // Ensure function is accessible globally
+  if (!video) return '';
+  const API_BASE_URL = "https://api.eternityready.com/";
+  let imageUrl,
+    playerUrl,
+    targetAttribute = "";
+  const id = encodeURIComponent(video.id);
+
+  switch (video.sourceType) {
+    case "music":
+      imageUrl = video.thumbnail?.url;
+      playerUrl = `/radio/?id=${id}`;
+      break;
+    case "channels":
+    case "movies":
+      imageUrl = video.thumbnail?.url;
+      playerUrl = `/tv/?id=${id}`;
+      break;
+    case "podcasts":
+      imageUrl = video.thumbnail?.url?.startsWith("http")
+        ? video.thumbnail.url
+        : `https://keystone.eternityready.com${video.thumbnail.url}`;
+      playerUrl = `https://podcasts.eternityready.com/episodes/${video.slug}`;
+      targetAttribute = 'target="_blank" rel="noopener noreferrer"';
+      break;
+    default: // Vídeos da API
+      imageUrl = video.thumbnail?.url
+        ? `${API_BASE_URL}${video.thumbnail.url.replace(/^\//, "")}`
+        : "../images/placeholder.jpg";
+      playerUrl = `/player/?q=${id}`;
+      break;
+  }
+
+  return `
+    <a href="${playerUrl}" class="media-card-link" ${targetAttribute}>
+      <div class="media-card">
+        <div class="media-thumb">
+          <img src="${imageUrl}" alt="${video.title}" loading="lazy" />
+          ${
+            video.duration
+              ? `<span class="media-duration">${video.duration}</span>`
+              : ""
+          }
+        </div>
+        <div class="media-info-col">
+          <p class="media-title">${video.title}</p>
+          <div class="media-subinfo">
+            <p class="media-genre">${(video.categories || [])
+              .map((c) => c.name)
+              .join(", ")}</p>
+            <p class="media-by">by <span class="media-author">${
+              video.author || "EternityReady"
+            }</span></p>
+          </div>
+        </div>
+      </div>
+    </a>`;
+}
+
+// Explicitly attach to window for global access
+window.createVideoCard = createVideoCard;
+
 document.addEventListener("DOMContentLoaded", () => {
   //
   // ─── CONFIGURAÇÕES GLOBAIS E FUNÇÕES DA API ───────────────────────────────────────
   //
   const API_BASE_URL = "https://api.eternityready.com/";
+  const PODCAST_API_URL = "https://keystone.eternityready.com/api/podcasts";
+  let normalizedLocalDataCache = null;
 
   /**
    * Busca as categorias de vídeo da API.
@@ -64,27 +134,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function loadLocalDataSources() {
     const promises = [
-      fetch("data/channels.json"),
-      fetch("data/movies.json"),
-      fetch("data/music.json"),
-      fetch(PODCAST_API_URL),
+      fetch("../data/channels.json"),
+      fetch("../data/movies.json"),
+      fetch("../data/music.json"),
+      fetch(PODCAST_API_URL).catch(() => ({ ok: false })),
     ];
     const results = await Promise.allSettled(promises);
     const localData = { channels: [], movies: [], music: [], podcasts: [] };
 
     const fileKeys = ["channels", "movies", "music"];
-    results.slice(0, 3).forEach((result, index) => {
+    for (let index = 0; index < 3; index++) {
+      const result = results[index];
       const key = fileKeys[index];
       if (result.status === "fulfilled" && result.value.ok) {
-        result.value.json().then((data) => (localData[key] = data[key] || []));
+        try {
+          const data = await result.value.json();
+          localData[key] = data[key] || [];
+        } catch (e) {
+          console.error(`Falha ao processar /data/${key}.json`);
+        }
       } else {
         console.error(`Falha ao carregar /data/${key}.json`);
       }
-    });
+    }
 
     if (results[3].status === "fulfilled" && results[3].value.ok) {
-      const podcastJson = await results[3].value.json();
-      localData.podcasts = podcastJson.data || [];
+      try {
+        const podcastJson = await results[3].value.json();
+        localData.podcasts = podcastJson.data || [];
+      } catch (e) {
+        console.error("Falha ao processar dados de podcasts.");
+      }
     } else {
       console.error("Falha ao carregar dados de podcasts.");
     }
@@ -160,177 +240,11 @@ document.addEventListener("DOMContentLoaded", () => {
     return allItems;
   }
 
-  /**
-   * Cria o HTML para um único card de vídeo.
-   * @param {object} video O objeto de vídeo da API.
-   * @returns {string} A string HTML do card.
-   */
-  function createVideoCard(video) {
-    let imageUrl,
-      playerUrl,
-      targetAttribute = "";
-    const id = encodeURIComponent(item.id);
-
-    switch (item.sourceType) {
-      case "music":
-        imageUrl = item.thumbnail?.url;
-        playerUrl = `/radio/?id=${id}`;
-        break;
-      case "channels":
-      case "movies":
-        imageUrl = item.thumbnail?.url;
-        playerUrl = `/tv/?id=${id}`;
-        break;
-      case "podcasts":
-        imageUrl = item.thumbnail?.url?.startsWith("http")
-          ? item.thumbnail.url
-          : `https://keystone.eternityready.com${item.thumbnail.url}`;
-        playerUrl = `https://podcasts.eternityready.com/episodes/${item.slug}`;
-        targetAttribute = 'target="_blank" rel="noopener noreferrer"';
-        break;
-      default: // Vídeos da API
-        imageUrl = item.thumbnail?.url
-          ? `${API_BASE_URL}${item.thumbnail.url.replace(/^\//, "")}`
-          : "images/placeholder.jpg";
-        playerUrl = `/player/?q=${id}`;
-        break;
-    }
-
-    return `
-      <a href="${playerUrl}" class="media-card-link" ${targetAttribute}>
-        <div class="media-card">
-          <div class="media-thumb">
-            <img src="${imageUrl}" alt="${item.title}" loading="lazy" />
-            ${
-              item.duration
-                ? `<span class="media-duration">${item.duration}</span>`
-                : ""
-            }
-          </div>
-          <div class="media-info-col">
-            <p class="media-title">${item.title}</p>
-            <div class="media-subinfo">
-              <p class="media-genre">${(item.categories || [])
-                .map((c) => c.name)
-                .join(", ")}</p>
-              <p class="media-by">by <span class="media-author">${
-                item.author || "EternityReady"
-              }</span></p>
-            </div>
-          </div>
-        </div>
-      </a>`;
-  }
-
-  //
-  // ─── CONTROLES DO PLAYER DE VÍDEO PRINCIPAL (HERO) ──────────────────────────────
-  //
-  function initializeHeroPlayer() {
-    const heroVideo = document.querySelector(".hero-bg");
-    if (!heroVideo) return;
-
-    const playBtn = document.querySelector(".control-play");
-    const progress = document.querySelector(".control-progress");
-    const fsBtn = document.querySelector(".control-fullscreen");
-    const likeBtn = document.querySelector(".btn-like");
-    const settingsBtn = document.querySelector(".control-settings");
-    const settingsMenu = document.getElementById("settings-menu");
-
-    heroVideo.play().catch(() => {});
-
-    if (playBtn) {
-      const playIconPath = playBtn.querySelector("svg path");
-      const PLAY_D = "M8 5v14l11-7z";
-      const PAUSE_D = "M6 19h4V5H6v14zm8-14v14h4V5h-4z";
-
-      playBtn.addEventListener("click", () => {
-        if (heroVideo.paused) {
-          heroVideo.play();
-          playIconPath.setAttribute("d", PAUSE_D);
-        } else {
-          heroVideo.pause();
-          playIconPath.setAttribute("d", PLAY_D);
-        }
-      });
-    }
-
-    if (progress) {
-      heroVideo.addEventListener("timeupdate", () => {
-        const pct = (heroVideo.currentTime / heroVideo.duration) * 100 || 0;
-        progress.value = pct;
-      });
-      progress.addEventListener("input", () => {
-        heroVideo.currentTime = (progress.value / 100) * heroVideo.duration;
-      });
-    }
-
-    const modal = document.getElementById("video-modal");
-    if (fsBtn && modal) {
-      const modalVideo = document.getElementById("modal-video");
-      const modalClose = document.getElementById("video-modal-close");
-
-      fsBtn.addEventListener("click", () => {
-        modalVideo.src = heroVideo.currentSrc || heroVideo.src;
-        modalVideo.currentTime = heroVideo.currentTime;
-        modal.classList.add("video-modal-open");
-        modalVideo.play();
-      });
-
-      modalClose.addEventListener("click", () => {
-        modal.classList.remove("video-modal-open");
-        modalVideo.pause();
-        heroVideo.currentTime = modalVideo.currentTime;
-        if (playBtn.querySelector("svg path[d*='M6']")) {
-          heroVideo.play();
-        }
-      });
-
-      document.addEventListener("keydown", (e) => {
-        if (
-          e.key === "Escape" &&
-          modal.classList.contains("video-modal-open")
-        ) {
-          modalClose.click();
-        }
-      });
-    }
-
-    if (likeBtn) {
-      likeBtn.addEventListener("click", () => {
-        likeBtn.classList.toggle("liked");
-      });
-    }
-
-    if (settingsBtn && settingsMenu) {
-      settingsBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        settingsMenu.style.display =
-          settingsMenu.style.display === "flex" ? "none" : "flex";
-      });
-      document.addEventListener("click", (e) => {
-        if (!settingsMenu.contains(e.target) && e.target !== settingsBtn) {
-          settingsMenu.style.display = "none";
-        }
-      });
-      settingsMenu.querySelectorAll(".setting-item").forEach((item) => {
-        item.addEventListener("click", () => {
-          if (item.dataset.speed) {
-            heroVideo.playbackRate = parseFloat(item.dataset.speed);
-          }
-          if (item.classList.contains("toggle-mute")) {
-            heroVideo.muted = !heroVideo.muted;
-            item.textContent = heroVideo.muted ? "Unmute" : "Mute";
-          }
-        });
-      });
-    }
-  }
-
   //
   // ─── LÓGICA DA BARRA DE PESQUISA DINÂMICA ─────────────────────────────────────────
   //
   async function initializeSearch() {
-    const input = document.getElementById("search-input");
+    const input = document.getElementById("search-input-new");
     const dropdown = document.getElementById("search-dropdown");
     if (!input || !dropdown) return;
 
@@ -424,8 +338,8 @@ document.addEventListener("DOMContentLoaded", () => {
       videos.slice(0, 5).forEach((video) => {
         const imageUrl = video.thumbnail?.url
           ? `${API_BASE_URL}${video.thumbnail.url.replace(/^\//, "")}`
-          : "images/placeholder.jpg";
-        const videoUrl = `/player.html?q=${video.id}`;
+          : "../images/placeholder.jpg";
+        const videoUrl = `/player/?q=${video.id}`;
 
         const li = document.createElement("li");
         li.className = "media-item";
@@ -590,7 +504,15 @@ document.addEventListener("DOMContentLoaded", () => {
           '<p class="no-results-feedback">Nenhum item corresponde aos filtros aplicados.</p>';
         return;
       }
-      grid.innerHTML = mediaToRender.map(createMediaCard).join("");
+      
+      // Verify createVideoCard is available (check both global and window)
+      const cardFunction = window.createVideoCard || createVideoCard;
+      if (typeof cardFunction !== 'function') {
+        console.error('createVideoCard is not a function!', typeof createVideoCard, typeof window.createVideoCard);
+        return;
+      }
+      
+      grid.innerHTML = mediaToRender.map(cardFunction).join("");
     }
 
     function applyFiltersAndRender() {
@@ -624,25 +546,25 @@ document.addEventListener("DOMContentLoaded", () => {
       .map((genre) => `<option value="${genre}">${genre}</option>`)
       .join("");
     dynamicContentArea.innerHTML = `
-      <a class="backHome-Button" href="/">Back Home</a>
+      <a class="backHome-Button" href="new-homepage/">Back Home</a><br>
       <h1 class="section-title">${categoryQuery} <span><span id="video-count">${allMedia.length}</span> Vídeos</span></h1>
       <div class="filters-container">
         <div class="filter-group">
-          <label for="name-filter">Filtrar por nome:</label>
-          <input type="text" id="name-filter" placeholder="Digite o nome do vídeo..." autocomplete="off">
+          <label for="name-filter">Filter by name:</label>
+          <input type="text" id="name-filter" placeholder="Enter the video name..." autocomplete="off">
         </div>
         <div class="filter-group">
-          <label for="genre-filter">Gênero:</label>
+          <label for="genre-filter">Genre:</label>
           <select id="genre-filter">
-            <option value="all">Todos os gêneros</option>
+            <option value="all">All genres</option>
             ${genreOptions}
           </select>
         </div>
         <div class="filter-group">
-          <label for="sort-filter">Ordenar por:</label>
+          <label for="sort-filter">Sort by:</label>
           <select id="sort-filter">
-            <option value="title-asc">Nome (A-Z)</option>
-            <option value="title-desc">Nome (Z-A)</option>
+            <option value="title-asc">Name (A-Z)</option>
+            <option value="title-desc">Name (Z-A)</option>
           </select>
         </div>
       </div>
@@ -669,65 +591,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     applyFiltersAndRender();
-  }
-
-  //
-  // ─── LÓGICA DOS SLIDERS DINÂMICOS (PÁGINA INICIAL) ──────────────────────────────
-  //
-  async function initializeDynamicSliders() {
-    const slidersContainer = document.getElementById(
-      "dynamic-sliders-container"
-    );
-    if (!slidersContainer) {
-      return;
-    }
-
-    slidersContainer.innerHTML =
-      '<p class="loading-feedback">Loading results</p>';
-    const categories = await fetchCategories();
-
-    if (categories.length === 0) {
-      slidersContainer.innerHTML =
-        '<p class="loading-feedback">No categories found.</p>';
-      return;
-    }
-
-    slidersContainer.innerHTML = "";
-
-    for (const category of categories) {
-      const videos = await fetchVideosByCategory(category.name);
-      if (videos.length > 0) {
-        const sliderHTML = createSliderHTML(category, videos);
-        const sliderSection = document.createElement("div");
-        sliderSection.className = `category-section ${category.name
-          .toLowerCase()
-          .replace(/\s+/g, "-")}-section`;
-        sliderSection.innerHTML = sliderHTML;
-        slidersContainer.appendChild(sliderSection);
-      }
-    }
-  }
-
-  function createSliderHTML(category, videos) {
-    const videoCardsHTML = videos
-      .map((video) => createVideoCard(video))
-      .join("");
-
-    return `
-      <div class="section-header">
-        <h2 class="section-title"><a href="/categories.html?category=${category.id}">${category.name}</a></h2>
-        <a href="/categories.html?category=${category.id}" class="section-link"><i class="fa fa-chevron-right"></i></a>
-      </div>
-      <section class="media-section">
-        <div class="all-videos-section">
-          <div class="section-header">
-            <h2 class="section-title">${title}</h2>
-          </div>
-          <div class="media-grid all-videos-grid">
-            ${cardsHTML}
-          </div>
-        </div>
-      </section>`;
   }
 
   //
@@ -793,47 +656,20 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       slider.addEventListener("touchend", endDrag);
     });
-
-    // --- Navegação Mobile ---
-    const menuBtn = document.querySelector(".btn-menu");
-    const overlay = document.querySelector(".menu-overlay");
-    const mobileNav = document.querySelector(".mobile-nav");
-    const closeBtn = document.querySelector(".btn-nav-close");
-    if (menuBtn && overlay && mobileNav && closeBtn) {
-      const toggleMobileNav = () => {
-        mobileNav.classList.toggle("open");
-        overlay.classList.toggle("open");
-      };
-      menuBtn.addEventListener("click", toggleMobileNav);
-      closeBtn.addEventListener("click", toggleMobileNav);
-      overlay.addEventListener("click", toggleMobileNav);
-    }
-
-    // --- Submenus "Accordion" na Navegação Mobile ---
-    document.querySelectorAll(".mobile-nav .nav-group > a").forEach((link) => {
-      if (!link.nextElementSibling?.classList.contains("submenu")) return;
-      link.addEventListener("click", (e) => {
-        e.preventDefault();
-        link.classList.toggle("open");
-      });
-    });
   }
 
   //
   // ─── PONTO DE ENTRADA PRINCIPAL ───────────────────────────────────────────────────
   //
   async function main() {
-    initializeHeroPlayer();
     initializeSearch();
     initializeAllSlidersAndUI();
 
     if (document.getElementById("dynamic-content-area")) {
       handleCategoryPage();
-    } else if (document.getElementById("dynamic-sliders-container")) {
-      await initializeDynamicSliders();
-      initializeAllSlidersAndUI();
     }
   }
 
   main();
 });
+

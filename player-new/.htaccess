@@ -1,0 +1,4 @@
+DirectoryIndex index.html index.php
+Options -Indexes
+
+

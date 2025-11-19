@@ -85,9 +85,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 1. Try to fetch from local JSON files first
     try {
       const [channelsRes, musicRes, moviesRes] = await Promise.all([
-        fetch("../data/channels.json"),
-        fetch("../data/music.json"),
-        fetch("../data/movies.json"),
+        fetch("data/channels.json"),
+        fetch("data/music.json"),
+        fetch("data/movies.json"),
       ]);
 
       if (!channelsRes.ok || !musicRes.ok || !moviesRes.ok) {
@@ -218,9 +218,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const localSearchPromise = (async () => {
       try {
         const responses = await Promise.all([
-          fetch("../data/channels.json"),
-          fetch("../data/music.json"),
-          fetch("../data/movies.json"),
+          fetch("data/channels.json"),
+          fetch("data/music.json"),
+          fetch("data/movies.json"),
         ]);
 
         const [channelsData, musicData, moviesData] = await Promise.all(
@@ -350,7 +350,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       videos.slice(0, 5).forEach((video) => {
-        let imageUrl = "images/placeholder.jpg"; // Default placeholder
+        let imageUrl = "../player/images/placeholder.jpg"; // Default placeholder
         if (video.thumbnail && video.thumbnail.url) {
           // Check if the URL is absolute or relative
           if (video.thumbnail.url.startsWith("http")) {
