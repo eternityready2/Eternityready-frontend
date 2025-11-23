@@ -54,8 +54,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const PODCAST_API_URL =
     "https://keystone.eternityready.com/api/podcasts?limit=9999";
 
-  let localData = { channels: [], movies: [], music: [], radio: [], podcasts: [] };
-  let normalizedData = { channels: [], movies: [], music: [], radio: [], podcasts: [] };
+  let localData = { channels: [], movies: [], music: [], podcasts: [] };
+  let normalizedData = { channels: [], movies: [], music: [], podcasts: [] };
   let apiCategories = [];
 
   let sliderObserver;
@@ -70,7 +70,6 @@ document.addEventListener("DOMContentLoaded", () => {
       fetch("/data/channels.json"), // Local
       fetch("/data/movies.json"), // Local
       fetch("/data/music.json"), // Local
-      fetch("/data/radio.json"), // Local radio list
     ];
 
     const results = await Promise.allSettled(promises);
@@ -102,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
       );
     }
 
-    const localFiles = ["channels", "movies", "music", "radio"];
+    const localFiles = ["channels", "movies", "music"];
     for (let i = 0; i < localFiles.length; i++) {
       const result = results[i + 2];
       const fileName = localFiles[i];
@@ -110,12 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const response = result.value;
         if (response.ok) {
           const data = await response.json();
-          if (fileName === "radio") {
-            // radio.json uses a 'channels' array; prefer that when present
-            localData.radio = data.radio || data.channels || [];
-          } else {
-            localData[fileName] = data[fileName] || [];
-          }
+          localData[fileName] = data[fileName] || [];
         } else {
           console.error(
             `Failed loading /data/${fileName}.json:`,
@@ -212,7 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    localData = { channels: [], movies: [], music: [], radio: [], podcasts: [] };
+    localData = { channels: [], movies: [], music: [], podcasts: [] };
   }
 
   function normalizeLocalItem(item) {
@@ -345,7 +339,6 @@ document.addEventListener("DOMContentLoaded", () => {
       ...normalizedData.channels,
       ...normalizedData.movies,
       ...normalizedData.music,
-      ...normalizedData.radio,
       ...normalizedData.podcasts,
     ];
 
@@ -384,11 +377,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         const youtubeVideoId = item.videoId;
         let playerContainer = "";
-        const displayType = item.sourceType
-          ? item.sourceType === "radio"
+        // Show friendly label: when the user filters by 'radio', display 'Radio'
+        // for items whose sourceType is 'music'. Otherwise show the sourceType.
+        const displayType =
+          mediaTypeFilter.value === "radio" && item.sourceType === "music"
             ? "Radio"
-            : item.sourceType.charAt(0).toUpperCase() + item.sourceType.slice(1)
-          : "";
+            : item.sourceType
+            ? item.sourceType.charAt(0).toUpperCase() + item.sourceType.slice(1)
+            : "";
         if (youtubeVideoId) {
           const uniquePlayerId = `yt-player-grid-${index}-${item.id}`;
           playerContainer = `<div class="youtube-player-embed" id="${uniquePlayerId}"></div>`;
@@ -445,8 +441,11 @@ document.addEventListener("DOMContentLoaded", () => {
       fullFilteredData = allLocalData
         .filter((item) => {
           const nameMatch = item.title.toLowerCase().includes(nameQuery);
+          // Treat "radio" filter as matching items with sourceType "music"
           const mediaTypeMatch =
-            mediaTypeQuery === "all" || item.sourceType === mediaTypeQuery;
+            mediaTypeQuery === "all" ||
+            item.sourceType === mediaTypeQuery ||
+            (mediaTypeQuery === "radio" && item.sourceType === "music");
           const categoryMatch =
             categoryQuery === "all" ||
             item.categories.some((cat) => cat.name === categoryQuery);
@@ -539,7 +538,6 @@ document.addEventListener("DOMContentLoaded", () => {
           ...normalizedData.channels,
           ...normalizedData.movies,
           ...normalizedData.music,
-          ...normalizedData.radio,
           ...normalizedData.podcasts,
         ];
         const results = allLocalItems.filter(
@@ -611,7 +609,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         switch (video.sourceType) {
           case "music":
-          case "radio":
             imageUrl = video.thumbnail?.url;
             videoUrl = `/radio/?id=${id}`;
             break;
@@ -946,7 +943,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
           switch (type) {
             case "music":
-            case "radio":
               imageUrl = video.thumbnail?.url;
               videoUrl = `/radio/?id=${id}`;
               break;
@@ -1054,8 +1050,11 @@ document.addEventListener("DOMContentLoaded", () => {
               nameQuery === "" || item.title.toLowerCase().includes(nameQuery);
 
             const itemType = item.sourceType || "youtube";
+            // Also allow slider "radio" filter to match local music items
             const mediaTypeMatch =
-              mediaTypeQuery === "all" || itemType === mediaTypeQuery;
+              mediaTypeQuery === "all" ||
+              itemType === mediaTypeQuery ||
+              (mediaTypeQuery === "radio" && itemType === "music");
 
             const categoryMatch =
               categoryQuery === "all" ||
@@ -1165,7 +1164,6 @@ document.addEventListener("DOMContentLoaded", () => {
       ...normalizedData.channels,
       ...normalizedData.movies,
       ...normalizedData.music,
-      ...normalizedData.radio,
       ...normalizedData.podcasts,
     ];
 
