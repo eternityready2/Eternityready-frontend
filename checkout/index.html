@@ -10,7 +10,6 @@ async function redirectToCheckout() {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${sessionToken}`
         },
-        credentials: 'include',
     });
     const data = await res.json();
     if (data.url) {
