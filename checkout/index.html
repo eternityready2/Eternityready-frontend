@@ -1,0 +1,21 @@
+<script src="/lib/constants.js"></script>
+<script src="/lib/session.js"></script>
+<script>
+async function redirectToCheckout() {
+    const sessionToken = getSession();
+
+    const res = await fetch(`${API_BASE_URL}/api/create-checkout-session`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${sessionToken}`
+        },
+        credentials: 'include',
+    });
+    const data = await res.json();
+    if (data.url) {
+        window.location.href = data.url;
+    }
+}
+redirectToCheckout()
+</script>
