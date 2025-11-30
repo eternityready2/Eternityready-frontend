@@ -109,18 +109,18 @@ a:hover {
 
   #thank-you > span:first-child {
     font-weight: bold;
-    font-size: 4rem;
+    font-size: 3rem;
     background: -webkit-linear-gradient(red, pink);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
   #thank-you > span {
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: bold;
   }
   #left p {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
   }
 
 }
