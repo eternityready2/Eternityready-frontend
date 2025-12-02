@@ -183,6 +183,7 @@
                 "Password reset successful! redirecting to /login ...",
                 "success"
               );
+              localStorage.removeItem('session');
               setTimeout(() => {
                 window.location.assign(`${ETERNITY_BASE_URL}/login`);
               }, 2500);
