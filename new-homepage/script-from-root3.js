@@ -416,6 +416,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 }</span></p>
             </div>
         </div>`;
+        card.addEventListener("click", () => {
+          window.location.assign(`${ETERNITY_BASE_URL}/player?q=${item.id}`)
+        });
         if (youtubeVideoId) {
           // ... (seus event listeners de mouseover/mouseout para o player)
         }
@@ -610,12 +613,14 @@ document.addEventListener("DOMContentLoaded", () => {
         switch (video.sourceType) {
           case "music":
             imageUrl = video.thumbnail?.url;
-            videoUrl = `/radio/?id=${id}`;
+            videoUrl = `/player/?q=${id}`;
+            //videoUrl = `/radio/?id=${id}`;
             break;
           case "channels":
           case "movies":
             imageUrl = video.thumbnail?.url;
-            videoUrl = `/tv/?id=${id}`;
+            videoUrl = `/player/?q=${id}`;
+            //videoUrl = `/tv/?id=${id}`;
             break;
           case "podcasts":
             imageUrl = `https://keystone.eternityready.com${video.thumbnail.url}`;
@@ -944,12 +949,14 @@ document.addEventListener("DOMContentLoaded", () => {
           switch (type) {
             case "music":
               imageUrl = video.thumbnail?.url;
-              videoUrl = `/radio/?id=${id}`;
+              videoUrl = `/player/?q=${id}`;
+              //videoUrl = `/radio/?id=${id}`;
               break;
             case "channels":
             case "movies":
               imageUrl = video.thumbnail?.url;
-              videoUrl = `/tv/?id=${id}`;
+              videoUrl = `/player/?q=${id}`;
+              //videoUrl = `/tv/?id=${id}`;
               break;
             case "podcasts":
               imageUrl = video.thumbnail?.url?.startsWith("http")

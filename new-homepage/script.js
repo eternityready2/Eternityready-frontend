@@ -42,8 +42,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       const [channelData, movieData] = await Promise.all([
-        fetch("channels.json").then((res) => res.json()),
-        fetch("movies.json").then((res) => res.json()),
+        fetch("/data/channels.json").then((res) => res.json()),
+        fetch("/data/movies.json").then((res) => res.json()),
       ]);
 
       allChannels = channelData.channels.sort((a, b) =>
@@ -409,7 +409,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 <p class="current-program" data-channel-name="${channel.name.toLowerCase()}"><span>On Now: </span>Not Known</p>
             </div>`;
 
-    card.addEventListener("click", () => openChannelModal(channel));
+    card.addEventListener("click", () => {
+      window.location.assign(`${ETERNITY_BASE_URL}/player?q=${channel.id}`)
+    });
 
     const watchLaterBtn = card.querySelector(".watch-later-btn");
     watchLaterBtn.addEventListener("click", (e) => {
@@ -430,7 +432,10 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="rating" data-rating="${movie.rating}"></div>
         </div>
     `;
-    card.addEventListener("click", () => openChannelModal(movie));
+    //card.addEventListener("click", () => openChannelModal(movie));
+    card.addEventListener("click", () => {
+      window.location.assign(`${ETERNITY_BASE_URL}/player?q=${movie.id}`)
+    });
     return card;
   }
 

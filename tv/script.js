@@ -410,7 +410,6 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>`;
 
     //card.addEventListener("click", () => openChannelModal(channel));
-    console.log('channel:', channel)
     card.addEventListener("click", () => {
       window.location.assign(`${ETERNITY_BASE_URL}/player?q=${channel.id}`)
     });
