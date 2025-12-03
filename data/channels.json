@@ -20,7 +20,8 @@
         "featured"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://lifeendtimes.tv/' target='_blank'>KSCE Life! End Times TV</a>"
+      "description": "Learn more @ <a href='https://lifeendtimes.tv/' target='_blank'>KSCE Life! End Times TV</a>",
+      "id": "0af72179-318e-4c8c-b501-161eec71b89a"
     },
     {
       "name": "Impact Network",
@@ -38,7 +39,8 @@
         "featured"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://watchimpact.com/' target='_blank'>Impact Network</a>"
+      "description": "Learn more @ <a href='https://watchimpact.com/' target='_blank'>Impact Network</a>",
+      "id": "4cb4025e-31f6-427f-9ae2-33ceae6886a7"
     },
     {
       "name": "Amazing Facts TV",
@@ -56,7 +58,8 @@
         "featured"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.amazingfacts.org/media-library/watch/archives/o/Amazing-Facts-TV' target='_blank'>Amazing Facts TV</a>"
+      "description": "Learn more @ <a href='https://www.amazingfacts.org/media-library/watch/archives/o/Amazing-Facts-TV' target='_blank'>Amazing Facts TV</a>",
+      "id": "9891f773-ccbf-4bdf-bd82-8078ab8d540f"
     },
     {
       "name": "THE WALK TV",
@@ -72,7 +75,8 @@
         "featured"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://thewalktv.com/' target='_blank'>THE WALK TV</a>"
+      "description": "Learn more @ <a href='https://thewalktv.com/' target='_blank'>THE WALK TV</a>",
+      "id": "65de38be-5e18-419a-aef3-9098661c8fbd"
     },
     {
       "name": "MNN SPIRIT CHANNEL",
@@ -88,7 +92,8 @@
         "featured"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.mnn.org/watch/channels/spirit' target='_blank'>MNN SPIRIT CHANNEL</a>"
+      "description": "Learn more @ <a href='https://www.mnn.org/watch/channels/spirit' target='_blank'>MNN SPIRIT CHANNEL</a>",
+      "id": "d238caaa-47a0-46e3-bef6-943e0d435453"
     },
     {
       "name": "3ABN Russia",
@@ -104,7 +109,8 @@
         "featured"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://3abnrussia.org/' target='_blank'>3ABN Russia</a>"
+      "description": "Learn more @ <a href='https://3abnrussia.org/' target='_blank'>3ABN Russia</a>",
+      "id": "54458b06-9226-4be7-b43f-14ff1fa08f33"
     },
     {
       "name": "Ihop (24/7 Prayer & Worship)",
@@ -120,7 +126,8 @@
         "popular"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.ihopkc.org/prayerroom/' target='_blank'>Ihop (24/7 Prayer & Worship)</a>"
+      "description": "Learn more @ <a href='https://www.ihopkc.org/prayerroom/' target='_blank'>Ihop (24/7 Prayer & Worship)</a>",
+      "id": "149acc02-4de4-4018-800e-ffa1295e9c83"
     },
     {
       "name": "SAT7 PARS",
@@ -136,7 +143,8 @@
         "popular"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://sat7pars.com/' target='_blank'>SAT7 PARS</a>"
+      "description": "Learn more @ <a href='https://sat7pars.com/' target='_blank'>SAT7 PARS</a>",
+      "id": "45ef8aa4-9490-4907-b59b-cb404d18aee7"
     },
     {
       "name": "SAT7 TURK",
@@ -153,7 +161,8 @@
         "popular"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://turk.sat7.org/' target='_blank'>SAT7 TURK</a>"
+      "description": "Learn more @ <a href='https://turk.sat7.org/' target='_blank'>SAT7 TURK</a>",
+      "id": "597932c3-830b-469f-a3d5-6441af72b09c"
     },
     {
       "name": "SAT7 ARABIC",
@@ -170,7 +179,8 @@
         "popular"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://arabic.sat7.org/' target='_blank'>SAT7 ARABIC</a>"
+      "description": "Learn more @ <a href='https://arabic.sat7.org/' target='_blank'>SAT7 ARABIC</a>",
+      "id": "f187d91f-a353-4e65-830b-549a490a0c03"
     },
     {
       "name": "GOOD LIFE 45",
@@ -186,7 +196,8 @@
         "popular"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.goodlife45.com/' target='_blank'>GOOD LIFE 45</a>"
+      "description": "Learn more @ <a href='https://www.goodlife45.com/' target='_blank'>GOOD LIFE 45</a>",
+      "id": "86850a1f-4836-4e3f-880f-5dbcfc4e3101"
     },
     {
       "name": "Spirit TV",
@@ -202,7 +213,8 @@
         "popular"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://myspirit.tv/' target='_blank'>Spirit TV</a>"
+      "description": "Learn more @ <a href='https://myspirit.tv/' target='_blank'>Spirit TV</a>",
+      "id": "7f19da5c-af1c-42ef-a4c4-8f5ce3fab62e"
     },
     {
       "name": "GEB America",
@@ -215,7 +227,8 @@
         "Top Networks"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.gebamerica.com/' target='_blank'>GEB America</a>"
+      "description": "Learn more @ <a href='https://www.gebamerica.com/' target='_blank'>GEB America</a>",
+      "id": "261d5173-2d90-4e97-b97f-604a8264398e"
     },
     {
       "name": "SonLife TV",
@@ -228,7 +241,8 @@
         "Top Networks"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.sonlifetv.com/' target='_blank'>SonLife TV</a>"
+      "description": "Learn more @ <a href='https://www.sonlifetv.com/' target='_blank'>SonLife TV</a>",
+      "id": "22868905-e9fc-4888-81cc-62ab65b4856c"
     },
     {
       "name": "World Harvest Television",
@@ -241,7 +255,8 @@
         "Top Networks"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.wht.org/' target='_blank'>World Harvest Television</a>"
+      "description": "Learn more @ <a href='https://www.wht.org/' target='_blank'>World Harvest Television</a>",
+      "id": "9936ef0a-d10f-43ae-8c8f-b1b38beb8314"
     },
     {
       "name": "Living Faith TV",
@@ -254,7 +269,8 @@
         "Lifestyle + Others"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://livingfaithtv.com/' target='_blank'>Living Faith TV</a>"
+      "description": "Learn more @ <a href='https://livingfaithtv.com/' target='_blank'>Living Faith TV</a>",
+      "id": "e19591b3-2b14-4ef3-9f42-8c9a72b28cc3"
     },
     {
       "name": "Firstlight",
@@ -267,7 +283,8 @@
         "Lifestyle + Others"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.firstlight.org.nz/' target='_blank'>Firstlight</a>"
+      "description": "Learn more @ <a href='https://www.firstlight.org.nz/' target='_blank'>Firstlight</a>",
+      "id": "77c4ae1e-d346-44c1-87e0-6b02c54f1c82"
     },
     {
       "name": "Day Star",
@@ -280,7 +297,8 @@
         "Top Networks"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.daystar.com/' target='_blank'>Day Star</a>"
+      "description": "Learn more @ <a href='https://www.daystar.com/' target='_blank'>Day Star</a>",
+      "id": "a5710937-2898-4528-8126-0486652ec719"
     },
     {
       "name": "3ABN",
@@ -295,7 +313,8 @@
         "Top Networks"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://3abn.org/' target='_blank'>3ABN</a>"
+      "description": "Learn more @ <a href='https://3abn.org/' target='_blank'>3ABN</a>",
+      "id": "eaebf36f-16ce-4955-9665-55d80d004023"
     },
     {
       "name": "Smart Life Style TV",
@@ -308,7 +327,8 @@
         "Lifestyle + Others"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://smartlifestyletv.com/' target='_blank'>Smart Life Style TV</a>"
+      "description": "Learn more @ <a href='https://smartlifestyletv.com/' target='_blank'>Smart Life Style TV</a>",
+      "id": "3f0a6d48-9835-4576-8d53-df4935fa2354"
     },
     {
       "name": "TCT HD",
@@ -321,7 +341,8 @@
         "Top Networks"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.tct.tv/' target='_blank'>TCT HD</a>"
+      "description": "Learn more @ <a href='https://www.tct.tv/' target='_blank'>TCT HD</a>",
+      "id": "73e238c5-e88e-4ea9-a805-df1e2ecd4dca"
     },
     {
       "name": "Christian Television Network",
@@ -334,7 +355,8 @@
         "Top Networks"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.ctnonline.com/' target='_blank'>Christian Television Network</a>"
+      "description": "Learn more @ <a href='https://www.ctnonline.com/' target='_blank'>Christian Television Network</a>",
+      "id": "1559beed-9fb5-48fb-8afc-c025f0bec634"
     },
     {
       "name": "God's Learning Channel",
@@ -347,7 +369,8 @@
         "Lifestyle + Others"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.glc.us.com/' target='_blank'>God's Learning Channel</a>"
+      "description": "Learn more @ <a href='https://www.glc.us.com/' target='_blank'>God's Learning Channel</a>",
+      "id": "a7d4625d-58ea-4a3c-86bb-2e44428a1cac"
     },
     {
       "name": "Emmanuel TV",
@@ -360,7 +383,8 @@
         "Lifestyle + Others"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://emmanuel.tv/' target='_blank'>Emmanuel TV</a>"
+      "description": "Learn more @ <a href='https://emmanuel.tv/' target='_blank'>Emmanuel TV</a>",
+      "id": "ebde849d-9683-4597-a265-ec4af99abd20"
     },
     {
       "name": "NEW HOPE TV",
@@ -373,7 +397,8 @@
         "Lifestyle + Others"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://nhtv.com/' target='_blank'>NEW HOPE TV</a>"
+      "description": "Learn more @ <a href='https://nhtv.com/' target='_blank'>NEW HOPE TV</a>",
+      "id": "25203842-23dd-428d-8224-1dae7d919eaa"
     },
     {
       "name": "Bible Discovery TV",
@@ -386,7 +411,8 @@
         "Lifestyle + Others"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://biblediscoverytv.com/' target='_blank'>Bible Discovery TV</a>"
+      "description": "Learn more @ <a href='https://biblediscoverytv.com/' target='_blank'>Bible Discovery TV</a>",
+      "id": "32cdf876-8845-4470-ba34-9abe88aa4334"
     },
     {
       "name": "WOCB",
@@ -399,7 +425,8 @@
         "Lifestyle + Others"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.wocb.org/' target='_blank'>WOCB</a>"
+      "description": "Learn more @ <a href='https://www.wocb.org/' target='_blank'>WOCB</a>",
+      "id": "08ba2d39-52ca-4f5c-9583-b2f9d4be8145"
     },
     {
       "name": "3ABN Francias",
@@ -412,7 +439,8 @@
         "International"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://3abnfrancais.org/' target='_blank'>3ABN Francias</a>"
+      "description": "Learn more @ <a href='https://3abnfrancais.org/' target='_blank'>3ABN Francias</a>",
+      "id": "16f5ef98-55c9-445f-ad40-d74cb62165a4"
     },
     {
       "name": "3ABN Latino",
@@ -425,7 +453,8 @@
         "International"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://3abnlatino.org/' target='_blank'>3ABN Latino</a>"
+      "description": "Learn more @ <a href='https://3abnlatino.org/' target='_blank'>3ABN Latino</a>",
+      "id": "e36cdf28-c79e-43c0-a83c-d45bc28b5fd1"
     },
     {
       "name": "3ABN International",
@@ -438,7 +467,8 @@
         "International"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://3abninternational.org/' target='_blank'>3ABN International</a>"
+      "description": "Learn more @ <a href='https://3abninternational.org/' target='_blank'>3ABN International</a>",
+      "id": "2cd52fbe-c767-4c09-94ee-47fad59c901c"
     },
     {
       "name": "LOVEWORLD TV",
@@ -451,7 +481,8 @@
         "Lifestyle + Others"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://loveworldtv.co.uk/' target='_blank'>LOVEWORLD TV</a>"
+      "description": "Learn more @ <a href='https://loveworldtv.co.uk/' target='_blank'>LOVEWORLD TV</a>",
+      "id": "d5342e52-6aed-4c33-a7ab-864c4f67d726"
     },
     {
       "name": "SuperChannel Orlando",
@@ -465,7 +496,8 @@
         "Top Networks"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.superchannel.com/' target='_blank'>SuperChannel  (WACX -DTV Orlando, Florida)</a>"
+      "description": "Learn more @ <a href='https://www.superchannel.com/' target='_blank'>SuperChannel  (WACX -DTV Orlando, Florida)</a>",
+      "id": "0cbe6b88-d2ff-4b7b-9eda-9d7768a489b8"
     },
     {
       "name": "God Television (Asia)",
@@ -478,7 +510,8 @@
         "International"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.god.tv/live/asia/' target='_blank'>God Television (Asia)</a>"
+      "description": "Learn more @ <a href='https://www.god.tv/live/asia/' target='_blank'>God Television (Asia)</a>",
+      "id": "7262e7a7-1d11-4dce-a904-3322b1dfa1fd"
     },
     {
       "name": "ICFN",
@@ -491,7 +524,8 @@
         "Lifestyle + Others"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://icfn.tv/' target='_blank'>ICFN</a>"
+      "description": "Learn more @ <a href='https://icfn.tv/' target='_blank'>ICFN</a>",
+      "id": "12aa582f-0ae9-4148-a1fc-f820dce45573"
     },
     {
       "name": "God Television (Africa- Satellite Live)",
@@ -504,7 +538,8 @@
         "International"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.god.tv/live/africa/' target='_blank'>God Television (Africa- Satellite Live)</a>"
+      "description": "Learn more @ <a href='https://www.god.tv/live/africa/' target='_blank'>God Television (Africa- Satellite Live)</a>",
+      "id": "7aeab1b2-03cd-44af-bdc1-4cb0bfec2c46"
     },
     {
       "name": "God Television (Australia)",
@@ -517,7 +552,8 @@
         "International"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.god.tv/live/australasia/' target='_blank'>God Television (Australia)</a>"
+      "description": "Learn more @ <a href='https://www.god.tv/live/australasia/' target='_blank'>God Television (Australia)</a>",
+      "id": "9433b37f-4e6e-42ce-ad06-c1d8822ac78c"
     },
     {
       "name": "God Television (UK - Satellite Live)",
@@ -531,7 +567,8 @@
         "International"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.god.tv/live/uk-europe/' target='_blank'>God Television (UK - Satellite Live)</a>"
+      "description": "Learn more @ <a href='https://www.god.tv/live/uk-europe/' target='_blank'>God Television (UK - Satellite Live)</a>",
+      "id": "7ec51e51-a485-43a1-a82b-a14ae55fae4d"
     },
     {
       "name": "God Television (USA- Main Flagship Live)",
@@ -544,7 +581,8 @@
         "Top Networks"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.god.tv/live/usa/' target='_blank'>God Television (USA- Main Flagship Live)</a>"
+      "description": "Learn more @ <a href='https://www.god.tv/live/usa/' target='_blank'>God Television (USA- Main Flagship Live)</a>",
+      "id": "b78442cd-4e3d-4e7a-8166-8b9188e20b65"
     },
     {
       "name": "CBN Family",
@@ -557,7 +595,8 @@
         "Top Networks"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.cbn.com/family/app' target='_blank'>CBN Family</a>"
+      "description": "Learn more @ <a href='https://www.cbn.com/family/app' target='_blank'>CBN Family</a>",
+      "id": "585e865c-4dd5-4438-87c0-07d3c29ba338"
     },
     {
       "name": "Safe TV",
@@ -570,7 +609,8 @@
         "Kids & Family"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.safetv.org/' target='_blank'>Safe TV</a>"
+      "description": "Learn more @ <a href='https://www.safetv.org/' target='_blank'>Safe TV</a>",
+      "id": "5ddccff6-aff3-4ae3-a514-4a3f59031c7b"
     },
     {
       "name": "LLBN LATINO",
@@ -583,7 +623,8 @@
         "International"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://llbnlatino.tv/' target='_blank'>LLBN LATINO</a>"
+      "description": "Learn more @ <a href='https://llbnlatino.tv/' target='_blank'>LLBN LATINO</a>",
+      "id": "b06a9b7f-25d7-4154-817b-12fbbf394f2e"
     },
     {
       "name": "LLBN Asia",
@@ -596,7 +637,8 @@
         "International"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://llbn.asia/' target='_blank'>LLBN Asia</a>"
+      "description": "Learn more @ <a href='https://llbn.asia/' target='_blank'>LLBN Asia</a>",
+      "id": "bb3a24a6-5cef-47c1-9946-1c4242765789"
     },
     {
       "name": "LLBN Arabic",
@@ -609,7 +651,8 @@
         "International"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://llbnarabic.tv/' target='_blank'>LLBN Arabic</a>"
+      "description": "Learn more @ <a href='https://llbnarabic.tv/' target='_blank'>LLBN Arabic</a>",
+      "id": "a565f911-5792-4cf6-b2a6-c20a7bba6844"
     },
     {
       "name": "3ABN Kids",
@@ -622,7 +665,8 @@
         "Kids & Family"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://3abnkids.tv/' target='_blank'>3ABN Kids</a>"
+      "description": "Learn more @ <a href='https://3abnkids.tv/' target='_blank'>3ABN Kids</a>",
+      "id": "45e6d9db-ca93-4945-b7f5-e6dfc32b1d28"
     },
     {
       "name": "Gospel Broadcasting Network",
@@ -635,7 +679,8 @@
         "Lifestyle + Others"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://gbnlive.org/' target='_blank'>Gospel Broadcasting Network</a>"
+      "description": "Learn more @ <a href='https://gbnlive.org/' target='_blank'>Gospel Broadcasting Network</a>",
+      "id": "c0516e44-52f6-4042-83df-3b3fd425b0e8"
     },
     {
       "name": "The Word Network",
@@ -648,7 +693,8 @@
         "Top Networks"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.thewordnetwork.org/' target='_blank'>The Word Network</a>"
+      "description": "Learn more @ <a href='https://www.thewordnetwork.org/' target='_blank'>The Word Network</a>",
+      "id": "daa1d224-96e6-416e-baf9-9092b9c619c5"
     },
     {
       "name": "Hope Channel",
@@ -661,7 +707,8 @@
         "Top Networks"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.hopetv.org/' target='_blank'>Hope Channel</a>"
+      "description": "Learn more @ <a href='https://www.hopetv.org/' target='_blank'>Hope Channel</a>",
+      "id": "3e712f6b-a9a2-4ddd-b957-5a9827a1dede"
     },
     {
       "name": "Corner Stone TV",
@@ -674,7 +721,8 @@
         "Top Networks"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.ctvn.org/' target='_blank'>Corner Stone TV</a>"
+      "description": "Learn more @ <a href='https://www.ctvn.org/' target='_blank'>Corner Stone TV</a>",
+      "id": "2ed0ccc4-45e4-4fca-8657-aee68ee1ee5d"
     },
     {
       "name": "LLBN",
@@ -687,7 +735,8 @@
         "Top Networks"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://llbn.tv/' target='_blank'>LLBN</a>"
+      "description": "Learn more @ <a href='https://llbn.tv/' target='_blank'>LLBN</a>",
+      "id": "856abdc1-3fdf-4fae-8b7b-fea72a42a93d"
     },
     {
       "name": "Son Broadcasting Network",
@@ -700,7 +749,8 @@
         "Top Networks"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.kchftv.org' target='_blank'>Son Broadcasting Network</a>"
+      "description": "Learn more @ <a href='https://www.kchftv.org' target='_blank'>Son Broadcasting Network</a>",
+      "id": "8ba9a1ff-26d8-4e1b-a26c-2e275e79422b"
     },
     {
       "name": "ABN AFRICA",
@@ -713,7 +763,8 @@
         "International"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://abnafrica.com/' target='_blank'>ABN AFRICA</a>"
+      "description": "Learn more @ <a href='https://abnafrica.com/' target='_blank'>ABN AFRICA</a>",
+      "id": "ed4017bf-b303-4fba-b191-6981c79c4be1"
     },
     {
       "name": "Sid Roth Network",
@@ -727,7 +778,8 @@
         "Bible Prophecy"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://sidroth.org/' target='_blank'>Sid Roth Network</a>"
+      "description": "Learn more @ <a href='https://sidroth.org/' target='_blank'>Sid Roth Network</a>",
+      "id": "aa2e34e1-c52e-44f9-b0fc-78ca0b5e66c6"
     },
     {
       "name": "JLTV",
@@ -741,7 +793,8 @@
         "Mideast"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.jltv.tv/' target='_blank'>JLTV</a>"
+      "description": "Learn more @ <a href='https://www.jltv.tv/' target='_blank'>JLTV</a>",
+      "id": "6a01e480-b4c9-41b7-9e1b-92ffbc9eb4a8"
     },
     {
       "name": "Press TV",
@@ -754,7 +807,8 @@
         "News + Opinions"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.presstv.ir/' target='_blank'>Press TV</a>"
+      "description": "Learn more @ <a href='https://www.presstv.ir/' target='_blank'>Press TV</a>",
+      "id": "ba109bf1-71b5-428b-be69-418a99b1ae15"
     },
     {
       "name": "Nejat TV",
@@ -767,7 +821,8 @@
         "International"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.nejat.tv/' target='_blank'>Nejat TV</a>"
+      "description": "Learn more @ <a href='https://www.nejat.tv/' target='_blank'>Nejat TV</a>",
+      "id": "5a7165cc-1339-4bbc-8ca6-b3759e298421"
     },
     {
       "name": "Jewish Broadcasting",
@@ -781,7 +836,8 @@
         "Mideast"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://jbstv.org/' target='_blank'>Jewish Broadcasting</a>"
+      "description": "Learn more @ <a href='https://jbstv.org/' target='_blank'>Jewish Broadcasting</a>",
+      "id": "dcb15930-1ca5-4d70-82c1-07cfc06c1cde"
     },
     {
       "name": "RT News",
@@ -795,7 +851,8 @@
         "International"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.rt.com/' target='_blank'>RT News</a>"
+      "description": "Learn more @ <a href='https://www.rt.com/' target='_blank'>RT News</a>",
+      "id": "f9d58322-25de-493e-a899-20ac11e34337"
     },
     {
       "name": "Newsmax",
@@ -809,7 +866,8 @@
         "News + Opinions"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.newsmaxtv.com/' target='_blank'>Newsmax</a>"
+      "description": "Learn more @ <a href='https://www.newsmaxtv.com/' target='_blank'>Newsmax</a>",
+      "id": "0007efc1-42ef-4e74-94cf-57db63e1805b"
     },
     {
       "name": "Family TV",
@@ -822,7 +880,8 @@
         "Kids & Family"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.familytv.com/' target='_blank'>Family TV</a>"
+      "description": "Learn more @ <a href='https://www.familytv.com/' target='_blank'>Family TV</a>",
+      "id": "9b6dcbc8-0c6e-41dc-8610-3c29b87a159d"
     },
     {
       "name": "3ABN! Dare to Dream",
@@ -835,7 +894,8 @@
         "Top Networks"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://daretodream.tv/' target='_blank'>3ABN! Dare to Dream</a>"
+      "description": "Learn more @ <a href='https://daretodream.tv/' target='_blank'>3ABN! Dare to Dream</a>",
+      "id": "e1eff1f3-ada3-45d4-8d57-1131f57d5530"
     },
     {
       "name": "3ABN Proclaim",
@@ -848,7 +908,8 @@
         "Top Networks"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://3abnproclaim.org/' target='_blank'>3ABN Proclaim</a>"
+      "description": "Learn more @ <a href='https://3abnproclaim.org/' target='_blank'>3ABN Proclaim</a>",
+      "id": "5751d65b-f6fa-461a-91dc-ae235d38af74"
     },
     {
       "name": "His Channel",
@@ -861,7 +922,8 @@
         "Lifestyle + Others"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.hischannel.com/' target='_blank'>His Channel</a>"
+      "description": "Learn more @ <a href='https://www.hischannel.com/' target='_blank'>His Channel</a>",
+      "id": "07307b7b-ac43-4cf9-b5a5-7d7316344b0c"
     },
     {
       "name": "Believers Voice of Victory",
@@ -874,7 +936,8 @@
         "Top Networks"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.kcm.org/watch/believers-voice-of-victory-network' target='_blank'>Believers Voice of Victory</a>"
+      "description": "Learn more @ <a href='https://www.kcm.org/watch/believers-voice-of-victory-network' target='_blank'>Believers Voice of Victory</a>",
+      "id": "cc635b5e-58f0-42a8-9152-b3d9ae86c813"
     },
     {
       "name": "VertiZontal Media",
@@ -887,7 +950,8 @@
         "Top Networks"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://vertizontalmedia.com/' target='_blank'>VertiZontal Media</a>"
+      "description": "Learn more @ <a href='https://vertizontalmedia.com/' target='_blank'>VertiZontal Media</a>",
+      "id": "79861082-8c2e-4f73-8327-def2edd14837"
     },
     {
       "name": "HARVEST TV",
@@ -899,7 +963,8 @@
       "categories": [
         "Top Networks"
       ],
-      "description": "Learn more @ <a href='https://harvesttv.in/' target='_blank'>HARVEST TV</a>"
+      "description": "Learn more @ <a href='https://harvesttv.in/' target='_blank'>HARVEST TV</a>",
+      "id": "9481cade-ab35-4719-84cf-af19fcfd47f3"
     },
     {
       "name": "SAT 7 Kids",
@@ -912,7 +977,8 @@
         "Kids & Family"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://kids.sat7.org/' target='_blank'>SAT 7 Kids</a>"
+      "description": "Learn more @ <a href='https://kids.sat7.org/' target='_blank'>SAT 7 Kids</a>",
+      "id": "cd4c0435-acad-4c17-98d8-501c17d52d10"
     },
     {
       "name": "Family Friendly Entertainment",
@@ -925,7 +991,8 @@
         "Kids & Family"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://familyfriendlye.com/' target='_blank'>Family Friendly Entertainment</a>"
+      "description": "Learn more @ <a href='https://familyfriendlye.com/' target='_blank'>Family Friendly Entertainment</a>",
+      "id": "ec50a5a8-e726-48d1-8d64-1d8e21b7e1f3"
     },
     {
       "name": "Amazing Discoveries TV",
@@ -938,7 +1005,8 @@
         "Bible Prophecy"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://amazingdiscoveries.tv/' target='_blank'>Amazing Discoveries TV</a>"
+      "description": "Learn more @ <a href='https://amazingdiscoveries.tv/' target='_blank'>Amazing Discoveries TV</a>",
+      "id": "815c50bf-81b9-47f9-9b2b-4b5e747ce228"
     },
     {
       "name": "KSCE-TV Life!",
@@ -951,7 +1019,8 @@
         "Top Networks"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://kscetv.com/' target='_blank'>KSCE-TV Life!</a>"
+      "description": "Learn more @ <a href='https://kscetv.com/' target='_blank'>KSCE-TV Life!</a>",
+      "id": "322daab4-e927-4917-b20b-d4b32cf02af9"
     },
     {
       "name": "Gospel Truth TV",
@@ -964,7 +1033,8 @@
         "Lifestyle + Others"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.gospeltruth.tv/' target='_blank'>Gospel Truth TV</a>"
+      "description": "Learn more @ <a href='https://www.gospeltruth.tv/' target='_blank'>Gospel Truth TV</a>",
+      "id": "6177d3ae-124c-4e2a-a256-0b28e8dce73c"
     },
     {
       "name": "NRB Network",
@@ -977,7 +1047,8 @@
         "Top Networks"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://nrbtv.org/' target='_blank'>NRB Network</a>"
+      "description": "Learn more @ <a href='https://nrbtv.org/' target='_blank'>NRB Network</a>",
+      "id": "f41816e4-2ded-460b-8cb1-b259fe5ff1a9"
     },
     {
       "name": "CBN News",
@@ -992,7 +1063,8 @@
         "Mideast"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.cbnnews.com/' target='_blank'>CBN News</a>"
+      "description": "Learn more @ <a href='https://www.cbnnews.com/' target='_blank'>CBN News</a>",
+      "id": "a0f59849-23bf-4e02-9d0f-9c01e7c45054"
     },
     {
       "name": "Mission TV",
@@ -1006,7 +1078,8 @@
         "News + Opinions"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://missiontv.com/' target='_blank'>Mission TV</a>"
+      "description": "Learn more @ <a href='https://missiontv.com/' target='_blank'>Mission TV</a>",
+      "id": "62fb7027-f341-4ad6-a12c-ae88bbd27b40"
     },
     {
       "name": "Christian Youth Channel",
@@ -1020,7 +1093,8 @@
         "Mideast"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.cycnow.com/' target='_blank'>Christian Youth Channel</a>"
+      "description": "Learn more @ <a href='https://www.cycnow.com/' target='_blank'>Christian Youth Channel</a>",
+      "id": "3967b2ca-2177-4478-a3cf-36778e0566bc"
     },
     {
       "name": "Total Living Network",
@@ -1033,7 +1107,8 @@
         "Lifestyle + Others"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://tln.com/' target='_blank'>Total Living Network</a>"
+      "description": "Learn more @ <a href='https://tln.com/' target='_blank'>Total Living Network</a>",
+      "id": "0b606743-e344-415f-ba04-f4e28d5241fe"
     },
     {
       "name": "Wylie Gospel TV",
@@ -1046,7 +1121,8 @@
         "Christian Gospel"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.wotgtvnetwork.com/' target='_blank'>Wylie Gospel</a>"
+      "description": "Learn more @ <a href='https://www.wotgtvnetwork.com/' target='_blank'>Wylie Gospel</a>",
+      "id": "ecbc18e4-53eb-4e9e-94f9-63e9a2f3319e"
     },
     {
       "name": "Branson Gospel TV",
@@ -1059,7 +1135,8 @@
         "Christian Gospel"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.wotgtvnetwork.com/' target='_blank'>Branson Gospel</a>"
+      "description": "Learn more @ <a href='https://www.wotgtvnetwork.com/' target='_blank'>Branson Gospel</a>",
+      "id": "72d2f88f-3a49-474b-88c1-aafa718ca481"
     },
     {
       "name": "WGHC TV",
@@ -1072,7 +1149,8 @@
         "Christian Gospel"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.wotgtvnetwork.com/' target='_blank'>WGHC TV</a>"
+      "description": "Learn more @ <a href='https://www.wotgtvnetwork.com/' target='_blank'>WGHC TV</a>",
+      "id": "e1565469-0685-4913-ae0d-a37ad522c385"
     },
     {
       "name": "Ohio Valley Gospel TV",
@@ -1085,7 +1163,8 @@
         "Christian Gospel"
       ],
       "status": "ON",
-      "description": "Learn more @ <a href='https://www.wotgtvnetwork.com/' target='_blank'>Ohio Valley Gospel</a>"
+      "description": "Learn more @ <a href='https://www.wotgtvnetwork.com/' target='_blank'>Ohio Valley Gospel</a>",
+      "id": "d124ff43-8956-4f3f-a08b-274e9216e9d6"
     },
     {
       "name": "Kulture TV",
@@ -1098,7 +1177,8 @@
         "Lifestyle + Others"
       ],
       "status": "ON",
-      "description": "Kulture TV is dedicated to bridging the cultural gaps that separate us as believers and to being one united body of Christ. Learn more @ <a href='https://goodvuenetwork.com/' target='_blank'>GoodVue Network</a>"
+      "description": "Kulture TV is dedicated to bridging the cultural gaps that separate us as believers and to being one united body of Christ. Learn more @ <a href='https://goodvuenetwork.com/' target='_blank'>GoodVue Network</a>",
+      "id": "325f3aa3-dc09-4d71-8bb3-57e3faca312b"
     },
     {
       "name": "Apologetics 24/7",
@@ -1111,8 +1191,8 @@
         "Lifestyle + Others"
       ],
       "status": "ON",
-      "description": "Now more than ever we need to defend our faith. Apologetics 24/7 equips you with the tools you need to build a strong foundation for defense. Learn more @ <a href='https://goodvuenetwork.com/' target='_blank'>GoodVue Network</a>"
+      "description": "Now more than ever we need to defend our faith. Apologetics 24/7 equips you with the tools you need to build a strong foundation for defense. Learn more @ <a href='https://goodvuenetwork.com/' target='_blank'>GoodVue Network</a>",
+      "id": "f841d968-f0c2-44ca-a14d-db49b035bf37"
     }
-    
   ]
 }
