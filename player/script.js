@@ -85,9 +85,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 1. Try to fetch from local JSON files first
     try {
       const [channelsRes, musicRes, moviesRes] = await Promise.all([
-        fetch("data/channels.json"),
-        fetch("data/music.json"),
-        fetch("data/movies.json"),
+        fetch("/data/channels.json"),
+        fetch("/data/music.json"),
+        fetch("/data/movies.json"),
       ]);
 
       if (!channelsRes.ok || !musicRes.ok || !moviesRes.ok) {
@@ -218,9 +218,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const localSearchPromise = (async () => {
       try {
         const responses = await Promise.all([
-          fetch("data/channels.json"),
-          fetch("data/music.json"),
-          fetch("data/movies.json"),
+          fetch("/data/channels.json"),
+          fetch("/data/music.json"),
+          fetch("/data/movies.json"),
         ]);
 
         const [channelsData, musicData, moviesData] = await Promise.all(
