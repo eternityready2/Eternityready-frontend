@@ -137,9 +137,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const player = document.getElementById("video-player");
     const titleElement = document.getElementById("video-title");
     const authorElement = document.getElementById("video-author");
-    const descriptionElement = document.getElementById("video-description");
+    //const descriptionElement = document.getElementById("video-description");
 
-    if (!video || !player || !titleElement || !descriptionElement) {
+    if (!video || !player || !titleElement ) {
       if (titleElement) titleElement.textContent = "Media not found.";
       console.error("DOM elements or media data not found.");
       return;
@@ -169,6 +169,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (mediaId) {
       const mediaData = await fetchMediaData(mediaId);
+      console.log(mediaData);
       renderVideo(mediaData);
     } else {
       const titleElement = document.getElementById("video-title");
