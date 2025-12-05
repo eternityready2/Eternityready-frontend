@@ -136,11 +136,26 @@
 
       </div>
     </main>
+    <eternity-footer></eternity-footer />
     <script src="/lib/constants.js"></script>
     <script src="/lib/session.js"></script>
     <script src="/lib/toast.js"></script>
     <script src="/lib/utils.js"></script>
     <script src="/lib/eternityHeader.js"></script>
     <script src="/lib/eternityFooter.js"></script>
-    <script src="./script.js"></script>
+    <script>
+      function resizeMain() {
+        const header = document.getElementsByTagName('eternity-header')[0];
+        const main = document.getElementsByTagName('main')[0];
+
+        const vh = window.innerHeight;
+        const headerHeight = header.offsetHeight;
+
+        main.style.minHeight = (vh - headerHeight) + 'px';
+      }
+
+      window.addEventListener('load', resizeMain);
+      window.addEventListener('resize', resizeMain);
+    </script>
+
 </body>

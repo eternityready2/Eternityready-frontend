@@ -44,7 +44,6 @@ main {
     padding: 2.5rem 2.5rem 0rem 2.5rem;
     display: flex;
     column-gap: 1.5rem;
-    flex: 1;
   }
 
   .content-to-play {
