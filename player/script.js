@@ -137,9 +137,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const player = document.getElementById("video-player");
     const titleElement = document.getElementById("video-title");
     const authorElement = document.getElementById("video-author");
+    const descriptionElement = document.getElementById("video-description");
     //const descriptionElement = document.getElementById("video-description");
 
-    if (!video || !player || !titleElement ) {
+    if (!video || !player || !titleElement || !descriptionElement) {
       if (titleElement) titleElement.textContent = "Media not found.";
       console.error("DOM elements or media data not found.");
       return;

@@ -28,48 +28,49 @@
 <body>
     <eternity-header></eternity-header>
     <main>
-      <div class="content-to-play">
-        <div
-            class="video"
-            style="position: relative;"
-        >
-            <iframe
-              id="video-player"
-              style="
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                border-radius: 16px;
-              "
-              src="https://www.youtube.com/embed/-bBzIgIaPS4"
-              frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen
-            ></iframe>
-        </div>
-        <div class="info">
-          <h1 id="video-title">1940's Jazz Classics [Jazz, Jazz Classics, Smooth Jazz, Vintage Jazz]</h1>
-          <div>
-            <img
-                class="author-picture"
-                src="https://yt3.ggpht.com/Lc88L_nRkAh5zz0LWZFsxqgkCEbtvPCyENXNpjhpX7S86LZMdI2C6M0BbxCgQ6BJjjQI-99pQA=s88-c-k-c0x00ffffff-no-rj"
-            />
+      <div id="content-to-play" class="content-to-play">
+        <div id="player-area">
+          <div
+              class="video"
+              style="position: relative;"
+          >
+              <iframe
+                id="video-player"
+                style="
+                  position: absolute;
+                  top: 0;
+                  left: 0;
+                  width: 100%;
+                  height: 100%;
+                  border-radius: 16px;
+                "
+                src="https://www.youtube.com/embed/-bBzIgIaPS4"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              ></iframe>
+          </div>
+          <div class="info">
+            <h1 id="video-title">1940's Jazz Classics [Jazz, Jazz Classics, Smooth Jazz, Vintage Jazz]</h1>
             <div>
-              <h2 id="video-author" class="author-name">PLAYaudio - Smooth Jazz and more</h2>
-              <h3 class="author-subscribers">0 Subscribers</h3>
+              <img
+                  class="author-picture"
+                  src="https://yt3.ggpht.com/Lc88L_nRkAh5zz0LWZFsxqgkCEbtvPCyENXNpjhpX7S86LZMdI2C6M0BbxCgQ6BJjjQI-99pQA=s88-c-k-c0x00ffffff-no-rj"
+              />
+              <div>
+                <h2 id="video-author" class="author-name">PLAYaudio - Smooth Jazz and more</h2>
+                <h3 class="author-subscribers">0 Subscribers</h3>
+              </div>
+              <button class="subscribe-button">Subscribe</button>
             </div>
-            <button class="subscribe-button">Subscribe</button>
           </div>
         </div>
-        <!---
-        <div>
-          <h1 id="video-title">Loading Video...</h1>
-          <h3 id="video-author"></h3>
-          <p id="video-description"></p>
+        <div class="description">
+          <h1>0 Views - 1 Year ago</h1>
+          <p id="video-description">
+          In the early 1940s in jazz, bebop emerged, led by Charlie Parker, Dizzy Gillespie, Thelonious Monk and others. It helped to shift jazz from danceable popular music towards a more challenging "musician's music." Enjoy our selection of 1940's Jazz Hits:
+          </p>
         </div>
-        -->
       </div>
       <div class="content-recommended">
         <div>
@@ -143,15 +144,18 @@
     <script src="/lib/utils.js"></script>
     <script src="/lib/eternityHeader.js"></script>
     <script src="/lib/eternityFooter.js"></script>
+    <script src="./script.js"></script>
     <script>
       function resizeMain() {
         const header = document.getElementsByTagName('eternity-header')[0];
         const main = document.getElementsByTagName('main')[0];
+        const playerArea = document.getElementById('player-area');
 
         const vh = window.innerHeight;
         const headerHeight = header.offsetHeight;
 
         main.style.minHeight = (vh - headerHeight) + 'px';
+        playerArea.style.minHeight = (vh - headerHeight) + 'px';
       }
 
       window.addEventListener('load', resizeMain);
