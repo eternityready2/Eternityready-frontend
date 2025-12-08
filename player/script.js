@@ -171,7 +171,28 @@ document.addEventListener("DOMContentLoaded", async () => {
       const mediaData = await fetchMediaData(mediaId);
       console.log('mediaData:', mediaId, mediaData);
       renderVideo(mediaData);
-      publishVideo(mediaData);
+      
+      video = null;
+      try {
+        const publishedVideo = await publishVideo(mediaData);
+        console.log('Video published:', publishedVideo);
+        
+        video = await incrementVideoViews(publishedVideo.id);
+        console.log('Views incremented');
+        
+      } catch (publishError) {
+        console.warn('Publish failed (video may already exist):', publishError.message);
+        try {
+          video = await incrementVideoViews(mediaData.id || mediaId);
+        } catch (viewError) {
+          console.error('Views increment failed:', viewError);
+        }
+      }
+
+      if (video) {
+        document.getElementsByClassName("views")[0].textContent = `${video.views} Views`
+      }
+
     } else {
       const titleElement = document.getElementById("video-title");
       if (titleElement) {
@@ -564,3 +585,23 @@ async function publishVideo(videoData, endpoint) {
     throw error;
   }
 }
+
+async function incrementVideoViews(id) {
+  const body = {id: id};
+
+  const response = await fetch(`${API_BASE_URL}/api/increment-views`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    const err = await response.json();
+    throw new Error(err.message || 'Failed to increment views');
+  }
+
+  const data = await response.json();
+  console.log('Views incremented:', data.video.views);
+  return data.video;
+}
+
