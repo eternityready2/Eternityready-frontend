@@ -143,6 +143,7 @@ main {
 
   .content-recommended a > .aside-picture {
     flex: 1;
+    aspect-ratio: 16/9;
   }
   
   .content-recommended a > .aside-picture img {
