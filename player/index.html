@@ -92,8 +92,7 @@
         const vh = window.innerHeight;
         const headerHeight = header.offsetHeight;
 
-        main.style.minHeight = (vh - headerHeight) + 'px';
-        playerArea.style.minHeight = (vh - headerHeight) + 'px';
+        playerArea.style.minHeight = (vh - headerHeight - 40) + 'px';
       }
 
       window.addEventListener('load', resizeMain);
