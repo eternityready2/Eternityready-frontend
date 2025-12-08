@@ -17,9 +17,6 @@ function debounce(func, delay) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  // --- GLOBAL CONFIG ---
-  const API_BASE_URL = "https://api.eternityready.com/";
-
   // =======================================================================
   // --- VIDEO PLAYER LOGIC ---
   // =======================================================================
@@ -52,12 +49,14 @@ document.addEventListener("DOMContentLoaded", async () => {
    */
   function normalizeDataForPlayer(item, type) {
     const normalized = {
+      id: item.id,
       title: item.title || item.name || "Title Unavailable",
       description: item.description || "",
       author: item.author || "Unknown Source", // Default if no author
-      embedUrl: item.embed,
+      embedCode: item.embed,
       sourceType: "unknown",
       videoId: null,
+      thumbnailUrl: item.logo || item.thumbnail || null,
     };
 
     if (
@@ -68,9 +67,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       normalized.videoId = parts.pop();
       normalized.sourceType = "youtube";
     } else if (item.embed) {
-      normalized.sourceType = "iframe";
+      normalized.sourceType = "embed";
     }
-
     return normalized;
   }
 
@@ -117,6 +115,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (foundItem) {
         console.log(`Media found locally in ${itemType}s.json`);
+        console.log('foundItem', foundItem);
         return normalizeDataForPlayer(foundItem, itemType);
       }
     } catch (e) {
@@ -148,8 +147,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (video.sourceType === "youtube" && video.videoId) {
       player.src = `https://www.youtube.com/embed/${video.videoId}?autoplay=1`;
-    } else if (video.sourceType === "iframe" && video.embedUrl) {
-      player.src = video.embedUrl;
+    } else if (video.sourceType === "embed" && video.embedCode) {
+      player.src = video.embedCode;
     } else {
       console.error("Unknown video type or missing embed URL:", video);
       titleElement.textContent = "Could not load this media.";
@@ -170,8 +169,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (mediaId) {
       const mediaData = await fetchMediaData(mediaId);
-      console.log(mediaData);
+      console.log('mediaData:', mediaId, mediaData);
       renderVideo(mediaData);
+      publishVideo(mediaData);
     } else {
       const titleElement = document.getElementById("video-title");
       if (titleElement) {
@@ -289,7 +289,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Deduplicate results based on item ID
     const uniqueResults = Array.from(
-      new Map(combinedResults.map((item) => [item.id, item])).values()
+      new Map(combinedResults.map((item) => [item.mediaId ?? item.id, item])).values()
     );
 
     return uniqueResults;
@@ -497,3 +497,70 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   initializeGeneralUI();
 });
+
+
+async function publishVideo(videoData, endpoint) {
+  const query = `
+    mutation CreateVideo($input: VideoCreateInput!) {
+      createVideo(data: $input) {
+        id
+        sourceType
+        youtubeUrl
+        title
+        description
+        author
+        isPublic
+        featured
+        highlight
+        categories {
+          id
+          name
+        }
+      }
+    }
+  `;
+
+  const variables = {
+    input: {
+      sourceType: videoData.sourceType || "youtube",
+      youtubeUrl: videoData.youtubeUrl || null,
+      embedCode: videoData.embedCode || null,
+      title: videoData.title || null,
+      description: videoData.description || null,
+      author: videoData.author || null,
+      isPublic: videoData.isPublic !== undefined ? videoData.isPublic : true,
+      featured: videoData.featured || false,
+      highlight: videoData.highlight || false,
+      thumbnailUrl: videoData.thumbnailUrl || null,
+      mediaId: videoData.id,
+
+      // Auto-generated fields (leave null/undefined)
+      verificationMessage: "",
+      isNew: false,
+      isRestricted: false
+    }
+  };
+
+  console.log('variables', variables);
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/graphql`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ query, variables })
+    });
+
+    const result = await response.json();
+    
+    if (result.errors) {
+      throw new Error(`GraphQL Errors: ${JSON.stringify(result.errors)}`);
+    }
+
+    return result.data.createVideo;
+  } catch (error) {
+    console.error('Error creating video:', error);
+    throw error;
+  }
+}
