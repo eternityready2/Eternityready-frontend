@@ -135,26 +135,30 @@ main {
     row-gap: 0.5rem;
   }
   
-  .content-recommended > div {
+  .content-recommended a {
     display: flex;
     column-gap: 0.5rem;
+    text-decoration: none;
   }
 
-  .content-recommended > div > .aside-picture {
+  .content-recommended a > .aside-picture {
     flex: 1;
   }
   
-  .content-recommended > div > .aside-picture img {
+  .content-recommended a > .aside-picture img {
     max-width: 100%;
-    height: auto;
+    height: 100%;
     display: block;
+    object-fit: cover;
+    aspect-ratio: 16/9;
+    border-radius: 0.5rem;
   }
 
-  .content-recommended > div .aside-info {
+  .content-recommended a .aside-info {
     flex: 1.4;
   }
 
-  .content-recommended > div > div .aside-title {
+  .content-recommended a > div .aside-title {
     color: white;
     font-family: "Roboto", "Arial", sans-serif;
     font-size: 0.875rem;
@@ -163,8 +167,8 @@ main {
     margin: 0;
   }
 
-  .content-recommended > div > div .aside-name,
-  .content-recommended > div > div .aside-views-and-date {
+  .content-recommended a > div .aside-name,
+  .content-recommended a > div .aside-views-and-date {
     font-family: "Roboto", "Arial", sans-serif;
     font-size: 0.75rem;
     line-height: 1.125rem;

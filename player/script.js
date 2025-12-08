@@ -26,6 +26,8 @@ document.addEventListener("DOMContentLoaded", async () => {
    * @param {string} videoId The ID of the video.
    * @returns {Promise<object|null>} The video data or null.
    */
+
+  let allMedia;
   async function fetchVideoFromAPI(videoId) {
     try {
       const url = `${API_BASE_URL}api/video/${videoId}`;
@@ -57,6 +59,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       sourceType: "unknown",
       videoId: null,
       thumbnailUrl: item.logo || item.thumbnail || null,
+      categories: item.categories
     };
 
     if (
@@ -95,6 +98,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       const channelsData = await channelsRes.json();
       const musicData = await musicRes.json();
       const moviesData = await moviesRes.json();
+
+      allMedia = [
+        ...channelsData.channels,
+        ...musicData.music,
+        ...moviesData.movies
+      ];
 
       let foundItem = null;
       let itemType = "";
@@ -171,6 +180,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const mediaData = await fetchMediaData(mediaId);
       console.log('mediaData:', mediaId, mediaData);
       renderVideo(mediaData);
+      renderRecommendations(mediaData, allMedia);
       
       video = null;
       try {
@@ -605,3 +615,51 @@ async function incrementVideoViews(id) {
   return data.video;
 }
 
+
+function renderRecommendations(currentItem, allMedia) {
+  const itemCategories = currentItem.categories || currentItem.genres || [];
+  if (itemCategories.length === 0) return;
+
+  const currentTitle = currentItem.name || currentItem.title;
+
+  const recommendations = allMedia
+    .filter((media) => {
+      // 1. Não recomendar o próprio item que está aberto
+      const mediaTitle = media.name || media.title;
+      if (mediaTitle === currentTitle) {
+        return false;
+      }
+
+      // 2. Verificar se há pelo menos uma categoria em comum
+      const mediaCategories = media.categories || media.genres || [];
+      return itemCategories.some((cat) => mediaCategories.includes(cat));
+    })
+    // Limita o número de recomendações (ex: 6) e embaralha para variedade
+    .sort(() => 0.5 - Math.random())
+    .slice(0, 6);
+
+  console.log('recommendations', recommendations);
+
+  const recommendationsContainer = document.getElementsByClassName("content-recommended")[0];
+
+  if (recommendations.length > 0) {
+    recommendations.forEach((recItem) => {
+      let container = document.createElement("div");
+      container.innerHTML = `
+        <a href="${ETERNITY_BASE_URL}/player?q=${recItem.id}">
+        <div class="aside-picture">
+          <img
+            src="${recItem.thumbnail || recItem.logo}"
+          />
+        </div>
+        <div class="aside-info">
+          <h2 class="aside-title">${recItem.title}</h2>
+          <h3 class="aside-name">Unknown Author</h3>
+          <h3 class="aside-views-and-date">1.3M views - 6 months ago</h3>
+        </div>
+        </a>
+      `
+      recommendationsContainer.appendChild(container);
+    });
+  }
+}
