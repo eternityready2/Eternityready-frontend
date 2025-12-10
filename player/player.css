@@ -9,182 +9,292 @@
 
 html body {
   margin: 0;
-  font-family: "Poppins", sans-serif;
+  font-family: "Roboto", "Arial", sans-serif;
   background-color: #060d17;
   color: #ffffff;
   min-height: 100vh;
   line-height: 1.5;
-  display: flex;
-  flex-direction: column;
 }
 
-/* Player css */
-
-.content-to-play .info h1 {
+span, button {
   font-family: "Roboto", "Arial", sans-serif;
-  font-size: 1.25rem;
-  line-height: 1.75rem;
-  font-weight: 700;
-  white-space: normal;
-  margin: 0;
 }
 
-.content-to-play .info > div {
-  display: flex;
-  flex-direction: row;
-  column-gap: 1rem;
-  margin-top: 0.75rem;
-}
-
-.content-to-play .info div .author-picture {
-  width: 2.5rem;
-  height: 2.5rem;
+a.video {
   display: block;
-  border-radius: 100%;
-}
-
-.content-toplay .info div div {
-  display: flex;
-  flex-direction: column;
-}
-.content-to-play .info div .author-name {
-  font-family: "Roboto", "Arial", sans-serif;
-  font-size: 1rem;
-  line-height: 1.375rem;
-  font-weight: 500;
-  margin: 0;
-}
-
-.content-to-play .info div .author-subscribers {
-  font-family: "Roboto", "Arial", sans-serif;
-  font-size: 0.75rem;
-  line-height: 1.125rem;
-  font-weight: 400;
-  margin: 0;
-  color: #aaa;
-}
-
-.content-to-play .info div .subscribe-button {
-  font-family: "Roboto", "Arial", sans-serif;
-  padding: 0 1rem;
-  height: 2.25rem;
-  font-size: 0.875rem;
-  line-height: 2.25rem;
-  border-radius: 1.125rem;
-  background-color: white;
-  color: black;
-  border: none;
-  font-weight: 500;
   cursor: pointer;
 }
 
-.content-to-play .info div .subscribe-button:hover {
-  background-color: #d9d9d9;
-}
-
-.content-recommended a {
-  display: flex;
-  column-gap: 0.5rem;
-  text-decoration: none;
-  flex-direction: column;
-}
-
-.content-recommended a > .aside-picture {
-  flex: 1;
-  aspect-ratio: 16/9;
-}
-
-.content-recommended a > .aside-picture img {
-  max-width: 100%;
-  height: 100%;
+.video img,
+.profile-image img,
+main.desktop .comments .comment .image img {
   display: block;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  aspect-ratio: 16/9;
-  border-radius: 0.5rem;
 }
 
-.content-recommended a .aside-info {
-  flex: 1.4;
-  padding: 1rem;
-}
-
-.content-recommended a > div .aside-title {
-  color: white;
-  font-family: "Roboto", "Arial", sans-serif;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  font-weight: 500;
-  margin: 0;
-}
-
-.content-recommended a > div .aside-name,
-.content-recommended a > div .aside-views-and-date {
-  font-family: "Roboto", "Arial", sans-serif;
-  font-size: 0.75rem;
-  line-height: 1.125rem;
-  font-weight: 400;
-  margin: 0;
-  color: #aaa;
-}
-
-.content-to-play .description {
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 0.875rem;
-  border-radius: 0.875rem;
-}
-
-.content-to-play .description h1,
-.content-to-play .description p {
-  font-family: "Roboto", "Arial", sans-serif;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  margin: 0;
-}
-
-.content-to-play .description h1, {
-  font-weight: 400;
-}
-
-.content-to-play .description p, {
-  font-weight: 400;
+.profile-image img,
+main.desktop .comments .comment .image img {
+  border-radius: 100%;
 }
 
 /* Xs */
-main {
+main.desktop {
+  display: none;
+}
+
+main.mobile {
   padding: 0rem;
   display: flex;
   column-gap: 1.5rem;
   flex-direction: column;
 }
 
-.content-to-play {
-  flex: 2.15;
-  display: flex;
-  flex-direction: column;
+main.mobile .video {
+  aspect-ratio: 16/9;
+  width: 100%;
+  background-color: gray;
 }
 
-#player-area {
+main.mobile > .video {
+  position: sticky;
+  top: 0;
+}
+
+main.mobile .info {
+  padding: 1rem;
   display: flex;
   flex-direction: column;
   row-gap: 1rem;
 }
 
-.content-to-play .video {
-  aspect-ratio: 16/9;
+
+#title-name-views-and-more {
+  display: flex;
+  justify-content: space-between;
   width: 100%;
 }
 
-.content-to-play .info {
-  padding: 0rem 1rem;
-} 
+main.mobile .video-title {
+  font-size: 1.125rem;
+  line-height: 1.625rem;
+  font-weight: 500;
+  margin: 0;
+  color: #f1f1f1;
+}
 
-.content-recommended {
+main.mobile #views-date-more .views::after {
+  content: "\00B7";
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
+}
+
+main.mobile .views, main.mobile .date {
+  color: #aaa;
+}
+
+main.mobile .views, main.mobile .date, main.mobile .more {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  margin: 0;
+}
+
+main.mobile .more {
+  margin-left: 0.25rem;
+}
+
+
+#profile-and-subscribe {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profile {
+  display: flex;
+  flex-direction: row;
+  column-gap: 0.75rem;
+  align-items: center;
+}
+
+.profile-image {
+  width: 2.125rem;
+  height: 2.125rem;
+  border-radius: 100%;
+}
+
+.profile-name {
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.profile-subscribers {
+  font-size: 0.75rem;
+  margin: 0;
+}
+
+.profile-subscribers {
+  color: #aaa;
+}
+
+button.subscribe {
+  font-family: inherit;
+  border: none;
+  padding: 0 1rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 2.25rem;
+  background-color: white;
+  color: black;
+  border-radius: 1.125rem;
+  height: 2.25rem;
+  cursor: pointer;
+}
+
+button.subscribe:hover {
+  background-color: #d9d9d9;
+}
+
+.action-buttons {
+  display: flex;
+  column-gap: 0.5rem;
+}
+
+.action-buttons #like-and-dislike {
+  background-color: #272727;
+  display: flex;
+  flex-direction: row;
+  cursor: pointer;
+  border-radius: 1rem;
+}
+
+.action-buttons .like, .action-buttons .dislike {
+  background-color: #272727;
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.325rem 0.65rem;
+}
+
+.action-buttons .like {
+  border-radius: 1rem 0rem 0rem 1rem;
+}
+
+.action-buttons .dislike {
+  border-radius: 0rem 1rem 1rem 0rem;
+}
+
+.action-buttons .like:hover, .action-buttons .dislike:hover {
+  filter: brightness(150%);
+}
+
+.action-buttons .like .material-icons,
+.action-buttons .dislike .material-icons {
+  font-size: 1.5rem;
+}
+
+.action-buttons #like-and-dislike hr {
+  margin: 0;
+}
+
+.action-buttons button.share,
+.action-buttons button.report {
+  background-color: #272727;
+  border: none;
+  font-size: 1rem;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1rem;
+  padding: 0.325rem 0.65rem;
+  cursor: pointer;
+}
+
+.action-buttons button.share:hover,
+.action-buttons button.report:hover {
+  filter: brightness(150%);
+}
+
+.action-buttons button.share .material-symbols-outlined,
+.action-buttons button.report .material-symbols-outlined {
+  font-size: 1.5rem;
+  margin-right: 0.25rem;
+}
+
+main.mobile .comments {
+  background-color: #272727;
+  padding: 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25rem;
   display: flex;
   flex-direction: column;
-  flex: 1;
   row-gap: 0.5rem;
-}  
+}
 
+main.mobile #number-of-comments {
+  color: #aaa;
+}
+
+main.mobile .comment {
+  display: flex;
+  column-gap: 0.675rem;
+  align-items: center;
+}
+
+main.mobile .comments .comment .profile-image {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+main.mobile .comments .comment .profile-text {
+  font-weight: 400;
+}
+
+main.mobile .recommendation .info .profile-image {
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+}
+
+main.mobile .recommendation .info {
+  padding: 0.875rem;
+  display: flex;
+  flex-direction: row;
+  column-gap: 0.75rem;
+}
+
+main.mobile #title-name-views .title {
+  font-size: 0.875rem;
+  font-weight: normal;
+  line-height: 1.25;
+}
+
+main.mobile #title-name-views {
+  display: flex;
+  flex-direction: column;
+}
+
+main.mobile #title-name-views #name-and-views .profile-name,
+main.mobile #title-name-views #name-and-views .views {
+  font-size: 0.75rem;
+  color: #aaa;
+}
+
+main.mobile #title-name-views #name-and-views .profile-name::after {
+  content: "\2022";
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
+}
 
 /* Small devices (landscape phones, 576px and up) */
 @media (min-width: 576px) {
@@ -192,47 +302,291 @@ main {
 
 /* Medium devices (tablets, 768px and up) */
 @media (min-width: 768px) {
-  main {
+  main.desktop {
+    display: block;
+  }
+
+  main.mobile {
+    display: none;
+  }
+
+  main.desktop {
     padding: 2.5rem 2.5rem 0rem 2.5rem;
     display: flex;
     column-gap: 1.5rem;
     flex-direction: row;
   }
 
-  .content-to-play {
+  main.desktop #player-all {
     flex: 2.15;
     display: flex;
     flex-direction: column;
   }
 
-  .content-to-play .video {
-    flex: 5.15 5.15 0;
-    aspect-ratio: auto;
-  }
-
-  .content-to-play .info {
-    flex: 1 1 0;
-  } 
-
-  .content-recommended {
+  main.desktop #player-and-info {
     display: flex;
     flex-direction: column;
+  }
+
+  main.desktop #player-and-info .video {
+    flex: 5.15;
+    position: relative;
+  }
+
+  main.desktop #player-and-info .info {
     flex: 1;
-    row-gap: 0.5rem;
-  }  
+    padding-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.75rem;
+  }
 
+  main.desktop .recommendations {
+    flex: 1;
+  }
 
-  .content-recommended a {
+  main.desktop .profile-image {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  main.desktop .video-title {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  main.desktop .info #profile-subscribe-and-action-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  main.desktop #profile-name-and-subscribers {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #profile-name-and-subscribers .profile-name {
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.375rem;
+  }
+
+  main.desktop .subscribe {
+    margin-left: 1.5rem;
+  }
+
+  main.desktop .recommendations {
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.75rem;
+  }
+  main.desktop .recommendations .recommendation {
+    display: flex;
+    flex-direction: row;
+    column-gap: 0.5rem;
+    width: 100%;
+  }
+
+  main.desktop .recommendations .recommendation .video {
+    flex: 1;
+    width: 0;
+    min-width: 0;
+    height: auto;
+
+    aspect-ratio: 16/9;
+    border-radius: 0.5rem;
+    background-color: gray;
+  }
+
+  main.desktop .recommendations .recommendation .video img {
+    border-radius: 0.5rem;
+  }
+
+  main.desktop .recommendations .recommendation .info {
+    flex: 1.35;
+    width: 0;
+    min-width: 0;
+
+    display: flex;
     flex-direction: row;
   }
 
-  .content-recommended a .aside-info {
-    padding: 0rem;
+  main.desktop .recommendations .recommendation .info > div {
+    display: flex;
+    flex-direction: column;
   }
 
-  .content-to-play .info {
-    padding: 0rem 0rem;
-  } 
+  main.desktop .recommendations .recommendation .video-title {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500rem;
+  }
+
+  main.desktop .recommendations .recommendation .profile-name,
+  main.desktop .recommendations .recommendation .views,
+  main.desktop .recommendations .recommendation .video-date
+  {
+    color: #aaa;
+    font-size: 0.75rem;
+    line-height: 1.125rem;
+    font-weight: 400;
+  }
+
+  main.desktop .recommendations .recommendation .material-symbols-outlined {
+    cursor: pointer;
+  }
+
+  main.desktop .recommendations .recommendation .video-date::before {
+    content: "\2022";
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
+  }
+
+  main.desktop .comments {
+    display: flex;
+    flex-direction: column;
+    row-gap: 1.25rem;
+  }
+
+  main.desktop .comments #comments-number-and-sort {
+    display: flex;
+    flex-direction: row;
+    column-gap: 2rem;
+    align-items: center;
+  }
+
+  main.desktop .comments span {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    font-weight: 700;
+  }
+
+  main.desktop .comments #sort-comments {
+    display: flex;
+    column-gap: 0.25rem;
+    cursor: pointer;
+  }
+
+  main.desktop .comments #sort-comments span {
+    font-size: 0.875rem;
+    line-height: 1.375rem;
+    font-weight: 500;
+  }
+
+  main.desktop .comments #sort-comments span.material-symbols-outlined {
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: 1.5rem;
+  }
+
+  main.desktop .comments #add-comment {
+    display: flex;
+    flex-direction: row;
+    column-gap: 0.875rem;
+  }
+
+
+  main.desktop .comments #add-comment .profile-image {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  main.desktop .comments #add-comment span {
+    border-bottom: 1px solid #333;
+    color: #aaa;
+    font-size: 0.875rem;
+    line-height: 1.375rem;
+    font-weight: 400;
+    width: 100%;
+  }
+
+  main.desktop .comments .comment {
+    display: flex;
+    column-gap: 1rem;
+  }
+
+  main.desktop .comments #name-and-date {
+    display: flex;
+    column-gap: 0.5rem;
+  }
+
+  main.desktop .comments #name-and-date .name {
+    font-size: 0.8125rem;
+    line-height: 1.125rem;
+    font-weight: 500;
+  }
+  
+  main.desktop .comments #name-and-date .date {
+    font-size: 0.75rem;
+    line-height: 1.125rem;
+    font-weight: 400;
+    color: #aaa;
+  }
+
+  main.desktop .comments .comment .text {
+    font-size: 0.75rem;
+    line-height: 1.25rem;
+    font-weight: 400;
+  }
+
+  main.desktop .comments .comment .image {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 100%;
+  }
+
+  main.desktop .comments .comment #like-and-dislike {
+    display: flex;
+    column-gap: 0.5rem;
+  }
+
+  main.desktop .comments .comment #like-and-dislike button {
+    border: none;
+    background-color: inherit;
+    color: white;
+    cursor: pointer;
+  }
+
+  main.desktop .comments .comment #like-and-dislike span {
+    font-size: 0.75rem;
+    line-height: 1.25rem;
+    font-weight: 400;
+  }
+
+  main.desktop .comments .comment .reply {
+    font-weight: 500;
+    line-height: 2rem;
+  }
+
+  main.desktop .description {
+    background-color: #272727;
+    border-radius: 1rem;
+    padding: 0.75rem;
+    margin-bottom: 1.25rem;
+    min-height: 4rem;
+  }
+
+  main.desktop .description p {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 400;
+  }
+
+  main.desktop .description .views,
+  main.desktop .description .date
+  {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+  }
+
+  main.desktop .description .date {
+    margin-left: 0.75rem;
+  }
 }
 
 /* Large devices (desktops, 992px and up) */

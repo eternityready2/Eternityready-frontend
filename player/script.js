@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const normalized = {
       id: item.id,
       title: item.title || item.name || "Title Unavailable",
-      description: item.description || "",
+      description: item.description || "No description provided for the given media.",
       author: item.author || "Unknown Source", // Default if no author
       embedCode: item.embed,
       sourceType: "unknown",
@@ -142,31 +142,51 @@ document.addEventListener("DOMContentLoaded", async () => {
    * @param {object} video The video data object.
    */
   function renderVideo(video) {
-    const player = document.getElementById("video-player");
+    const players = document.querySelectorAll("video-player");
     const titleElement = document.getElementById("video-title");
     const authorElement = document.getElementById("video-author");
     const descriptionElement = document.getElementById("video-description");
-    //const descriptionElement = document.getElementById("video-description");
 
+    /*
     if (!video || !player || !titleElement || !descriptionElement) {
       if (titleElement) titleElement.textContent = "Media not found.";
       console.error("DOM elements or media data not found.");
       return;
     }
+    */
+
+
+    const mobile = document.querySelector('.mobile');
+    const desktop = document.querySelector('.desktop');
+    let playerSrc;
 
     if (video.sourceType === "youtube" && video.videoId) {
-      player.src = `https://www.youtube.com/embed/${video.videoId}?autoplay=1`;
-    } else if (video.sourceType === "embed" && video.embedCode) {
-      player.src = video.embedCode;
-    } else {
+      playerSrc = `https://www.youtube.com/embed/${video.videoId}?autoplay=1`;
+    }
+
+    else if (video.sourceType === "embed" && video.embedCode) {
+      playerSrc = video.embedCode;
+    }
+
+    else {
       console.error("Unknown video type or missing embed URL:", video);
-      titleElement.textContent = "Could not load this media.";
       return;
     }
 
-    titleElement.textContent = video.title;
-    authorElement.textContent = video.author || "";
+    mobile.querySelector('.video-player').src = playerSrc;
+    desktop.querySelector('.video-player').src = playerSrc;
+
+    mobile.querySelector('.video-title').textContent = video.title;
+    desktop.querySelector('.video-title').textContent = video.title;
+
+    mobile.querySelector('.profile-name').textContent = video.author || "Unknown author";
+    desktop.querySelector('.profile-name').textContent = video.author || "Unknown author";
+
+    desktop.querySelector('.description p').innerHTML = video.description.replace(/\n/g, "<br />");
+
+    /*
     descriptionElement.innerHTML = video.description.replace(/\n/g, "<br />");
+    */
   }
 
   /**
@@ -176,6 +196,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const params = new URLSearchParams(window.location.search);
     const mediaId = params.get("q");
 
+    console.log('params', params);
     if (mediaId) {
       const mediaData = await fetchMediaData(mediaId);
       console.log('mediaData:', mediaId, mediaData);
@@ -200,7 +221,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       if (video) {
-        document.getElementsByClassName("views")[0].textContent = `${video.views} Views`
+        const mobile = document.querySelector('.mobile');
+        const desktop = document.querySelector('.desktop');
+        mobile.querySelector(".views").textContent = `${video.views} Views`;
+        desktop.querySelector(".views").textContent = `${video.views} Views`;
       }
 
     } else {
@@ -518,9 +542,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Decides which script parts to initialize based on page elements.
   // =======================================================================
 
-  if (document.getElementById("video-player")) {
-    initializePlayerPage();
-  }
+  initializePlayerPage();
 
   if (document.getElementById("search-input")) {
     initializeSearch();
@@ -616,7 +638,7 @@ async function incrementVideoViews(id) {
 }
 
 
-function renderRecommendations(currentItem, allMedia) {
+async function renderRecommendations(currentItem, allMedia) {
   const itemCategories = currentItem.categories || currentItem.genres || [];
   if (itemCategories.length === 0) return;
 
@@ -636,30 +658,63 @@ function renderRecommendations(currentItem, allMedia) {
     })
     // Limita o número de recomendações (ex: 6) e embaralha para variedade
     .sort(() => 0.5 - Math.random())
-    .slice(0, 6);
+    .slice(0, 8);
 
   console.log('recommendations', recommendations);
+  if (recommendations.length <= 0) { return; }
 
-  const recommendationsContainer = document.getElementsByClassName("content-recommended")[0];
+  const mobile = document.querySelector('.mobile').querySelector('.recommendations');
+  const desktop = document.querySelector('.desktop').querySelector('.recommendations');
 
-  if (recommendations.length > 0) {
-    recommendations.forEach((recItem) => {
-      let container = document.createElement("div");
-      container.innerHTML = `
-        <a href="${ETERNITY_BASE_URL}/player?q=${recItem.id}">
-        <div class="aside-picture">
+  recommendations.forEach((recItem) => {
+    let mobileContainer = document.createElement("div");
+    mobileContainer.className="recommendation"
+    mobileContainer.innerHTML = `
+      <a class="video" href="${ETERNITY_BASE_URL}/player?q=${recItem.id}">
+        <img
+          src="${recItem.thumbnail || recItem.logo}"
+        />
+      </a>
+      <div class="info">
+        <div class="profile-image" href="${ETERNITY_BASE_URL}/player?q=${recItem.id}">
           <img
             src="${recItem.thumbnail || recItem.logo}"
           />
         </div>
-        <div class="aside-info">
-          <h2 class="aside-title">${recItem.title}</h2>
-          <h3 class="aside-name">Unknown Author</h3>
-          <h3 class="aside-views-and-date">1.3M views - 6 months ago</h3>
+        <div id="title-name-views-and-more">
+          <div id="title-name-views">
+            <span class="title">${recItem.title}</span>
+            <div id="name-and-views">
+              <span class="profile-name">Unknown Author</span><span class="views">1.3M views</span>
+            </div>
+          </div>
+          <span class="material-symbols-outlined">more_vert</span>
         </div>
+      </div>
+    `
+    mobile.appendChild(mobileContainer);
+
+    let desktopContainer = document.createElement("div");
+    desktopContainer.className="recommendation"
+    desktopContainer.innerHTML = `
+      <div class="recommendation">
+        <a class="video" href="${ETERNITY_BASE_URL}/player?q=${recItem.id}">
+          <img
+            src="${recItem.thumbnail || recItem.logo}"
+          />
         </a>
-      `
-      recommendationsContainer.appendChild(container);
-    });
-  }
+        <div class="info">
+          <div>
+            <span class="video-title">${recItem.title}</span>
+            <span class="profile-name">Unknown Author</span>
+            <div>
+              <span class="views">1.3M views</span><span class="video-date">2 Years ago</span>
+            </div>
+          </div>
+          <span class="material-symbols-outlined">more_vert</span>
+        </div>
+      </div>
+    `
+    desktop.appendChild(desktopContainer);
+  });
 }

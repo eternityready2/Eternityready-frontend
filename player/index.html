@@ -3,6 +3,8 @@
     <link rel="stylesheet" href="./player.css" />
     <link rel="stylesheet" href="/lib/toast.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Symbols">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
     <title>Eternity Ready | Player </title>
     <!-- Icon config -->
     <link
@@ -27,53 +29,222 @@
 </head>
 <body>
     <eternity-header></eternity-header>
-    <main>
-      <div id="content-to-play" class="content-to-play">
-        <div id="player-area">
-          <div
-              class="video"
-              style="position: relative;"
-          >
-              <iframe
-                id="video-player"
-                style="
-                  position: absolute;
-                  top: 0;
-                  left: 0;
-                  width: 100%;
-                  height: 100%;
-                  border-radius: 16px;
-                  display: block;
-                "
-                src="https://www.youtube.com/embed/-bBzIgIaPS4"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen
-              ></iframe>
+    <main hidden class="mobile">
+      <div class="video">
+        <iframe
+          class="video-player"
+          style="
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 0px;
+            display: block;
+          "
+          src="https://www.youtube.com/embed/-bBzIgIaPS4"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      </div>
+      <div class="info">
+        <div id="title-views-date-more">
+          <h1 class="video-title">Programming a first person shooter from scratch like it's 1995</h1>
+          <span class="views">1.9M views</span>
+          <span class="date">2 years ago</span>
+          <span class="more">...more</span>
+        </div>
+        <div id="profile-and-subscribe">
+          <div class="profile">
+            <div class="profile-image">
+              <img
+                  src="/profile/public/profileImage.png"
+              />
+            </div>
+            <span class="profile-name">jdh</span>
+            <span class="profile-subscribers">296K</span>
+          </div>
+          <button class="subscribe">Subscribe</button>
+        </div>
+        <div class="action-buttons">
+          <div id="like-and-dislike">
+            <button class="like">
+              <span class="material-symbols-outlined">thumb_up</span>
+              <span>0</span>
+            </button>
+            <hr>
+            <button class="dislike">
+              <span>0</span>
+              <span class="material-symbols-outlined">thumb_down</span>
+            </button>
+          </div>
+          <button class="share">
+            <span class="material-symbols-outlined">share</span>
+            <span>Share</span>
+          </button>
+
+          <button class="report">
+            <span class="material-symbols-outlined">flag</span>
+            <span>Report</span>
+          </button>
+        </div>
+        <div class="comments">
+          <div id="comments-and-number">
+            <span>Comments</span>
+            <span id="number-of-comments">1</span>
+          </div>
+          <div class="comment">
+            <div class="profile-image">
+              <img
+                  src="/profile/public/profileImage.png"
+              />
+            </div>
+            <div class="profile-text">A Very good video, well done.</div>
+          </div>
+        </div>
+      </div>
+      <div class="recommendations">
+      </div>
+    </main>
+    <main hidden class="desktop">
+      <div id="player-all">
+        <div id="player-and-info">
+          <div class="video">
+            <iframe
+              class="video-player"
+              style="
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                border-radius: 16px;
+                display: block;
+              "
+              src=""
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+            ></iframe>
           </div>
           <div class="info">
-            <h1 id="video-title">1940's Jazz Classics [Jazz, Jazz Classics, Smooth Jazz, Vintage Jazz]</h1>
-            <div>
-              <img
-                  class="author-picture"
-                  src="https://yt3.ggpht.com/Lc88L_nRkAh5zz0LWZFsxqgkCEbtvPCyENXNpjhpX7S86LZMdI2C6M0BbxCgQ6BJjjQI-99pQA=s88-c-k-c0x00ffffff-no-rj"
-              />
-              <div>
-                <h2 id="video-author" class="author-name">PLAYaudio - Smooth Jazz and more</h2>
-                <h3 class="author-subscribers">0 Subscribers</h3>
+            <h1 class="video-title">Programming a first person shooter from scratch like it's 1995</h1>
+            <div id="profile-subscribe-and-action-buttons">
+              <div id="profile-and-subscribe">
+                <div class="profile">
+                  <div class="profile-image">
+                    <img
+                        src="/profile/public/profileImage.png"
+                    />
+                  </div>
+                  <div id="profile-name-and-subscribers">
+                    <span class="profile-name">jdh</span>
+                    <span class="profile-subscribers">296K subscribers</span>
+                  </div>
+                </div>
+                <button class="subscribe">Subscribe</button>
               </div>
-              <button class="subscribe-button">Subscribe</button>
+              <div class="action-buttons">
+                <div id="like-and-dislike">
+                  <button class="like">
+                    <span class="material-symbols-outlined">thumb_up</span>
+                    <span>0</span>
+                  </button>
+                  <hr>
+                  <button class="dislike">
+                    <span>0</span>
+                    <span class="material-symbols-outlined">thumb_down</span>
+                  </button>
+                </div>
+                <button class="share">
+                  <span class="material-symbols-outlined">share</span>
+                  <span>Share</span>
+                </button>
+
+                <button class="report">
+                  <span class="material-symbols-outlined">flag</span>
+                  <span>Report</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
         <div class="description">
-          <h1 class="views">0 Views</h1>
-          <p id="video-description">
-          In the early 1940s in jazz, bebop emerged, led by Charlie Parker, Dizzy Gillespie, Thelonious Monk and others. It helped to shift jazz from danceable popular music towards a more challenging "musician's music." Enjoy our selection of 1940's Jazz Hits:
+          <span class="views">0 Views</span><span class="date">1 year ago</span>
+          <p>
+            check out https://brilliant.org/jdh for a free 30-day trial and a 20% discount on an annual premium subscription to Brilliant!
           </p>
         </div>
+        <div class="comments">
+          <div id="comments-number-and-sort">
+            <span>2 Comments</span>
+            <div id="sort-comments">
+              <span class="material-symbols-outlined">sort</span><span>Sort by</span>
+            </div>
+          </div>
+          <div id="add-comment">
+            <div class="profile-image">
+              <img
+                  src="/profile/public/profileImage.png"
+              />
+            </div>
+            <span>Add a comment...</span>
+          </div>
+          <div class="comment">
+            <div class="image">
+              <img
+                  src="/profile/public/profileImage.png"
+              />
+            </div>
+            <div>
+              <div id="name-and-date">
+                <div class="name">@test123</div>
+                <div class="date">1 year ago</div>
+              </div>
+              <div class="text">A Very good video, well done.</div>
+              <div id="like-and-dislike">
+                <button class="like">
+                  <span class="material-symbols-outlined">thumb_up</span>
+                  <span>0</span>
+                </button>
+                <button class="dislike">
+                  <span>0</span>
+                  <span class="material-symbols-outlined">thumb_down</span>
+                </button>
+                <span class="reply">Reply</span>
+              </div>
+            </div>
+          </div>
+          <div class="comment">
+            <div class="image">
+              <img
+                  src="/profile/public/profileImage.png"
+              />
+            </div>
+            <div>
+              <div id="name-and-date">
+                <div class="name">@test123</div>
+                <div class="date">1 year ago</div>
+              </div>
+              <div class="text">A Very good video, well done.</div>
+              <div id="like-and-dislike">
+                <button class="like">
+                  <span class="material-symbols-outlined">thumb_up</span>
+                  <span>0</span>
+                </button>
+                <button class="dislike">
+                  <span>0</span>
+                  <span class="material-symbols-outlined">thumb_down</span>
+                </button>
+                <span class="reply">Reply</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
       </div>
-      <div class="content-recommended">
+      <div class="recommendations">
       </div>
     </main>
     <eternity-footer></eternity-footer />
@@ -85,23 +256,46 @@
     <script src="/lib/eternityFooter.js"></script>
     <script src="./script.js"></script>
     <script>
-      function resizePlayerArea() {
-        const header = document.getElementsByTagName('eternity-header')[0];
-        const playerArea = document.getElementById('player-area');
+      function updateMainVisibility() {
+        const mobileMain = document.querySelector('main.mobile');
+        const desktopMain = document.querySelector('main.desktop');
+        const isMobile = window.innerWidth < 768;
+        mobileMain.hidden = !isMobile;
+        desktopMain.hidden = isMobile;
+      }
 
-        if (window.innerWidth < 768) {
-          playerArea.style.removeProperty("min-height")
-          return;
-        }
+      window.addEventListener('resize', updateMainVisibility);
+      window.addEventListener('load', updateMainVisibility);
+    </script>
+    <script>
+      function setStickyVideoTopMobile() {
+        const header = document.querySelector("eternity-header");
+        const stickyVideo = document.querySelector(
+          "main.mobile .video"
+        );
+        if (!header || !stickyVideo) return;
+
+        const headerHeight = header.offsetHeight;
+        stickyVideo.style.top = headerHeight + 'px';
+      }
+
+      setInterval(setStickyVideoTopMobile, 10);
+      window.addEventListener('load', setStickyVideoTopMobile);
+      window.addEventListener('resize', setStickyVideoTopMobile);
+    </script>
+    <script>
+      function resizePlayerAndInfo() {
+        const header = document.querySelector('eternity-header');
+        const playerAndInfo = document.getElementById('player-and-info');
 
         const vh = window.innerHeight;
         const headerHeight = header.offsetHeight;
 
-        playerArea.style.minHeight = (vh - headerHeight - 40) + 'px';
+        playerAndInfo.style.minHeight = (vh - headerHeight - 2.5 * 16) + 'px';
       }
 
-      window.addEventListener('load', resizePlayerArea);
-      window.addEventListener('resize', resizePlayerArea);
+      window.addEventListener('load', resizePlayerAndInfo);
+      window.addEventListener('resize', resizePlayerAndInfo);
     </script>
 
 </body>
