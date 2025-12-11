@@ -118,7 +118,7 @@ button {
 .nav-links li .on-demand-dropdown {
   display: none;
   position: absolute;
-  top: 1.5rem;
+  top: 0rem;
   left: 0;
   background-color: var(--bg-dark);
   list-style: none;
@@ -170,7 +170,7 @@ button {
 .about-us-dropdown {
   display: none;
   position: absolute;
-  top: 1.5rem;
+  top: 0rem;
   left: 0;
   background-color: var(--bg-dark);
   list-style: none;
@@ -203,7 +203,7 @@ button {
 .nav-links li .tv-channels-dropdown {
   display: none;
   position: absolute;
-  top: 1.5rem;
+  top: 0rem;
   left: 0;
   background-color: var(--bg-dark);
   list-style: none;
