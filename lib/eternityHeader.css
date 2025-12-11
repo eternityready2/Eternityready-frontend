@@ -200,7 +200,8 @@ button {
 /* ============================================= */
 /* TV Channels Dropdown */
 /* ============================================= */
-.nav-links li .tv-channels-dropdown {
+.nav-links li .tv-channels-dropdown,
+.nav-links li .affiliates-dropdown {
   display: none;
   position: absolute;
   top: 0rem;
@@ -209,28 +210,32 @@ button {
   list-style: none;
   padding: 10px 0;
   margin: 0;
-  width: 180px;
+  width: 205px;
   opacity: 0;
   transform: scale(0.95);
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.tv-channels-dropdown li {
+.tv-channels-dropdown li,
+.affiliates-dropdown li {
   padding: 1.5px 15px;
 }
 
-.tv-channels-dropdown a {
+.tv-channels-dropdown a,
+.affiliates-dropdown a {
   color: #fff;
   text-decoration: none;
   font-size: 14px;
 }
 
-.tv-channels-dropdown a:hover {
+.tv-channels-dropdown a:hover,
+.affiliates-dropdown a:hover {
   /* color: #33c3a5; */
   color: #fb2c36;
 }
 /* Base styles for the dropdown (hidden by default) */
-.tv-channels-dropdown {
+.tv-channels-dropdown,
+.affiliates-dropdown {
   display: none;
   list-style: none;
   padding: 0;
@@ -241,6 +246,7 @@ button {
 .has-arrow.open .on-demand-dropdown,
 .has-arrow.open .podcasts-dropdown,
 .has-arrow.open .tv-channels-dropdown,
+.has-arrow.open .affiliates-dropdown,
 .has-arrow.open .about-us-dropdown {
   display: block !important;
   opacity: 1;
@@ -683,7 +689,8 @@ button {
     transition: opacity 0.5s ease, transform 0.3s ease;
   }
 
-  .nav-links li .tv-channels-dropdown {
+  .nav-links li .tv-channels-dropdown,
+  .nav-links li .affiliates-dropdown {
     position: static;
     background-color: #ffffff;
     list-style: none;
@@ -715,7 +722,8 @@ button {
     font-weight: 600;
   }
 
-  .tv-channels-dropdown a {
+  .tv-channels-dropdown a,
+  .affiliates-dropdown a {
     color: #8d8d8d;
     font-size: 14px;
     padding: 5px 0px 5px 20px;
@@ -934,12 +942,14 @@ button {
   .has-arrow:hover .on-demand-dropdown,
   .has-arrow:hover .podcasts-dropdown,
   .has-arrow:hover .tv-channels-dropdown,
+  .has-arrow:hover .affiliates-dropdown,
   .has-arrow:hover .about-us-dropdown {
     display: block;
   }
   .nav-links li:hover .on-demand-dropdown,
   .nav-links li:hover .podcasts-dropdown,
   .nav-links li:hover .tv-channels-dropdown,
+  .nav-links li:hover .affiliates-dropdown,
   .nav-links li:hover .about-us-dropdown {
     opacity: 1;
     transform: scale(1);

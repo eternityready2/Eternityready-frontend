@@ -1,5 +1,6 @@
 // Aguarda o DOM estar completamente carregado para executar o script
 document.addEventListener("DOMContentLoaded", () => {
+  /*
   const dropdownBtn = document.getElementById("dropdown-btn");
   const dropdownMenu = document.getElementById("dropdown-menu");
 
@@ -15,6 +16,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   });
+
+  */
 
   // =================================================================================
   // 1. ESTADO DA APLICAÇÃO E CACHE DE ELEMENTOS
@@ -54,8 +57,9 @@ document.addEventListener("DOMContentLoaded", () => {
       );
 
       const urlParams = new URLSearchParams(window.location.search);
-      const itemId = urlParams.get("id");
 
+      /*
+      const itemId = urlParams.get("id");
       if (itemId) {
         const allMedia = [...allMovies, ...allChannels];
         const itemToShow = allMedia.find(
@@ -71,6 +75,18 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         updateView("channel");
       }
+      */
+
+      const viewToOpen = urlParams.get("view");
+      console.log('viewTOOpen', viewToOpen);
+      if (viewToOpen && viewToOpen == "movies") {
+        updateView("movie");
+      }
+
+      else {
+        updateView("channel");
+      }
+
     } catch (error) {
       mainContainer.innerHTML =
         "<h2>Error loading data. Please try again later.</h2>";
