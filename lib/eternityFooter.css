@@ -1,3 +1,12 @@
+li {
+  color: white;
+}
+
+li a {
+  text-decoration: none;
+  color: inherit;
+}
+
 #eternityFooter {
   display: flex;
   flex-direction: column;

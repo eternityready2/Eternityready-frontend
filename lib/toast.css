@@ -14,11 +14,12 @@
   z-index: 1337;
 }
 
-.sf-toast-content {
+section.sf-toast-content {
   display: flex;
   flex-direction: column;
   flex: 1;
   overflow-wrap: anywhere;
+  padding: 0;
 }
 
 .sf-toast-content h1, .sf-toast-content p {
