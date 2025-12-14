@@ -50,7 +50,7 @@ fetch("https://beta.ourmanna.com/api/v1/get/?format=json&order=daily")
   });
 
 document.addEventListener("DOMContentLoaded", () => {
-  const API_BASE_URL = "http://127.0.0.1:3000/";
+  const API_BASE_URL = "https://api.eternityready.com/";
   const PODCAST_API_URL =
     "https://keystone.eternityready.com/api/podcasts?limit=9999";
 
