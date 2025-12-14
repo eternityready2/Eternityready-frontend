@@ -477,7 +477,7 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
     //card.addEventListener("click", () => openChannelModal(movie));
     card.addEventListener("click", () => {
-      window.location.assign(`${ETERNITY_BASE_URL}/player?q=${movie.id}`)
+      window.location.assign(`${ETERNITY_BASE_URL}/player?q=${encodeURIComponent(movie.title || movie.name)}`)
     });
     return card;
   }

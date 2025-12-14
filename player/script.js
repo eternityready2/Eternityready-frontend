@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       id: item.id,
       title: item.title || item.name || "Title Unavailable",
       description: item.description || "No description provided for the given media.",
-      author: item.author || "Unknown Source", // Default if no author
+      author: item.author || "Eternity Ready",
       embedCode: item.embed,
       sourceType: "unknown",
       videoId: null,
@@ -77,11 +77,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   /**
    * Fetches media data, trying local JSON files first, then falling back to the API.
-   * @param {string} mediaId The ID of the media to fetch.
+   * @param {string} mediaTitle The ID of the media to fetch.
    * @returns {Promise<object|null>} The normalized media data or null.
    */
-  async function fetchMediaData(mediaId) {
-    if (!mediaId) return null;
+  async function fetchMediaData(mediaTitle) {
+    if (!mediaTitle) return null;
 
     // 1. Try to fetch from local JSON files first
     try {
@@ -108,17 +108,17 @@ document.addEventListener("DOMContentLoaded", async () => {
       let foundItem = null;
       let itemType = "";
 
-      foundItem = moviesData.movies.find((item) => item.id === mediaId);
+      foundItem = moviesData.movies.find((item) => (item.title || item.name) === mediaTitle);
       if (foundItem) itemType = "movie";
 
       if (!foundItem) {
-        foundItem = musicData.music.find((item) => item.id === mediaId);
+        foundItem = musicData.music.find((item) => (item.title || item.name) === mediaTitle);
         if (foundItem) itemType = "music";
       }
 
       if (!foundItem) {
         // NOTE: Your channels.json needs an "id" field on each channel for this to work.
-        foundItem = channelsData.channels.find((item) => item.id === mediaId);
+        foundItem = channelsData.channels.find((item) => (item.title || item.name) === mediaTitle);
         if (foundItem) itemType = "channel";
       }
 
@@ -133,7 +133,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // 2. If not found locally, fetch from the API as a fallback
     console.log("Media not found locally, trying API...");
-    const apiData = await fetchVideoFromAPI(mediaId);
+    const apiData = await fetchVideoFromAPI(mediaTitle);
     return apiData ? apiData : null;
   }
 
@@ -159,6 +159,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const mobile = document.querySelector('.mobile');
     const desktop = document.querySelector('.desktop');
     let playerSrc;
+    
+    console.log('sourceType', video);
 
     if (video.sourceType === "youtube" && video.videoId) {
       playerSrc = `https://www.youtube.com/embed/${video.videoId}?autoplay=1`;
@@ -194,12 +196,12 @@ document.addEventListener("DOMContentLoaded", async () => {
    */
   async function initializePlayerPage() {
     const params = new URLSearchParams(window.location.search);
-    const mediaId = params.get("q");
+    const mediaTitle = params.get("q");
 
     console.log('params', params);
-    if (mediaId) {
-      const mediaData = await fetchMediaData(mediaId);
-      console.log('mediaData:', mediaId, mediaData);
+    if (mediaTitle) {
+      const mediaData = await fetchMediaData(mediaTitle);
+      console.log('mediaData:', mediaTitle, mediaData);
       renderVideo(mediaData);
       renderRecommendations(mediaData, allMedia);
       
@@ -208,13 +210,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         const publishedVideo = await publishVideo(mediaData);
         console.log('Video published:', publishedVideo);
         
-        video = await incrementVideoViews(publishedVideo.id);
+        video = await incrementVideoViews(publishedVideo.title || publishedVideo.name);
         console.log('Views incremented');
         
       } catch (publishError) {
         console.warn('Publish failed (video may already exist):', publishError.message);
         try {
-          video = await incrementVideoViews(mediaData.id || mediaId);
+          video = await incrementVideoViews(mediaTitle);
         } catch (viewError) {
           console.error('Views increment failed:', viewError);
         }
@@ -344,7 +346,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Deduplicate results based on item ID
     const uniqueResults = Array.from(
-      new Map(combinedResults.map((item) => [item.mediaId ?? item.id, item])).values()
+      new Map(combinedResults.map((item) => [item.mediaTitle, item])).values()
     );
 
     return uniqueResults;
@@ -417,7 +419,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           }
         }
 
-        const videoUrl = `/player/?q=${video.id}`;
+        const videoUrl = `/player/?q=${encodeURIComponent(video.title || video.name)}`;
         const li = document.createElement("li");
         li.className = "media-item";
         li.innerHTML = `
@@ -585,7 +587,6 @@ async function publishVideo(videoData, endpoint) {
       featured: videoData.featured || false,
       highlight: videoData.highlight || false,
       thumbnailUrl: videoData.thumbnailUrl || null,
-      mediaId: videoData.id,
 
       // Auto-generated fields (leave null/undefined)
       verificationMessage: "",
@@ -618,8 +619,8 @@ async function publishVideo(videoData, endpoint) {
   }
 }
 
-async function incrementVideoViews(id) {
-  const body = {id: id};
+async function incrementVideoViews(title) {
+  const body = {title: title};
 
   const response = await fetch(`${API_BASE_URL}/api/increment-views`, {
     method: 'POST',
@@ -670,13 +671,13 @@ async function renderRecommendations(currentItem, allMedia) {
     let mobileContainer = document.createElement("div");
     mobileContainer.className="recommendation"
     mobileContainer.innerHTML = `
-      <a class="video" href="${ETERNITY_BASE_URL}/player?q=${recItem.id}">
+      <a class="video" href="${ETERNITY_BASE_URL}/player?q=${encodeURIComponent(recItem.name || recItem.title)}">
         <img
           src="${recItem.thumbnail || recItem.logo}"
         />
       </a>
       <div class="info">
-        <div class="profile-image" href="${ETERNITY_BASE_URL}/player?q=${recItem.id}">
+        <div class="profile-image" href="${ETERNITY_BASE_URL}/player?q=${encodeURIComponent(recItem.name || recItem.title)}">
           <img
             src="${recItem.thumbnail || recItem.logo}"
           />
@@ -698,7 +699,7 @@ async function renderRecommendations(currentItem, allMedia) {
     desktopContainer.className="recommendation"
     desktopContainer.innerHTML = `
       <div class="recommendation">
-        <a class="video" href="${ETERNITY_BASE_URL}/player?q=${recItem.id}">
+        <a class="video" href="${ETERNITY_BASE_URL}/player?q=${encodeURIComponent(recItem.name || recItem.title)}">
           <img
             src="${recItem.thumbnail || recItem.logo}"
           />

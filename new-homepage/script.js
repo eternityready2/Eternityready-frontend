@@ -410,7 +410,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>`;
 
     card.addEventListener("click", () => {
-      window.location.assign(`${ETERNITY_BASE_URL}/player?q=${channel.id}`)
+      window.location.assign(`${ETERNITY_BASE_URL}/player?q=${encodeURIComponent(channel.title || channel.name)}`)
     });
 
     const watchLaterBtn = card.querySelector(".watch-later-btn");
@@ -434,7 +434,7 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
     //card.addEventListener("click", () => openChannelModal(movie));
     card.addEventListener("click", () => {
-      window.location.assign(`${ETERNITY_BASE_URL}/player?q=${movie.id}`)
+      window.location.assign(`${ETERNITY_BASE_URL}/player?q=${encodeURIComponent(movie.title || movie.name)}`)
     });
     return card;
   }

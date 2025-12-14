@@ -50,7 +50,7 @@ fetch("https://beta.ourmanna.com/api/v1/get/?format=json&order=daily")
   });
 
 document.addEventListener("DOMContentLoaded", () => {
-  const API_BASE_URL = "https://api.eternityready.com/";
+  const API_BASE_URL = "http://127.0.0.1:3000/";
   const PODCAST_API_URL =
     "https://keystone.eternityready.com/api/podcasts?limit=9999";
 
@@ -417,7 +417,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
         </div>`;
         card.addEventListener("click", () => {
-          window.location.assign(`${ETERNITY_BASE_URL}/player?q=${item.id}`)
+          window.location.assign(`${ETERNITY_BASE_URL}/player?q=${encodeURIComponent(item.title || item.name)}`)
         });
         if (youtubeVideoId) {
           // ... (seus event listeners de mouseover/mouseout para o player)
@@ -608,7 +608,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         let videoUrl;
         let targetAttribute = "";
-        const id = encodeURIComponent(video.id);
+        const id = encodeURIComponent(video.title || video.name);
 
         switch (video.sourceType) {
           case "music":
@@ -828,7 +828,7 @@ document.addEventListener("DOMContentLoaded", () => {
           ? `${API_BASE_URL}${video.thumbnail.url.replace(/^\//, "")}`
           : "/images/placeholder.jpg";
 
-        const playerUrl = `/player/?q=${video.id}`;
+        const playerUrl = `/player/?q=${encodeURIComponent(video.title || video.name)}`;
         const youtubeVideoId = video.videoId;
         const videoHoverData = youtubeVideoId
           ? `data-youtube-id="${youtubeVideoId}"`
@@ -943,7 +943,7 @@ document.addEventListener("DOMContentLoaded", () => {
           let imageUrl,
             videoUrl,
             targetAttribute = "";
-          const id = encodeURIComponent(video.id);
+          const id = encodeURIComponent(video.title || video.name);
           const type = video.sourceType || "youtube";
 
           switch (type) {
@@ -1423,7 +1423,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ${description}
               </p>
               <div class="hero-cta">
-                <button class="btn-play" aria-label="Watch Now" onClick="window.location.href = '/player/?q=${video.id}'">
+                <button class="btn-play" aria-label="Watch Now" onClick="window.location.href = '/player/?q=${encodeURIComponent(video.title || video.name)}'">
                   <svg
                     width="16"
                     height="16"
