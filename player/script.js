@@ -222,12 +222,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       }
 
+      renderComments(mediaTitle);
+
       if (video) {
         const mobile = document.querySelector('.mobile');
         const desktop = document.querySelector('.desktop');
         mobile.querySelector(".views").textContent = `${video.views} Views`;
         desktop.querySelector(".views").textContent = `${video.views} Views`;
       }
+
 
     } else {
       const titleElement = document.getElementById("video-title");
@@ -718,4 +721,83 @@ async function renderRecommendations(currentItem, allMedia) {
     `
     desktop.appendChild(desktopContainer);
   });
+}
+
+
+async function renderComments(videoTitle) {
+  const response = await fetch(`${API_BASE_URL}/api/graphql`, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: `
+        query GetVideoComments($title: String!) {
+          video(where: { title: $title }) {
+            id
+            comments(take: 100, orderBy: { timestamp: desc }) {
+              id
+              text
+              timestamp
+              user {
+                id
+                email
+              }
+            }
+          }
+        }
+      `,
+      variables: { title: videoTitle }
+    })
+  });
+
+  const { data, errors } = await response.json();
+  
+  if (errors) {
+    console.error('renderComment errors: ', errors);
+    return;
+  }
+
+  console.log('comments: ', data?.video?.comments);
+
+
+  const desktopCommentsNumber = document.querySelector(
+    "#comments-number-and-sort span"
+  )
+
+  desktopCommentsNumber.textContent = `${data.video.comments.length} Comments`;
+
+  const mobile = document.querySelector('.mobile');
+  const desktop = document.querySelector('.desktop').querySelector(".comments");
+
+  for (const comment of data?.video?.comments) {
+    let commentContainer = document.createElement("div");
+    commentContainer.className="comment"
+    commentContainer.innerHTML = `
+      <div class="image">
+        <img
+            src="/profile/public/profileImage.png"
+        />
+      </div>
+      <div>
+        <div id="name-and-date">
+          <div class="name">${comment.user.email}</div>
+          <div class="date">${comment.timestamp}</div>
+        </div>
+        <div class="text">${comment.text}</div>
+        <div id="like-and-dislike">
+          <button class="like">
+            <span class="material-symbols-outlined">thumb_up</span>
+            <span>0</span>
+          </button>
+          <button class="dislike">
+            <span>0</span>
+            <span class="material-symbols-outlined">thumb_down</span>
+          </button>
+          <span class="reply">Reply</span>
+        </div>
+      </div>
+    `
+    desktop.appendChild(commentContainer);
+  }
 }

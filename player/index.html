@@ -178,7 +178,7 @@
         </div>
         <div class="comments">
           <div id="comments-number-and-sort">
-            <span>2 Comments</span>
+            <span>0 Comments</span>
             <div id="sort-comments">
               <span class="material-symbols-outlined">sort</span><span>Sort by</span>
             </div>
@@ -189,59 +189,18 @@
                   src="/profile/public/profileImage.png"
               />
             </div>
-            <span>Add a comment...</span>
-          </div>
-          <div class="comment">
-            <div class="image">
-              <img
-                  src="/profile/public/profileImage.png"
+            <div id="comment-input-and-buttons">
+              <input
+                type="text"
+                placeholder="Add a comment..."
+                id="commentInput"
               />
-            </div>
-            <div>
-              <div id="name-and-date">
-                <div class="name">@test123</div>
-                <div class="date">1 year ago</div>
-              </div>
-              <div class="text">A Very good video, well done.</div>
-              <div id="like-and-dislike">
-                <button class="like">
-                  <span class="material-symbols-outlined">thumb_up</span>
-                  <span>0</span>
-                </button>
-                <button class="dislike">
-                  <span>0</span>
-                  <span class="material-symbols-outlined">thumb_down</span>
-                </button>
-                <span class="reply">Reply</span>
+              <div>
+                <button id="cancel-comment">Cancel</button>
+                <button id="post-comment">Comment</button>
               </div>
             </div>
           </div>
-          <div class="comment">
-            <div class="image">
-              <img
-                  src="/profile/public/profileImage.png"
-              />
-            </div>
-            <div>
-              <div id="name-and-date">
-                <div class="name">@test123</div>
-                <div class="date">1 year ago</div>
-              </div>
-              <div class="text">A Very good video, well done.</div>
-              <div id="like-and-dislike">
-                <button class="like">
-                  <span class="material-symbols-outlined">thumb_up</span>
-                  <span>0</span>
-                </button>
-                <button class="dislike">
-                  <span>0</span>
-                  <span class="material-symbols-outlined">thumb_down</span>
-                </button>
-                <span class="reply">Reply</span>
-              </div>
-            </div>
-          </div>
-
         </div>
       </div>
       <div class="recommendations">
@@ -297,5 +256,119 @@
       window.addEventListener('load', resizePlayerAndInfo);
       window.addEventListener('resize', resizePlayerAndInfo);
     </script>
+    <script>
+      const postCommentBtn = document.getElementById("post-comment");
+      const cancelCommentBtn = document.getElementById("cancel-comment");
+      const commentInput = document.getElementById("commentInput");
+      postCommentBtn.hidden = true;
+      cancelCommentBtn.hidden = true;
 
+      postCommentBtn?.addEventListener('click', async () => {
+        if (commentInput.value === "") {
+          return;
+        }
+
+        const user = await getUserFromSessionToken(getSession());
+        if (!user) { return; }
+        console.log(user);
+
+        const response = await fetch(`${API_BASE_URL}/api/graphql`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            query: `
+              mutation CreateComment($data: CommentCreateInput!) {
+                createComment(data: $data) {
+                  id
+                  text
+                  user {
+                    id
+                  }
+                  video {
+                    id
+                    title
+                  }
+                  timestamp
+                }
+              }
+            `,
+            variables: {
+              data: { 
+                text: commentInput.value,
+                user: {
+                  connect: {
+                    id: user.id
+                  }
+                },
+                video: {
+                  connect: {
+                    title: (new URLSearchParams(window.location.search))?.get("q")
+                  }
+                }
+              }
+            }
+          })
+        });
+
+        const result = await response.json();
+        console.log('Comment result: ', result);
+
+        let commentContainer = document.createElement("div");
+        commentContainer.className="comment"
+        commentContainer.innerHTML = `
+          <div class="image">
+            <img
+                src="/profile/public/profileImage.png"
+            />
+          </div>
+          <div>
+            <div id="name-and-date">
+              <div class="name">${user.email}</div>
+              <div class="date">Now</div>
+            </div>
+            <div class="text">${commentInput.value}</div>
+            <div id="like-and-dislike">
+              <button class="like">
+                <span class="material-symbols-outlined">thumb_up</span>
+                <span>0</span>
+              </button>
+              <button class="dislike">
+                <span>0</span>
+                <span class="material-symbols-outlined">thumb_down</span>
+              </button>
+              <span class="reply">Reply</span>
+            </div>
+          </div>
+        `
+
+        const desktop = document.querySelector('.desktop .comments')
+        const firstComment = desktop.querySelector(".comment");
+        if (!firstComment) {
+          desktop.appendChild(commentContainer);
+        }
+
+        else {
+          firstComment.insertAdjacentElement('beforeBegin', commentContainer)
+        }
+
+        commentInput.value = "";
+
+      });
+
+      cancelCommentBtn?.addEventListener('click', () => {
+        commentInput.value = "";
+        postCommentBtn.hidden = true;
+        cancelCommentBtn.hidden = true;
+      });
+
+      commentInput?.addEventListener(
+        "input",
+        (event) => {
+          postCommentBtn.hidden = event.target.value === "";
+          cancelCommentBtn.hidden = event.target.value === "";
+        }
+      );
+    </script>
 </body>
