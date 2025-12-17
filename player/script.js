@@ -813,7 +813,6 @@ async function renderComments(videoTitle) {
       </div>
     `
     desktop.appendChild(commentContainer);
-    console.log('mobile', mobile);
-    mobile.appendChild(commentContainer);
+    mobile.appendChild(commentContainer.cloneNode(true));
   }
 }
