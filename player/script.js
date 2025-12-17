@@ -766,15 +766,30 @@ async function renderComments(videoTitle) {
   )
 
   desktopCommentsNumber.textContent = `${data.video.comments.length} Comments`;
+  document.getElementById("number-of-comments").textContent = data.video.comments.length;
 
-  const mobile = document.querySelector('.mobile');
+  if (data.video.comments.length) {
+    const commentMobile = document.createElement("div");
+    commentMobile.className = "comment"
+    commentMobile.innerHTML = `
+      <div class="profile-image">
+        <img
+            src="/profile/public/profileImage.png"
+        />
+      </div>
+      <div class="profile-text">${data.video.comments[0].text}</div>
+    `
+    document.querySelector('.mobile .comments').appendChild(commentMobile);
+  }
+
+  const mobile = document.querySelector('.mobile').querySelector(".commentsModal .comments");
   const desktop = document.querySelector('.desktop').querySelector(".comments");
 
   for (const comment of data?.video?.comments) {
     let commentContainer = document.createElement("div");
     commentContainer.className="comment"
     commentContainer.innerHTML = `
-      <div class="image">
+      <div class="profile-image">
         <img
             src="/profile/public/profileImage.png"
         />
@@ -794,10 +809,11 @@ async function renderComments(videoTitle) {
             <span>0</span>
             <span class="material-symbols-outlined">thumb_down</span>
           </button>
-          <span class="reply">Reply</span>
         </div>
       </div>
     `
     desktop.appendChild(commentContainer);
+    console.log('mobile', mobile);
+    mobile.appendChild(commentContainer);
   }
 }

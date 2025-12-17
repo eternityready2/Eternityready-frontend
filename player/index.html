@@ -92,19 +92,34 @@
         <div class="comments">
           <div id="comments-and-number">
             <span>Comments</span>
-            <span id="number-of-comments">1</span>
-          </div>
-          <div class="comment">
-            <div class="profile-image">
-              <img
-                  src="/profile/public/profileImage.png"
-              />
-            </div>
-            <div class="profile-text">A Very good video, well done.</div>
+            <span id="number-of-comments">Loading...</span>
           </div>
         </div>
       </div>
-      <div class="recommendations">
+      <div class="recommendations"></div>
+      <div class="commentsModal">
+        <div id="comments-and-close">
+          <span>Comments</span>
+          <span class="close-comments material-symbols-outlined">close</span>
+        </div>
+        <div id="top-and-newest">
+          <button id="top-comments">Top</button>
+          <button id="newest-comments">Newest</button>
+        </div>
+        <div id="add-comment">
+          <div class="profile-image">
+            <img
+                src="/profile/public/profileImage.png"
+            />
+          </div>
+          <input
+            type="text"
+            placeholder="Add a comment..."
+            id="commentInput"
+          />
+          <span class="post-comment material-symbols-outlined">send</span>
+        </div>
+        <div class="comments"></div>
       </div>
     </main>
     <main hidden class="desktop">
@@ -338,7 +353,6 @@
                 <span>0</span>
                 <span class="material-symbols-outlined">thumb_down</span>
               </button>
-              <span class="reply">Reply</span>
             </div>
           </div>
         `
@@ -370,5 +384,128 @@
           cancelCommentBtn.hidden = event.target.value === "";
         }
       );
+    </script>
+    <script>
+      const commentsModal = document.querySelector(".commentsModal");
+      commentsModal.style.display = "none";
+
+      document.querySelector('main.mobile .comments').addEventListener(
+        'click', () => {
+          const header = document.querySelector('eternity-header');
+          const video = document.querySelector('main.mobile .video');
+
+          const headerHeight = header.offsetHeight;
+          const videoHeight = video.offsetHeight;
+          const viewportHeight = window.innerHeight;
+
+          commentsModal.style.display = "flex";
+          commentsModal.style.height = viewportHeight - (headerHeight + videoHeight);
+          document.querySelector('html').style.overflow = "hidden";
+        }
+      );
+
+    </script>
+    <script>
+      commentsModal.querySelector('.close-comments')
+        .addEventListener('click', () => {
+          commentsModal.style.display = "none";
+          document.querySelector('html').style.overflow = "scroll";
+      })
+    </script>
+    <script>
+      const postCommentBtnMobile = document.querySelector("main.mobile #add-comment .post-comment");
+      const commentInputMobile = document.querySelector("main.mobile #add-comment input");
+
+      postCommentBtnMobile?.addEventListener('click', async () => {
+        if (commentInputMobile.value === "") {
+          return;
+        }
+
+        const user = await getUserFromSessionToken(getSession());
+        if (!user) { return; }
+        console.log(user);
+
+        const response = await fetch(`${API_BASE_URL}/api/graphql`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            query: `
+              mutation CreateComment($data: CommentCreateInput!) {
+                createComment(data: $data) {
+                  id
+                  text
+                  user {
+                    id
+                  }
+                  video {
+                    id
+                    title
+                  }
+                  timestamp
+                }
+              }
+            `,
+            variables: {
+              data: { 
+                text: commentInputMobile.value,
+                user: {
+                  connect: {
+                    id: user.id
+                  }
+                },
+                video: {
+                  connect: {
+                    title: (new URLSearchParams(window.location.search))?.get("q")
+                  }
+                }
+              }
+            }
+          })
+        });
+
+        const result = await response.json();
+        console.log('Comment result: ', result);
+
+        let commentContainer = document.createElement("div");
+        commentContainer.className="comment"
+        commentContainer.innerHTML = `
+          <div class="profile-image">
+            <img
+                src="/profile/public/profileImage.png"
+            />
+          </div>
+          <div>
+            <div id="name-and-date">
+              <div class="name">${user.email}</div>
+              <div class="date">Now</div>
+            </div>
+            <div class="text">${commentInputMobile.value}</div>
+            <div id="like-and-dislike">
+              <button class="like">
+                <span class="material-symbols-outlined">thumb_up</span>
+                <span>0</span>
+              </button>
+              <button class="dislike">
+                <span>0</span>
+                <span class="material-symbols-outlined">thumb_down</span>
+              </button>
+            </div>
+          </div>
+        `
+
+        const mobile = document.querySelector('main.mobile .commentsModal .comments')
+        const firstComment = mobile.querySelector(".comment");
+        if (!firstComment) {
+          mobile.appendChild(commentContainer);
+        }
+
+        else {
+          firstComment.insertAdjacentElement('beforeBegin', commentContainer)
+        }
+
+        commentInputMobile.value = "";
+      });
     </script>
 </body>
