@@ -262,26 +262,39 @@ document.addEventListener("DOMContentLoaded", async () => {
         } catch (e) {
           console.error('Error fetching user reactions', e);
         }
-      }
 
+        const mobile = document.querySelector('main.mobile #like-and-dislike');
+        const desktop = document.querySelector('main.desktop #like-and-dislike');
+        const likeAndDislikeContainers = [mobile, desktop];
 
-      const mobile = document.querySelector('main.mobile #like-and-dislike');
-      const desktop = document.querySelector('main.desktop #like-and-dislike');
-      const likeAndDislikeContainers = [mobile, desktop];
+        for (const likeAndDislike of likeAndDislikeContainers) {
+          const like = likeAndDislike.querySelector(".like");
+          const dislike = likeAndDislike.querySelector(".dislike");
 
-      for (const likeAndDislike of likeAndDislikeContainers) {
-        const like = likeAndDislike.querySelector(".like");
-        const dislike = likeAndDislike.querySelector(".dislike");
+          for (const userReaction of userReactions) {
+            if (mediaTitle && userReaction.video?.title === mediaTitle) {
+              if (userReaction.reaction === "like") {
+                like.classList.toggle('reaction');
+              }
 
-        like.addEventListener('click', () => {
-          console.log('Like Video', user.id, mediaTitle);
-          addReaction(user.id, 'like', mediaTitle, null, like, dislike);
-        });
+              else {
+                dislike.classList.toggle('reaction');
+              }
 
-        dislike.addEventListener('click', () => {
-          console.log('Dislike Video', user.id, mediaTitle);
-          addReaction(user.id, 'dislike', mediaTitle, null, like, dislike);
-        });
+              break;
+            }
+          }
+
+          like.addEventListener('click', () => {
+            console.log('Like Video', user.id, mediaTitle);
+            addReaction(user.id, 'like', mediaTitle, null, like, dislike);
+          });
+
+          dislike.addEventListener('click', () => {
+            console.log('Dislike Video', user.id, mediaTitle);
+            addReaction(user.id, 'dislike', mediaTitle, null, like, dislike);
+          });
+        }
       }
 
       console.log('userReactions', userReactions);
