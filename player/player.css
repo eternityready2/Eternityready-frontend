@@ -788,3 +788,9 @@ main.mobile .commentsModal .comment #like-and-dislike span {
 
 /* XX-Large devices (larger desktops, 1400px and up) */
 @media (min-width: 1400px) {}
+
+#like-and-dislike button.like.reaction,
+#like-and-dislike button.dislike.reaction {
+  background-color: #f11325 !important;
+  border-radius: 0.75rem;
+}

@@ -16,6 +16,8 @@ function debounce(func, delay) {
   };
 }
 
+let userReactions = [];
+
 document.addEventListener("DOMContentLoaded", async () => {
   // =======================================================================
   // --- VIDEO PLAYER LOGIC ---
@@ -186,6 +188,36 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     desktop.querySelector('.description p').innerHTML = video.description.replace(/\n/g, "<br />");
 
+    fetch(`${API_BASE_URL}/api/reactions`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({ videoTitle: video.title }),
+    })
+      .then(res => res.json())
+      .then(res => {
+        if (res.errors) {
+          console.error(res.errors)
+          return;
+        }
+
+        const mobile = document.querySelector('main.mobile #like-and-dislike');
+        const desktop = document.querySelector('main.desktop #like-and-dislike');
+        const likeAndDislikeContainers = [mobile, desktop];
+
+        for (const likeAndDislike of likeAndDislikeContainers) {
+          const like = likeAndDislike.querySelector(".like");
+          const dislike = likeAndDislike.querySelector(".dislike");
+
+          const likeCount = like.querySelector('span:nth-child(2)');
+          likeCount.textContent = parseInt(res.like);
+
+          const dislikeCount = dislike.querySelector('span:nth-child(1)');
+          dislikeCount.textContent = parseInt(res.dislike);
+        }
+      });
+
     /*
     descriptionElement.innerHTML = video.description.replace(/\n/g, "<br />");
     */
@@ -222,7 +254,39 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       }
 
-      renderComments(mediaTitle);
+      const user = await getUserFromSessionToken(getSession());
+      if (user) {
+        console.log('Fetching user reactions', mediaTitle, user.id);
+        try {
+          userReactions = await fetchUserReactions(mediaTitle, user.id);
+        } catch (e) {
+          console.error('Error fetching user reactions', e);
+        }
+      }
+
+
+      const mobile = document.querySelector('main.mobile #like-and-dislike');
+      const desktop = document.querySelector('main.desktop #like-and-dislike');
+      const likeAndDislikeContainers = [mobile, desktop];
+
+      for (const likeAndDislike of likeAndDislikeContainers) {
+        const like = likeAndDislike.querySelector(".like");
+        const dislike = likeAndDislike.querySelector(".dislike");
+
+        like.addEventListener('click', () => {
+          console.log('Like Video', user.id, mediaTitle);
+          addReaction(user.id, 'like', mediaTitle, null, like, dislike);
+        });
+
+        dislike.addEventListener('click', () => {
+          console.log('Dislike Video', user.id, mediaTitle);
+          addReaction(user.id, 'dislike', mediaTitle, null, like, dislike);
+        });
+      }
+
+      console.log('userReactions', userReactions);
+
+      renderComments(user, mediaTitle);
 
       if (video) {
         const mobile = document.querySelector('.mobile');
@@ -724,7 +788,7 @@ async function renderRecommendations(currentItem, allMedia) {
 }
 
 
-async function renderComments(videoTitle) {
+async function renderComments(user, videoTitle) {
   const response = await fetch(`${API_BASE_URL}/api/graphql`, {
     method: 'POST',
     headers: {
@@ -786,9 +850,9 @@ async function renderComments(videoTitle) {
   const desktop = document.querySelector('.desktop').querySelector(".comments");
 
   for (const comment of data?.video?.comments) {
-    let commentContainer = document.createElement("div");
-    commentContainer.className="comment"
-    commentContainer.innerHTML = `
+    let desktopCommentContainer = document.createElement("div");
+    desktopCommentContainer.className="comment"
+    desktopCommentContainer.innerHTML = `
       <div class="profile-image">
         <img
             src="/profile/public/profileImage.png"
@@ -812,7 +876,153 @@ async function renderComments(videoTitle) {
         </div>
       </div>
     `
-    desktop.appendChild(commentContainer);
-    mobile.appendChild(commentContainer.cloneNode(true));
+
+    const mobileCommentContainer = desktopCommentContainer.cloneNode(true);
+    desktop.appendChild(desktopCommentContainer);
+    mobile.appendChild(mobileCommentContainer);
+
+    for (const commentContainer of [mobileCommentContainer, desktopCommentContainer]) {
+      fetch(`${API_BASE_URL}/api/reactions`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({ commentId: comment.id }),
+      })
+        .then(res => res.json())
+        .then((res) => {
+          if (res.errors) {
+            console.error(res.errors)
+            return;
+          }
+
+          const like = commentContainer.querySelector(".like");
+          const dislike = commentContainer.querySelector(".dislike");
+
+          const likeCount = like.querySelector('span:nth-child(2)');
+          likeCount.textContent = parseInt(res.like);
+
+          const dislikeCount = dislike.querySelector('span:nth-child(1)');
+          dislikeCount.textContent = parseInt(res.dislike);
+          
+          if (!user) { return; }
+
+          for (const userReaction of userReactions) {
+            if (comment.id && userReaction.comment?.id === comment.id) {
+              if (userReaction.reaction === "like") {
+                like.classList.toggle('reaction');
+              }
+
+              else {
+                dislike.classList.toggle('reaction');
+              }
+
+              break;
+            }
+          }
+
+          like.addEventListener('click', () => {
+            console.log('Like Comment', user.id, videoTitle, comment.id);
+            addReaction(user.id, 'like', videoTitle, comment.id, like, dislike);
+          });
+
+          dislike.addEventListener('click', () => {
+            console.log('Dislike Comment', user.id, videoTitle, comment.id);
+            addReaction(user.id, 'dislike', videoTitle, comment.id, like, dislike);
+          });
+        });
+    }
   }
+}
+
+function addReaction(
+  userId,
+  reaction,
+  videoTitle,
+  commentId,
+  like,
+  dislike
+) {
+  let foundIdx;
+  for (const idx in userReactions) {
+    if (commentId && userReactions[idx].comment?.id === commentId) {
+      foundIdx = idx;
+      break;
+    }
+
+    if (videoTitle && userReactions[idx].video?.title === videoTitle) {
+      foundIdx = idx;
+      break;
+    }
+  }
+
+  const likeCount = like.querySelector('span:nth-child(2)');
+  const dislikeCount = dislike.querySelector('span:nth-child(1)');
+
+  if (foundIdx) {
+    const found = userReactions[foundIdx];
+    if (found.reaction == reaction) {
+      if (reaction == "like") {
+        likeCount.textContent = parseInt(likeCount.textContent) - 1
+        like.classList.toggle('reaction');
+      }
+      else {
+        dislikeCount.textContent = parseInt(dislikeCount.textContent) - 1
+        dislike.classList.toggle('reaction');
+      }
+      userReactions.splice(foundIdx, 1);
+    }
+
+    else {
+      if (found.reaction === "like" && reaction === "dislike") {
+        likeCount.textContent = parseInt(likeCount.textContent) - 1
+        dislikeCount.textContent = parseInt(dislikeCount.textContent) + 1
+        dislike.classList.toggle('reaction');
+        like.classList.toggle('reaction');
+      }
+
+      if (found.reaction === "dislike" && reaction === "like") {
+        dislikeCount.textContent = parseInt(dislike.textContent) - 1
+        likeCount.textContent = parseInt(likeCount.textContent) + 1
+        dislike.classList.toggle('reaction');
+        like.classList.toggle('reaction');
+      }
+      userReactions[foundIdx].reaction = reaction;
+    }
+  }
+
+  else {
+    if (reaction == "like") {
+      likeCount.textContent = parseInt(likeCount.textContent) + 1
+      like.classList.toggle('reaction');
+    }
+    else {
+      dislikeCount.textContent = parseInt(dislikeCount.textContent) + 1;
+      dislike.classList.toggle('reaction');
+    }
+    userReactions.push({
+      reaction: reaction,
+      user: { id: userId },
+      video: { title: videoTitle },
+      comment: { id: commentId },
+    });
+  }
+  console.log(userReactions);
+
+  fetch(`${API_BASE_URL}/api/react-content`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({
+      userId: userId,
+      reaction: reaction,
+      videoTitle: videoTitle,
+      commentId: commentId
+    }),
+  })
+    .then(res => res.json())
+    .then((res) => {
+      console.log('/api/react-content', res);
+    });
 }
