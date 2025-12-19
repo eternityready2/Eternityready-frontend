@@ -963,7 +963,7 @@ function addReaction(
       break;
     }
 
-    if (videoTitle && userReactions[idx].video?.title === videoTitle) {
+    if (!commentId && videoTitle && userReactions[idx].video?.title === videoTitle) {
       foundIdx = idx;
       break;
     }
@@ -972,6 +972,7 @@ function addReaction(
   const likeCount = like.querySelector('span:nth-child(2)');
   const dislikeCount = dislike.querySelector('span:nth-child(1)');
 
+  console.log('foundIdx', foundIdx);
   if (foundIdx) {
     const found = userReactions[foundIdx];
     if (found.reaction == reaction) {
