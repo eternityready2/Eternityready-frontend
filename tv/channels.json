@@ -1,6 +1,6 @@
 {
   "Title": "Guide - Eternity Ready TV",
-  "Number of channels": 81,
+  "Number of channels": 82,
   "channels": [
     {
       "name": "KSCE Life! End Times TV",
@@ -1099,6 +1099,19 @@
       ],
       "status": "ON",
       "description": "Kulture TV is dedicated to bridging the cultural gaps that separate us as believers and to being one united body of Christ. Learn more @ <a href='https://goodvuenetwork.com/' target='_blank'>GoodVue Network</a>"
+    },
+    {
+      "name": "FaithPoints TV",
+      "logo": "https://st1-fs.cdn01.net/channels/0000061/0061759/thumb/0061759xl.jpg?v1",
+      "link": "",
+      "embed": "https://www.lightcast.com/embed/player.php?&id=61759&type=live",
+      "keywords": [],
+      "rating": 5,
+      "categories": [
+        "Lifestyle + Others"
+      ],
+      "status": "ON",
+      "description": "Faith Points TV is dedicated to strengthing your walk with Jesus by making points about Faoth. Learn more @ <a href='https://www.faithpoints.org/' target='_blank'>Faith Points.org</a>"
     },
     {
       "name": "Apologetics 24/7",

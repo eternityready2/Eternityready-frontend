@@ -1,906 +1,302 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width,initial-scale=1,maximum-scale=1"
-    />
-    <title>Eternity Ready</title>
-    <!-- Google Fonts -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
-    <!-- Font Awesome -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
-      integrity="sha512-?qXv587Op+TN2fPLwKdTkciOc0/nZ0hpqbvBxXqyFfpu7H2Qnz+Wc+vlV5jJ2fr4RkBuWsR+S1pWQgf0RX+vRg=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eternity Ready - Media Page</title>
+  <style>
+    :root {
+      --primary: #0a0a0a;
+      --accent: #e63946;
+      --text-light: #ffffff;
+      --card-bg: #111111;
+      --shadow: 0 6px 22px rgba(0,0,0,0.55);
+      --radius: 18px;
+      --transition: 0.3s ease;
+    }
 
-    <!-- Import CSS Styles -->
-    <link rel="stylesheet" type="text/css" href="style.css" />
-    <link rel="stylesheet" type="text/css" href="popup.css" />
+    body {
+      margin: 0;
+      background: var(--primary);
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      color: var(--text-light);
+      line-height: 1.6;
+    }
 
-    <!-- Icon config -->
-    <link
-      rel="apple-touch-icon"
-      sizes="180x180"
-      href="public/apple-touch-icon.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="32x32"
-      href="public/favicon-32x32.png"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="16x16"
-      href="public/favicon-16x16.png"
-    />
-    <link rel="icon" href="public/favicon.ico" />
-    <link rel="manifest" href="public/site.webmanifest" />
-  </head>
-  <body>
-    <!-- BACKDROP FOR SLIDE-IN MENU -->
-    <div class="menu-overlay"></div>
+    /* HEADER */
+    header {
+      width: 100%;
+      background: rgba(0,0,0,0.8);
+      padding: 1rem 1.5rem;
+      backdrop-filter: blur(8px);
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 1500;
+    }
 
-    <!-- HEADER (desktop) -->
-    <header class="site-header">
-      <div class="container header-inner">
-        <div class="logo">
-          <img
-            src="images/logo1USE-THIS.png"
-            alt="Flame Logo"
-            class="logo-icon"
-          />
-        </div>
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-        <!-- Desktop Nav -->
-        <nav class="site-nav desktop-nav">
-          <a href="#" class="active">Home</a>
-          <a href="#">New</a>
-          <a href="#">Popular</a>
-          <a href="#">Web Pages</a>
-        </nav>
+    .logo {
+      font-size: 1.7rem;
+      font-weight: 900;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
 
-        <div class="search-container">
-          <input
-            id="search-input"
-            type="text"
-            placeholder="Search for movies, radio, podcasts or TV shows"
-            autocomplete="off"
-          />
-          <i class="fa-solid fa-search"></i>
-          <div id="search-dropdown">
-            <!-- existing dropdown markup -->
-            <div id="history-section" class="dropdown-section">
-              <p id="no-history" class="empty-text">No recent searches</p>
-              <ul id="history-list" class="history-list"></ul>
-            </div>
-            <div id="categories-section" class="dropdown-section">
-              <p class="section-label">Filter searches by categories</p>
-              <div id="categories-list" class="chip-list"></div>
-            </div>
-            <div id="media-section" class="dropdown-section">
-              <p class="section-label">MOVIES &amp; TV SHOWS</p>
-              <ul id="media-list" class="media-list"></ul>
-            </div>
-            <div id="trending-section" class="dropdown-section">
-              <p class="section-label">Trending searches</p>
-              <div id="trending-list" class="chip-list"></div>
-            </div>
-            <div class="search-footer">
-              <a href="#" id="see-all">See all results »</a>
-            </div>
-          </div>
-        </div>
-        <a
-          class="btn-radio"
-          role="button"
-          href="https://eternityreadyradio.com/"
-          ><span class="text">Radio</span></a
-        >
-        <!--<a class="btn-radio" href = "https://eternityreadyradio.com/">Radio</a>-->
-        <button class="btn-menu" aria-label="Open menu">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <rect y="4" width="24" height="2" />
-            <rect y="11" width="24" height="2" />
-            <rect y="18" width="24" height="2" />
-          </svg>
-        </button>
-      </div>
-    </header>
+    .hamburger {
+      cursor: pointer;
+      font-size: 2rem;
+      user-select: none;
+    }
 
-    <!-- MOBILE SLIDE-IN NAV -->
-    <nav class="site-nav mobile-nav">
-      <div class="mobile-nav-header">
-        <span class="menu-title">Menu</span>
-        <button class="btn-nav-close" aria-label="Close menu">&times;</button>
-      </div>
+    .nav-links {
+      display: none;
+      flex-direction: column;
+      gap: 1.2rem;
+      margin-top: 1rem;
+      animation: fadeIn var(--transition);
+    }
 
-      <!-- Donate CTA -->
-      <a href="https://www.eternityready.com/donate"><button class="btn-donate">Donate</button></a>
+    .nav-links a {
+      color: var(--text-light);
+      text-decoration: none;
+      font-size: 1.2rem;
+      font-weight: 600;
+      transition: color var(--transition);
+    }
 
-      <div class="mobile-nav-list">
-        <div class="nav-group">
-          <a href="#">ON-DEMAND <i class="fa fa-chevron-down"></i></a>
-          <ul class="submenu">
-            <li><a href="#">Feature Films</a></li>
-            <li><a href="#">Drama Series</a></li>
-            <li><a href="#">Comedy Series</a></li>
-          </ul>
-        </div>
+    .nav-links a:hover {
+      color: var(--accent);
+    }
 
-        <div class="nav-group">
-          <a href="#">PODCASTS <i class="fa fa-chevron-down"></i></a>
-          <ul class="submenu">
-            <li><a href="https://podcasts.eternityready.com/">Latest Episodes</a></li>
-            <li><a href="https://podcasts.eternityready.com/">Top Charts</a></li>
-            <li><a href="https://podcasts.eternityready.com/">Categories</a></li>
-          </ul>
-        </div>
+    .open { display: flex; }
 
-        <div class="nav-group">
-          <a href="#">TV CHANNELS <i class="fa fa-chevron-down"></i></a>
-          <ul class="submenu">
-            <li><a href="#">Live Now</a></li>
-            <li><a href="https://www.eternityready.com/tv">All Channels</a></li>
-          </ul>
-        </div>
+    @media (min-width: 768px) {
+      .hamburger { display: none; }
+      .nav-links {
+        display: flex !important;
+        flex-direction: row;
+        gap: 2.2rem;
+        margin: 0;
+      }
+    }
 
-        <div class="nav-group">
-          <a href="#">AFFILIATES</a>
-        </div>
+    /* GRID */
+    .grid {
+      padding: 2.5rem 1.5rem;
+      display: grid;
+      gap: 2.5rem;
+      grid-template-columns: 1fr;
+      max-width: 1200px;
+      margin: auto;
+    }
 
-        <div class="nav-group">
-          <a href="#">ABOUT US <i class="fa fa-chevron-down"></i></a>
-          <ul class="submenu">
-            <li><a href="https://www.eternityready.com/donate">Donate</a></li>
-            <li><a href="https://www.eternityready.com/help/">Contact &amp; Help</a></li>
-            <li><a href="https://www.eternityready.com/about-us">Mission, Beliefs</a></li>
-          </ul>
-        </div>
-      </div>
-    </nav>
+    @media (min-width: 768px) {
+      .grid { grid-template-columns: repeat(2, 1fr); }
+    }
 
-    <!-- HERO -->
-    <section class="hero-section">
-      <div id="hero-slider-container" class="hero-slider-container">
-        <div class="hero-slide active">
-          <div class="hero-card">
-            <video
-              class="hero-bg"
-              src="videos/placeholder.mp4"
-              autoplay
-              muted
-              loop
-              playsinline
-            ></video>
-            <div class="hero-gradient"></div>
-            <div class="hero-content">
-              <h2 style="color: white">Loading videos</h2>
-            </div>
-          </div>
-        </div>
-      </div>
+    /* CARD */
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
 
-      <button class="slider-nav prev" aria-label="Vídeo anterior">
-        &#10094;
-      </button>
-      <button class="slider-nav next" aria-label="Próximo vídeo">
-        &#10095;
-      </button>
-    </section>
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.7);
+    }
 
-    <!-- VIDEO MODAL OVERLAY -->
-    <div id="video-modal" class="video-modal">
-      <button
-        id="video-modal-close"
-        class="video-modal-close"
-        aria-label="Close fullscreen"
-      >
-        ×
-      </button>
-      <video
-        id="modal-video"
-        class="modal-video-element"
-        src=""
-        controls
-        autoplay
-        playsinline
-      ></video>
+    .card-img {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      filter: brightness(0.85);
+      transition: filter var(--transition);
+    }
+
+    .card:hover .card-img {
+      filter: brightness(1);
+    }
+
+    .overlay {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: rgba(0,0,0,0.55);
+      padding: 0.55rem 1.1rem;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      backdrop-filter: blur(4px);
+    }
+
+    .card-content {
+      padding: 1.8rem;
+    }
+
+    .card h3 {
+      margin-top: 0;
+      font-size: 1.7rem;
+      font-weight: 800;
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 1.2rem;
+      padding: 0.85rem 1.7rem;
+      background: var(--accent);
+      color: white;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 700;
+      transition: background var(--transition), transform var(--transition);
+      box-shadow: var(--shadow);
+    }
+
+    .btn:hover {
+      background: #c62836;
+      transform: scale(1.05);
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 2.5rem;
+      background: #000;
+      margin-top: 3rem;
+      color: #888;
+      font-size: 1rem;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+  <style>
+    /* DARK MODE TOGGLE */
+    .dark-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--accent);
+      color: #fff;
+      padding: 0.9rem 1.2rem;
+      border-radius: 50px;
+      font-weight: bold;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      z-index: 2000;
+      transition: var(--transition);
+    }
+    .dark-toggle:hover {
+      transform: scale(1.07);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="nav-container">
+    <div class="logo">Eternity Ready</div>
+    <div class="hamburger" onclick="toggleMenu()">☰</div>
+  </div>
+  <nav class="nav-links" id="navMenu">
+    <a href="https://www.eternityready.com/tv">TV</a>
+    <a href="https://listen.eternityready.com/">Radio</a>
+    <a href="https://podcasts.eternityready.com/">Podcasts</a>
+    <a href="https://www.eternityready.com/tv">Movies</a>
+  </nav>
+</header>
+
+<!-- CARDS SECTION -->
+<center>
+<h2>Eternity Ready is getting a new web site. Until we finish our site, please explore sections of our site below:</h2></center>
+<br> <br>
+<section class="grid">
+
+
+  <div class="card" id="tv">
+    <img src="tv.png" class="card-img" />
+    <div class="overlay">📺 Christian TV</div>
+    <div class="card-content">
+      <h3>Eternity Ready TV</h3>
+      <p>Watch 81 Faith and Family TV Channels on your PC, Android TV or mobile device totally free.</p>
+<a href="https://www.eternityready.com/tv" class="btn">Watch TV 🎬</a>
+   
     </div>
+  </div>
 
-    <!-- DISCOVER CONTENT SECTION -->
-    <section class="discover-section">
-      <div class="container">
-        <h2 class="section-title">Discover Content</h2>
-        <p class="section-subtitle">
-          Explore our diverse range of faith-building content across multiple
-          formats
-        </p>
+  <div class="card" id="radio">
+    <img src="radio.png" class="card-img" />
+    <div class="overlay">📻 Christian Radio</div>
+    <div class="card-content">
+      <h3>Eternity Ready Radio</h3>
+      <p>Listen to our Radio station "Eternity Ready Radio" and 14 other partner stations.</p>
+  <a href="https://listen.eternityready.com/" class="btn">Listen Now 🎧</a>
 
-        <!-- Top Row: Gradient Cards -->
-        <div class="discover-grid top-row">
-          <div class="card gradient purple">
-            <h3>Feature<br />Films</h3>
-          </div>
-          <div class="card gradient green">
-            <h3>Nonfiction<br />Films &amp; Series</h3>
-          </div>
-          <div class="card gradient gold">
-            <h3>Kids &amp;<br />Family</h3>
-          </div>
-          <div class="card gradient blue">
-            <h3>Drama<br />Series</h3>
-          </div>
-          <div class="card gradient teal">
-            <h3>Comedy<br />Series</h3>
-          </div>
-        </div>
-
-        <!-- Bottom Row: Image-backed Media Cards -->
-        <div class="discover-grid bottom-row">
-          <a href="https://eternityready.tv/">
-            <div class="card media tv">
-              <i class="fa fa-tv"></i>
-              <h4>Eternity Ready Television</h4>
-              <p>Faith-based shows &amp; series</p>
-              <img
-                alt="Christian TV"
-                class="cd-item__image"
-                src="images/index.jpg"
-              />
-            </div>
-          </a>
-          <a href="https://eternityready.com/radio/">
-            <div class="card media radio">
-              <i class="fa fa-broadcast-tower"></i>
-              <h4>Radio &amp; Music</h4>
-              <p>24/7 inspiration &amp; worship</p>
-              <img
-                alt="Christian TV"
-                class="cd-item__image"
-                src="images/3.webp"
-              />
-            </div>
-          </a>
-          <a href="http://podcasts.eternityready.com/">
-            <div class="card media podcast">
-              <i class="fa fa-podcast"></i>
-              <h4>Podcasts</h4>
-              <p>Discussions &amp; teachings</p>
-              <img
-                alt="Christian TV"
-                class="cd-item__image"
-                src="images/6.webp"
-              />
-            </div>
-          </a>
-          <div class="card media movies">
-            <i class="fa fa-music"></i>
-            <h4>Movies &amp; Music</h4>
-            <p>Films &amp; music videos</p>
-            <img
-              alt="Christian TV"
-              class="cd-item__image"
-              src="images/2.webp"
-            />
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel-grid">
-      <div class="panel-grid-cell">
-        <h4>Eternity Ready's Most Recent Updates</h4>
-        <ul>
-          <li>
-            <span style="text-decoration: underline"
-              ><a href="/">Rapture Ready News</a></span
-            >
-            -&nbsp;End times related events (Daily)
-          </li>
-          <li>
-            <span style="text-decoration: underline"
-              ><a href="/">Rapture Ready News</a></span
-            >
-            -&nbsp;End times related events (Daily)
-          </li>
-          <li>
-            <span style="text-decoration: underline"
-              ><a href="/">Rapture Ready News</a></span
-            >
-            -&nbsp;End times related events (Daily)
-          </li>
-          <li>
-            <span style="text-decoration: underline"
-              ><a href="/">Rapture Ready News</a></span
-            >
-            -&nbsp;End times related events (Daily)
-          </li>
-          <li>
-            <span style="text-decoration: underline"
-              ><a href="/">Rapture Ready News</a></span
-            >
-            -&nbsp;End times related events (Daily)
-          </li>
-          <li>
-            <span style="text-decoration: underline"
-              ><a href="/">Rapture Ready News</a></span
-            >
-            -&nbsp;End times related events (Daily)
-          </li>
-          <li>
-            <span style="text-decoration: underline"
-              ><a href="/">Rapture Ready News</a></span
-            >
-            -&nbsp;End times related events (Daily)
-          </li>
-          <li>
-            <span style="text-decoration: underline"
-              ><a href="/">Rapture Ready News</a></span
-            >
-            -&nbsp;End times related events (Daily)
-          </li>
-          <li>
-            <span style="text-decoration: underline"
-              ><a href="/">Rapture Ready News</a></span
-            >
-            -&nbsp;End times related events (Daily)
-          </li>
-          <li>
-            <span style="text-decoration: underline"
-              ><a href="/">Rapture Ready News</a></span
-            >
-            -&nbsp;End times related events (Daily)
-          </li>
-          <li>
-            <span style="text-decoration: underline"
-              ><a href="/">Rapture Ready News</a></span
-            >
-            -&nbsp;End times related events (Daily)
-          </li>
-          <li>
-            <span style="text-decoration: underline"
-              ><a href="/">Rapture Ready News</a></span
-            >
-            -&nbsp;End times related events (Daily)
-          </li>
-          <li>
-            <span style="text-decoration: underline"
-              ><a href="/">Rapture Ready News</a></span
-            >
-            -&nbsp;End times related events (Daily)
-          </li>
-          <li>
-            <span style="text-decoration: underline"
-              ><a href="/">Rapture Ready News</a></span
-            >
-            -&nbsp;End times related events (Daily)
-          </li>
-        </ul>
-      </div>
-      <div class="panel-grid-cell">
-        <h4>General Articles by Featured Writers & Contributors</h4>
-        <ul>
-          <li>
-            <a href="/">Churning toward 666 :: By Terry James</a>
-          </li>
-          <li>
-            <a href="/">Churning toward 666 :: By Terry James</a>
-          </li>
-          <li>
-            <a href="/">Churning toward 666 :: By Terry James</a>
-          </li>
-          <li>
-            <a href="/">Churning toward 666 :: By Terry James</a>
-          </li>
-          <li>
-            <a href="/">Churning toward 666 :: By Terry James</a>
-          </li>
-          <li>
-            <a href="/">Churning toward 666 :: By Terry James</a>
-          </li>
-          <li>
-            <a href="/">Churning toward 666 :: By Terry James</a>
-          </li>
-          <li>
-            <a href="/">Churning toward 666 :: By Terry James</a>
-          </li>
-          <li>
-            <a href="/">Churning toward 666 :: By Terry James</a>
-          </li>
-          <li>
-            <a href="/">Churning toward 666 :: By Terry James</a>
-          </li>
-          <li>
-            <a href="/">Churning toward 666 :: By Terry James</a>
-          </li>
-          <li>
-            <a href="/">Churning toward 666 :: By Terry James</a>
-          </li>
-          <li>
-            <a href="/">Churning toward 666 :: By Terry James</a>
-          </li>
-          <li>
-            <a href="/">Churning toward 666 :: By Terry James</a>
-          </li>
-        </ul>
-        <ul>
-          <li>
-            <a href="/"
-              ><span style="text-decoration: underline"
-                >More Articles...</span
-              ></a
-            >
-          </li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- THIRD SECTION: TOP 10 TV SHOWS & NEWEST STUFF -->
-    <section class="media-section container">
-      <div id="sliders-filters-container" class="filters-container">
-        <input
-          type="text"
-          id="sliders-name-filter"
-          placeholder="Filter by name..."
-        />
-        <select id="sliders-media-type-filter">
-          <option value="all">All types</option>
-          <option value="youtube">Youtube</option>
-          <option value="channels">TV Channels</option>
-          <option value="movies">Movies</option>
-          <option value="music">Music videos</option>
-          <option value="podcasts">Podcasts</option>
-        </select>
-        <select id="sliders-category-filter">
-          <option value="all">All categories</option>
-        </select>
-      </div>
-      <div id="dynamic-sliders-container"></div>
-    </section>
-
-    <!-- FOURTH SECTION: BROWSE BY SERVICE -->
-    <section class="browse-section">
-      <div class="container">
-        <div class="section-header">
-          <h2 class="section-title">Browse By Service</h2>
-          <a href="#" class="section-link"
-            ><i class="fa fa-chevron-right"></i
-          ></a>
-        </div>
-
-        <div class="slider-wrapper">
-          <button class="slider-arrow prev" aria-label="Previous">
-            <i class="fa fa-chevron-left"></i>
-          </button>
-
-          <div class="browse-slider">
-            <div class="service-card">
-              <div class="service-header">
-                <div class="service-label free">FREE</div>
-                <h3 class="service-title">Best of What’s Free</h3>
-              </div>
-              <div class="service-thumbs">
-                <div class="thumb">
-                  <img src="images/sticklong.jpeg" alt="Stick" />
-                  <span class="tv-badge">TV</span>
-                </div>
-                <div class="thumb">
-                  <img src="images/thebetter.jpeg" alt="The Better Sister" />
-                  <span class="tv-badge">TV</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="service-card">
-              <div class="service-header">
-                <div class="service-label netflix"><span>Netflix</span></div>
-                <h3 class="service-title">Best of Netflix</h3>
-              </div>
-              <div class="service-thumbs">
-                <div class="thumb">
-                  <img src="images/sticklong.jpeg" alt="Dept. Q" />
-                  <span class="tv-badge">TV</span>
-                </div>
-                <div class="thumb">
-                  <img src="images/thebetter.jpeg" alt="The Waterfront" />
-                  <span class="tv-badge">TV</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="service-card">
-              <div class="service-header">
-                <div class="service-label hulu"><span>Hulu</span></div>
-                <h3 class="service-title">Best of Hulu</h3>
-              </div>
-              <div class="service-thumbs">
-                <div class="thumb">
-                  <img src="images/sticklong.jpeg" alt="Love Island" />
-                  <span class="tv-badge">TV</span>
-                </div>
-                <div class="thumb">
-                  <img src="images/thebetter.jpeg" alt="The Bear" />
-                  <span class="tv-badge">TV</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="service-card">
-              <div class="service-header">
-                <div class="service-label primevideo">
-                  <span>Prime Video</span>
-                </div>
-                <h3 class="service-title">Best of Prime Video</h3>
-              </div>
-              <div class="service-thumbs">
-                <div class="thumb">
-                  <img src="images/sticklong.jpeg" alt="Stick" />
-                  <span class="tv-badge">TV</span>
-                </div>
-                <div class="thumb">
-                  <img src="images/thebetter.jpeg" alt="The Better Sister" />
-                  <span class="tv-badge">TV</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="service-card">
-              <div class="service-header">
-                <div class="service-label directv">
-                  <span>DIRECTV<br />Stream</span>
-                </div>
-                <h3 class="service-title">Best of DIRECTV Stream</h3>
-              </div>
-              <div class="service-thumbs">
-                <div class="thumb">
-                  <img src="images/sticklong.jpeg" alt="Resident Alien" />
-                  <span class="tv-badge">TV</span>
-                </div>
-                <div class="thumb">
-                  <img src="images/thebetter.jpeg" alt="Another Show" />
-                  <span class="tv-badge">TV</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <button class="slider-arrow next" aria-label="Next">
-            <i class="fa fa-chevron-right"></i>
-          </button>
-        </div>
-        <hr class="media-separator" />
-      </div>
-    </section>
-
-    <!-- All content collection -->
-    <section id="local-content-section" class="media-section container">
-      <div class="section-header">
-        <h2 class="section-title">Explore Our Collection</h2>
-      </div>
-
-      <div id="filters-container" class="filters-container">
-        <input type="text" id="name-filter" placeholder="Filter by name..." />
-        <select id="media-type-filter">
-          <option value="all">All types</option>
-          <option value="channels">TV Channels</option>
-          <option value="movies">Movies</option>
-          <option value="music">Music videos</option>
-          <option value="podcasts">Podcasts</option>
-        </select>
-        <select id="category-filter">
-          <option value="all">All categories</option>
-        </select>
-      </div>
-      <div id="content-grid" class="media-grid"></div>
-      <hr class="media-separator" />
-    </section>
-
-    <!-- FIFTH SECTION: POPULAR ACTORS & DIRECTORS -->
-    <section class="people-section">
-      <div class="container">
-        <div class="section-header">
-          <h2 class="section-title">Popular Actors & Directors</h2>
-          <i class="fa fa-chevron-right"></i>
-        </div>
-
-        <div class="slider-wrapper">
-          <button class="slider-arrow prev" aria-label="Previous">
-            <i class="fa fa-chevron-left"></i>
-          </button>
-
-          <div class="people-slider">
-            <div
-              class="person-card"
-              style="background: #161d25; border-radius: 12px"
-            >
-              <div
-                class="avatar"
-                style="background: linear-gradient(60deg, #fbff00, #4a6625)"
-              >
-                MG
-              </div>
-              <p class="name">Manuel Garcia-Rulfo</p>
-            </div>
-            <div class="person-card">
-              <div
-                class="avatar"
-                style="background: linear-gradient(60deg, #026244, #97f5cf)"
-              >
-                TH
-              </div>
-              <p class="name">Tom Holland</p>
-            </div>
-            <div class="person-card">
-              <div
-                class="avatar"
-                style="background: linear-gradient(60deg, #9800fd, #25baff)"
-              >
-                DS
-              </div>
-              <p class="name">Daniel Scheinert</p>
-            </div>
-            <div class="person-card">
-              <div
-                class="avatar"
-                style="background: linear-gradient(60deg, #f7f26e, #24e61a)"
-              >
-                TC
-              </div>
-              <p class="name">Tom Cruise</p>
-            </div>
-            <div class="person-card">
-              <div
-                class="avatar"
-                style="background: linear-gradient(60deg, #ff3300, #f9d339)"
-              >
-                DR
-              </div>
-              <p class="name">Daniel Radcliffe</p>
-            </div>
-            <div class="person-card">
-              <div
-                class="avatar"
-                style="background: linear-gradient(60deg, #f34141, #c90b77)"
-              >
-                BC
-              </div>
-              <p class="name">Benedict Cumberbatch</p>
-            </div>
-            <div class="person-card">
-              <div
-                class="avatar"
-                style="background: linear-gradient(60deg, #8c00ff, #253eff)"
-              >
-                CT
-              </div>
-              <p class="name">Channing Tatum</p>
-            </div>
-            <div class="person-card">
-              <div
-                class="avatar"
-                style="background: linear-gradient(60deg, #9c074f, #ff2d11)"
-              >
-                AS
-              </div>
-              <p class="name">Alexander Skarsgård</p>
-            </div>
-            <div class="person-card">
-              <div
-                class="avatar"
-                style="background: linear-gradient(135deg, #ff5252, #ff217b)"
-              >
-                JL
-              </div>
-              <p class="name">Jared Leto</p>
-            </div>
-            <div class="person-card">
-              <div
-                class="avatar"
-                style="background: linear-gradient(135deg, #db00f1, #8b00a3)"
-              >
-                TP
-              </div>
-              <p class="name">Trey Parker</p>
-            </div>
-            <div class="person-card">
-              <div
-                class="avatar"
-                style="background: linear-gradient(135deg, #d400ff, #ff6fdb)"
-              >
-                AN
-              </div>
-              <p class="name">Adam Nee</p>
-            </div>
-            <div class="person-card">
-              <div
-                class="avatar"
-                style="background: linear-gradient(135deg, #d1b51e, #f5db3f)"
-              >
-                DA
-              </div>
-              <p class="name">David Attenborough</p>
-            </div>
-          </div>
-
-          <button class="slider-arrow next" aria-label="Next">
-            <i class="fa fa-chevron-right"></i>
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <section id="verse-of-the-day" class="fade-in verse-section">
-      <div class="container">
-        <h2 class="section-title">Verse of the Day</h2>
-        <blockquote class="verse">
-          <p id="verse-text">Loading verse...</p>
-          <footer id="verse-ref"></footer>
-        </blockquote>
-      </div>
-    </section>
-
-    <div class="bottom_most_section free-container">
-      <div class="content_wrapper">
-        <div class="free-content">
-          <h3>Are You Eternity Ready?</h3>
-          <h4>If not learn how</h4>
-          <a href="https://www.eternityready.com/salvation" class="button"
-            >Learn More</a
-          >
-        </div>
-      </div>
-      <div class="red_fitler"></div>
-      <img
-        src="public/if-not.webp"
-        alt="Eternity Ready promotional content"
-        width="1921"
-        height="656"
-      />
     </div>
+  </div>
 
-    <footer class="footer-section">
-      <!--<hr class="footer-divider" />-->
-      <div class="subfooter">
-        <div class="container">
-          <div class="footer-connect">
-            <h3>Connect with us</h3>
-            <ul class="social-list">
-              <li>
-                <a
-                  href="https://www.facebook.com/eternityready"
-                  target="_blank"
-                  class="social-facebook"
-                >
-                  <i class="fab fa-facebook-f"></i> Facebook
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://www.eternityready.com/#"
-                  target="_blank"
-                  class="social-twitter"
-                >
-                  <i class="fab fa-x-twitter"></i> x.com
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://www.eternityready.com/#"
-                  target="_blank"
-                  class="social-youtube"
-                >
-                  <i class="fab fa-youtube"></i> YouTube
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://www.instagram.com/jeremiahfarris/"
-                  target="_blank"
-                  class="social-instagram"
-                >
-                  <i class="fab fa-instagram"></i> Instagram
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <hr class="footer-divider" />
+  <div class="card" id="podcast">
+    <img src="podcast.png" class="card-img" />
+    <div class="overlay">🎙️ Podcasts</div>
+    <div class="card-content">
+      <h3>Eternity Ready Podcasts</h3>
+      <p>Listen to 177 podcasts and 21,415 episodes anywhere. Grow your walk with Jesus!</p> 
+<a href="https://podcasts.eternityready.com/" class="btn">Browse Podcasts 🎙️</a>
+    </div>
+  </div>
 
-        <div class="footer-links-box">
-          <div class="container">
-            <div class="footer-content">
-              <!-- All columns on desktop in a row, on mobile use .footer-cols-wrap grid -->
-              <div class="footer-col footer-apps">
-                <h4>Our Apps</h4>
-                <div class="app-buttons">
-                  <a href="https://play.google.com/store/apps/details?id=com.wRaptureReadyEndTimesNewsProphecyDoctrineofPreTribRapture&hl=en_US" class="app-btn">
-                    <img
-                      src="images/pngegg (1).png"
-                      alt="Get it on Google Play"
-                    />
-                  </a>
-                  <a href="https://apps.apple.com/us/app/rapture-ready-eternity-ready/id6504677632" class="app-btn">
-                    <img
-                      src="images/pngegg.png"
-                      alt="Download on the App Store"
-                    />
-                  </a>
-                </div>
-              </div>
-              <div class="footer-stack-col">
-                <div class="footer-col">
-                  <h4>Useful Links</h4>
-                  <ul>
-                    <li><a href="#">Radio Schedule</a></li>
-                    <li><a href="#">Ways to Listen</a></li>
-                    <li><a href="https://www.eternityready.com/donate/">Donate</a></li>
-                  </ul>
-                </div>
-                <div class="footer-col">
-                  <h4>Our Brands</h4>
-                  <ul>
-                    <li><a href="#">Corporate</a></li>
-                    <li><a href="https://www.eternityready.com/tv">Eternity Ready TV</a></li>
-                    <li><a href="https://www.raptureready.tv">Rapture Ready TV</a></li>
-                  </ul>
-                </div>
-                <div class="footer-col">
-                  <h4>About</h4>
-                  <ul>
-                    <li><a href="https://www.eternityready.com/about-us/">Team &amp; Culture</a></li>
-                    <li><a href="https://www.eternityready.com/about-us/">About Us</a></li>
-                    <li><a href="https://www.eternityready.com/EternityReadyMedia.pdf">Our Media Kit</a></li>
-                  </ul>
-                </div>
-                <div class="footer-col">
-                  <h4>Help</h4>
-                  <ul>
-                    <li><a href="#">Terms of Use</a></li>
-                    <li><a href="#">Privacy &amp; Legal</a></li>
-                    <li><a href="https://www.eternityready.com/help/">Contact &amp; Help</a></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+  <div class="card" id="movies">
+    <img src="https://eternityready.com/login/public/media.jpg" class="card-img" />
+    <div class="overlay">🎬 Christian Movies</div>
+    <div class="card-content">
+      <h3>Faith-Based Movies</h3>
+      <p>Watch over 500 Faith & Family friendly movies. Movies with purpose, inspiration and best of all Jesus.</p>
+<a href="https://www.eternityready.com/tv" class="btn">Watch Movies ▶️</a>
 
-        <hr class="media-separator" />
-        <div class="container">
-          <div class="footer-bottom">
-            <div class="footer-brand">
-              <img
-                src="images/logo1USE-THIS.png"
-                alt="Eternity Logo"
-                class="logo-icon"
-              />
-            </div>
-            <p class="footer-copy">
-              © 2012–2025 Eternity Ready LLC, All Rights Reserved.
-            </p>
-          </div>
-        </div>
-      </div>
-    </footer>
+    </div>
+  </div>
 
-    <script async src="https://www.youtube.com/iframe_api"></script>
-    <script src="script.js"></script>
-    <script src="popup.js"></script>
-  </body>
+</section>
+
+<footer>
+  <b>Eternity Ready © 2025 — All Rights Reserved</b>
+</footer>
+
+<script>
+function toggleMenu() {
+  document.getElementById("navMenu").classList.toggle("open");
+}
+</script>
+
+<div class="dark-toggle" onclick="toggleDarkMode()">🌙 Dark Mode</div>
+
+<script>
+function toggleMenu() {
+  document.getElementById("navMenu").classList.toggle("open");
+}
+
+function toggleDarkMode() {
+  document.body.classList.toggle('dark');
+}
+</script>
+
+</body>
 </html>

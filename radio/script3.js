@@ -1,4 +1,4 @@
-import { getEternityRadioPlayerRef } from './dist19/ui.es.js';
+import { getEternityRadioPlayerRef } from './dist20/ui.es.js';
 // Aguarda o DOM estar completamente carregado para executar o script
 document.addEventListener("DOMContentLoaded", () => {
   // =================================================================================
