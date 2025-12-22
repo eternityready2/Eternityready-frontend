@@ -696,63 +696,27 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 
-async function publishVideo(videoData, endpoint) {
-  const query = `
-    mutation CreateVideo($input: VideoCreateInput!) {
-      createVideo(data: $input) {
-        id
-        sourceType
-        youtubeUrl
-        title
-        description
-        author
-        isPublic
-        featured
-        highlight
-        categories {
-          id
-          name
-        }
-      }
-    }
-  `;
-
-  const variables = {
-    input: {
-      sourceType: videoData.sourceType || "youtube",
-      youtubeUrl: videoData.youtubeUrl || null,
-      embedCode: videoData.embedCode || null,
-      title: videoData.title || null,
-      description: videoData.description || null,
-      author: videoData.author || null,
-      isPublic: videoData.isPublic !== undefined ? videoData.isPublic : true,
-      featured: videoData.featured || false,
-      highlight: videoData.highlight || false,
-      thumbnailUrl: videoData.thumbnailUrl || null,
-
-      // Auto-generated fields (leave null/undefined)
-      verificationMessage: "",
-      isNew: false,
-      isRestricted: false
-    }
-  };
-
+async function publishVideo(videoData) {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/graphql`, {
+    const response = await fetch(`${API_BASE_URL}/api/create-video`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ query, variables })
+      body: JSON.stringify({
+        ...videoData,
+        categories: videoData.categories || []
+      })
     });
 
     const result = await response.json();
     
-    if (result.errors) {
+    if (!result.success) {
       throw result.errors;
     }
 
-    return result.data.createVideo;
+    console.log('Created categories: ', result.createdCategories, videoData);
+    return result.video;
   } catch (error) {
     console.error('Error creating video:', error);
     throw error;
@@ -864,9 +828,10 @@ async function renderRecommendations(currentItem, allMedia) {
         console.log('Success publishing recommendation video', result);
       })
       .catch(async (error) => {
-        const isDuplicate = error.some(e => 
-          e.extensions?.prisma?.code === 'P2002' && 
-          e.extensions?.prisma?.meta?.target?.includes('Video_title_key')
+        console.log('erlsd', error);
+        const isDuplicate = (
+          error?.extensions?.prisma?.code === 'P2002'
+          && error?.extensions?.prisma?.meta?.target?.includes('Video_title_key')
         );
 
         if (!isDuplicate) {
