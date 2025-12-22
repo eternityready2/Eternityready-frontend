@@ -361,11 +361,16 @@
         console.log('Comment result: ', result);
 
         let commentContainer = document.createElement("div");
+        const imageSrc = (
+          user?.profileImage?.url == null
+            ? `${ETERNITY_BASE_URL}/profile/public/profileImage.png`
+            : `${API_BASE_URL}${user?.profileImage?.url}`
+        );
         commentContainer.className="comment"
         commentContainer.innerHTML = `
           <div class="image">
             <img
-                src="/profile/public/profileImage.png"
+                src="${imageSrc}"
             />
           </div>
           <div>
@@ -499,11 +504,16 @@
         console.log('Comment result: ', result);
 
         let commentContainer = document.createElement("div");
+        const imageSrc = (
+          user?.profileImage?.url == null
+            ? `${ETERNITY_BASE_URL}/profile/public/profileImage.png`
+            : `${API_BASE_URL}${user?.profileImage?.url}`
+        );
         commentContainer.className="comment"
         commentContainer.innerHTML = `
           <div class="profile-image">
             <img
-                src="/profile/public/profileImage.png"
+                src="${imageSrc}"
             />
           </div>
           <div>

@@ -336,8 +336,17 @@ document.addEventListener("DOMContentLoaded", async () => {
             addReaction(user.id, 'dislike', mediaTitle, null, like, dislike);
           });
         }
+
+        for (const profileImageAddComment of document.querySelectorAll("#add-comment .profile-image img")) {
+          profileImageAddComment.src = (
+            user?.profileImage?.url == null
+                ? `${ETERNITY_BASE_URL}/profile/public/profileImage.png`
+                : `${API_BASE_URL}${user?.profileImage?.url}`
+          );
+        }
       }
 
+      
       console.log('userReactions', userReactions);
 
       renderComments(user, mediaTitle);      
@@ -852,6 +861,9 @@ async function renderComments(user, videoTitle) {
               user {
                 id
                 email
+                profileImage {
+                  url
+                }
               }
             }
           }
@@ -880,11 +892,17 @@ async function renderComments(user, videoTitle) {
 
   if (data.video.comments.length) {
     const commentMobile = document.createElement("div");
+    const commentMobileImageSrc = (
+      data.video.comments[0]?.user?.profileImage?.url == null
+        ? `${ETERNITY_BASE_URL}/profile/public/profileImage.png`
+        : `${API_BASE_URL}${data.video.comments[0].user.profileImage.url}`
+    );
+
     commentMobile.className = "comment"
     commentMobile.innerHTML = `
       <div class="profile-image">
         <img
-            src="/profile/public/profileImage.png"
+            src="${commentMobileImageSrc}"
         />
       </div>
       <div class="profile-text">${data.video.comments[0].text}</div>
@@ -897,11 +915,17 @@ async function renderComments(user, videoTitle) {
 
   for (const comment of data?.video?.comments) {
     let desktopCommentContainer = document.createElement("div");
+    const imageSrc = (
+      comment?.user?.profileImage?.url == null
+        ? `${ETERNITY_BASE_URL}/profile/public/profileImage.png`
+        : `${API_BASE_URL}${comment.user.profileImage.url}`
+    );
+
     desktopCommentContainer.className="comment"
     desktopCommentContainer.innerHTML = `
       <div class="profile-image">
         <img
-            src="/profile/public/profileImage.png"
+            src="${imageSrc}"
         />
       </div>
       <div>
