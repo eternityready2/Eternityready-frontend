@@ -16,6 +16,24 @@ function debounce(func, delay) {
   };
 }
 
+function timeAgo(diffMs) {
+  const seconds = Math.floor(diffMs / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const weeks = Math.floor(days / 7);
+  const months = Math.floor(days / 30.44);
+  const years = Math.floor(days / 365.25);
+
+  if (years > 0) return `${years} ${years === 1 ? 'year' : 'years'} ago`;
+  if (months > 0) return `${months} ${months === 1 ? 'month' : 'months'} ago`;
+  if (weeks > 0) return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`;
+  if (days > 0) return `${days} ${days === 1 ? 'day' : 'days'} ago`;
+  if (hours > 0) return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
+  if (minutes > 0) return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
+  return `${seconds} ${seconds === 1 ? 'second' : 'seconds'} ago`;
+}
+
 let userReactions = [];
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -889,7 +907,7 @@ async function renderComments(user, videoTitle) {
       <div>
         <div id="name-and-date">
           <div class="name">${comment.user.email}</div>
-          <div class="date">${comment.timestamp}</div>
+          <div class="date">${timeAgo(new Date(Date.now()) - new Date(comment.timestamp).getTime())}</div>
         </div>
         <div class="text">${comment.text}</div>
         <div id="like-and-dislike">

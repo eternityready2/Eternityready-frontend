@@ -309,7 +309,7 @@
       cancelCommentBtn.hidden = true;
 
       postCommentBtn?.addEventListener('click', async () => {
-        if (commentInput.value === "") {
+        if (!commentInput.value || commentInput.value === "") {
           return;
         }
 
@@ -447,7 +447,7 @@
       const commentInputMobile = document.querySelector("main.mobile #add-comment input");
 
       postCommentBtnMobile?.addEventListener('click', async () => {
-        if (commentInputMobile.value === "") {
+        if (!commentInputMobile.value || commentInputMobile.value === "") {
           return;
         }
 
