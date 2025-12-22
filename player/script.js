@@ -181,12 +181,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     desktop.querySelector('.video-player').src = playerSrc;
 
     mobile.querySelector('.video-title').textContent = video.title;
+    mobile.querySelector('.descriptionModal .video-title').textContent = video.title;
     desktop.querySelector('.video-title').textContent = video.title;
 
     mobile.querySelector('.profile-name').textContent = video.author || "Unknown author";
+    mobile.querySelector('.descriptionModal .profile-name').textContent = video.author || "Unknown author";
     desktop.querySelector('.profile-name').textContent = video.author || "Unknown author";
 
     desktop.querySelector('.description p').innerHTML = video.description.replace(/\n/g, "<br />");
+    mobile.querySelector('.descriptionModal .description p').innerHTML = video.description.replace(/\n/g, "<br />");
 
     fetch(`${API_BASE_URL}/api/reactions`, {
       method: 'POST',
@@ -216,6 +219,8 @@ document.addEventListener("DOMContentLoaded", async () => {
           const dislikeCount = dislike.querySelector('span:nth-child(1)');
           dislikeCount.textContent = parseInt(res.dislike);
         }
+
+        document.querySelector('main.mobile .descriptionModal #stats .likes').textContent = parseInt(res.like);
       });
 
     /*
@@ -252,6 +257,24 @@ document.addEventListener("DOMContentLoaded", async () => {
         } catch (viewError) {
           console.error('Views increment failed:', viewError);
         }
+      }
+
+      console.log('video', video);
+      if (video) {
+        const mobile = document.querySelector('.mobile');
+        const desktop = document.querySelector('.desktop');
+        mobile.querySelector(".views").textContent = `${video.views} Views`;
+        mobile.querySelector(".descriptionModal .views").textContent = `${video.views}`;
+        desktop.querySelector(".views").textContent = `${video.views} Views`;
+
+        const date = new Date(video.createdAt);
+        const day = date.getUTCDate();
+        const month = date.getUTCMonth();
+        const year = date.getUTCFullYear();
+
+        const monthsMap = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        mobile.querySelector('.descriptionModal .date').textContent = `${monthsMap[month]} ${day}`;
+        mobile.querySelector('.descriptionModal .date ~ span').textContent = year;
       }
 
       const user = await getUserFromSessionToken(getSession());
@@ -299,15 +322,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       console.log('userReactions', userReactions);
 
-      renderComments(user, mediaTitle);
-
-      if (video) {
-        const mobile = document.querySelector('.mobile');
-        const desktop = document.querySelector('.desktop');
-        mobile.querySelector(".views").textContent = `${video.views} Views`;
-        desktop.querySelector(".views").textContent = `${video.views} Views`;
-      }
-
+      renderComments(user, mediaTitle);      
 
     } else {
       const titleElement = document.getElementById("video-title");

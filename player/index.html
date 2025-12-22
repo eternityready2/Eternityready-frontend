@@ -97,6 +97,36 @@
         </div>
       </div>
       <div class="recommendations"></div>
+      <div class="descriptionModal">
+        <div id="description-and-close">
+          <span>Description</span>
+          <span class="close-description material-symbols-outlined">close</span>
+        </div>
+        <span class="video-title">Loading video title</span>
+        <div id="profile-image-and-channel-name">
+          <div class="profile-image">
+            <img
+                src="/profile/public/profileImage.png"
+            />
+          </div>
+          <span class="profile-name">Loading channel Name</span>
+        </div>
+        <div id="stats">
+          <div>
+            <span class="likes">0</span>
+            <span>Likes</span>
+          </div>
+          <div>
+            <span class="views">0</span>
+            <span>Views</span>
+          </div>
+          <div>
+            <span class="date">0</span>
+            <span>Year</span>
+          </div>
+        </div>
+        <div class="description"><p></p></div>
+      </div>
       <div class="commentsModal">
         <div id="comments-and-close">
           <span>Comments</span>
@@ -507,5 +537,31 @@
 
         commentInputMobile.value = "";
       });
+    </script>
+    <script>
+      const descriptionModal = document.querySelector(".descriptionModal");
+      descriptionModal.style.display = "none";
+
+      document.querySelector('main.mobile #title-views-date-more').addEventListener(
+        'click', () => {
+          const header = document.querySelector('eternity-header');
+          const video = document.querySelector('main.mobile .video');
+
+          const headerHeight = header.offsetHeight;
+          const videoHeight = video.offsetHeight;
+          const viewportHeight = window.innerHeight;
+
+          descriptionModal.style.display = "flex";
+          descriptionModal.style.height = viewportHeight - (headerHeight + videoHeight);
+          document.querySelector('html').style.overflow = "hidden";
+        }
+      );
+    </script>
+    <script>
+      descriptionModal.querySelector('.close-description')
+        .addEventListener('click', () => {
+          descriptionModal.style.display = "none";
+          document.querySelector('html').style.overflow = "scroll";
+      })
     </script>
 </body>

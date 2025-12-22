@@ -16,7 +16,7 @@ html body {
   line-height: 1.5;
 }
 
-span, button {
+span, button, p {
   font-family: "Roboto", "Arial", sans-serif;
 }
 
@@ -279,7 +279,8 @@ main.mobile .commentsModal .comments {
   cursor: pointer;
 }
 
-main.mobile .commentsModal {
+main.mobile .commentsModal,
+main.mobile .descriptionModal {
   position: absolute;
   z-index: 1729;
   bottom: 0;
@@ -296,19 +297,26 @@ main.mobile .commentsModal {
   background-color: #272727;
 }
 
-main.mobile .commentsModal #comments-and-close {
+main.mobile .descriptionModal {
+  overflow: scroll;
+}
+
+main.mobile .commentsModal #comments-and-close,
+main.mobile .descriptionModal #description-and-close {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 }
 
-main.mobile .commentsModal #comments-and-close span {
+main.mobile .commentsModal #comments-and-close span,
+main.mobile .descriptionModal #description-and-close span {
   font-size: 1.5rem;
   font-weight: 500;
   line-height: 2rem;
 }
 
-main.mobile .commentsModal #comments-and-close .material-symbols-outlined {
+main.mobile .commentsModal #comments-and-close .material-symbols-outlined,
+main.mobile .descriptionModal #comments-and-close .material-symbols-outlined {
   font-size: 2rem;
   width: 2rem;
   height: 2rem;
@@ -472,6 +480,57 @@ main.mobile .commentsModal .comment #like-and-dislike span {
   font-weight: 400;
 }
 
+main.mobile .descriptionModal #profile-image-and-channel-name {
+  display: flex;
+  column-gap: 1rem;
+  align-items: center;
+}
+
+
+main.mobile .descriptionModal #stats {
+  display: flex;
+  column-gap: 1rem;
+}
+
+main.mobile .descriptionModal #stats div {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0rem;
+  background-color: rgba(255, 0, 0, 0.5);
+  flex: 1;
+  align-items: center;
+  border-radius: 0.75rem;
+}
+
+
+main.mobile .descriptionModal #stats div span:first-child {
+  font-weight: 700;
+  font-size: 1.125rem;
+  line-height: 1.625rem;
+  color: white;
+}
+
+
+main.mobile .descriptionModal #stats div span:nth-child(2) {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+main.mobile .descriptionModal > .description {
+  padding: 0.75rem 0.75rem;
+  background-color: rgba(255, 0, 0, 0.5);
+  border-radius: 0.75rem;
+}
+
+main.mobile .descriptionModal > .description p {
+  color: white;
+  line-height: 1rem;
+  font-size: 0.875rem;
+  font-weight: 400;
+  margin: 0;
+}
 
 /* Small devices (landscape phones, 576px and up) */
 @media (min-width: 576px) {
