@@ -603,5 +603,9 @@
           signInToContinue.style.display = 'none';
         }
       });
+
+      signInToContinue.querySelector('button').addEventListener('click', () => {
+        window.location.assign(`${ETERNITY_BASE_URL}/login`);
+      });
     </script>
 </body>
