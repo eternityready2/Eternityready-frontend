@@ -16,54 +16,7 @@ function debounce(func, delay) {
   };
 }
 
-function timeAgo(diffMs) {
-  const seconds = Math.floor(diffMs / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
-  const weeks = Math.floor(days / 7);
-  const months = Math.floor(days / 30.44);
-  const years = Math.floor(days / 365.25);
-
-  if (years > 0) return `${years} ${years === 1 ? 'year' : 'years'} ago`;
-  if (months > 0) return `${months} ${months === 1 ? 'month' : 'months'} ago`;
-  if (weeks > 0) return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`;
-  if (days > 0) return `${days} ${days === 1 ? 'day' : 'days'} ago`;
-  if (hours > 0) return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
-  if (minutes > 0) return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
-  return `${seconds} ${seconds === 1 ? 'second' : 'seconds'} ago`;
-}
-
-let userReactions = [];
-
-document.addEventListener("DOMContentLoaded", async () => {
-  // =======================================================================
-  // --- VIDEO PLAYER LOGIC ---
-  // =======================================================================
-
-  /**
-   * Fetches a specific video from the API only. Used as a fallback.
-   * @param {string} videoId The ID of the video.
-   * @returns {Promise<object|null>} The video data or null.
-   */
-
-  let allMedia;
-  async function fetchVideoFromAPI(videoId) {
-    try {
-      const url = `${API_BASE_URL}api/video/${videoId}`;
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      return data.video || null;
-    } catch (e) {
-      console.error(`Failed to fetch video from API: ${e}`);
-      return null;
-    }
-  }
-
-  /**
+/**
    * Normalizes data from different sources (JSON, API) into a consistent format for the player.
    * @param {object} item The found media item.
    * @param {string} type The type of media ('channel', 'music', 'movie').
@@ -95,6 +48,56 @@ document.addEventListener("DOMContentLoaded", async () => {
     return normalized;
   }
 
+
+function timeAgo(diffMs) {
+  const seconds = Math.floor(diffMs / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const weeks = Math.floor(days / 7);
+  const months = Math.floor(days / 30.44);
+  const years = Math.floor(days / 365.25);
+
+  if (years > 0) return `${years} ${years === 1 ? 'year' : 'years'} ago`;
+  if (months > 0) return `${months} ${months === 1 ? 'month' : 'months'} ago`;
+  if (weeks > 0) return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`;
+  if (days > 0) return `${days} ${days === 1 ? 'day' : 'days'} ago`;
+  if (hours > 0) return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
+  if (minutes > 0) return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
+  return `${seconds} ${seconds === 1 ? 'second' : 'seconds'} ago`;
+}
+
+let userReactions = [];
+
+async function fetchVideoFromAPI(videoTitle) {
+  try {
+    const url = `${API_BASE_URL}/api/video/${videoTitle}`;
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data.video || null;
+  } catch (e) {
+    console.error(`Failed to fetch video from API: ${e}`);
+    return null;
+  }
+}
+
+
+document.addEventListener("DOMContentLoaded", async () => {
+  // =======================================================================
+  // --- VIDEO PLAYER LOGIC ---
+  // =======================================================================
+
+  /**
+   * Fetches a specific video from the API only. Used as a fallback.
+   * @param {string} videoId The ID of the video.
+   * @returns {Promise<object|null>} The video data or null.
+   */
+
+  let allMedia;
+    
   /**
    * Fetches media data, trying local JSON files first, then falling back to the API.
    * @param {string} mediaTitle The ID of the media to fetch.
@@ -731,8 +734,6 @@ async function publishVideo(videoData, endpoint) {
     }
   };
 
-  console.log('variables', variables);
-
   try {
     const response = await fetch(`${API_BASE_URL}/api/graphql`, {
       method: 'POST',
@@ -745,7 +746,7 @@ async function publishVideo(videoData, endpoint) {
     const result = await response.json();
     
     if (result.errors) {
-      throw new Error(`GraphQL Errors: ${JSON.stringify(result.errors)}`);
+      throw result.errors;
     }
 
     return result.data.createVideo;
@@ -845,7 +846,7 @@ async function renderRecommendations(currentItem, allMedia) {
             <span class="video-title">${recItem.title}</span>
             <span class="profile-name">Eternity Ready</span>
             <div>
-              <span class="views">0 views</span><span class="video-date">2 Years ago</span>
+              <span class="views">0 views</span><span class="video-date">Now</span>
             </div>
           </div>
           <span class="material-symbols-outlined">more_vert</span>
@@ -853,6 +854,30 @@ async function renderRecommendations(currentItem, allMedia) {
       </div>
     `
     desktop.appendChild(desktopContainer);
+    const normalizedItem = normalizeDataForPlayer(recItem);
+    console.log('Publishing recommendation Video: ', normalizedItem);
+    publishVideo(normalizedItem)
+      .then(async (result) => {
+        console.log('Success publishing recommendation video', result);
+      })
+      .catch(async (error) => {
+        const isDuplicate = error.some(e => 
+          e.extensions?.prisma?.code === 'P2002' && 
+          e.extensions?.prisma?.meta?.target?.includes('Video_title_key')
+        );
+
+        if (!isDuplicate) {
+          console.error(`Unknown GraphQL Errors: ${JSON.stringify(error)}`);
+        }
+
+        console.log('Video already exists, fetching video', normalizedItem.title);
+        const video = await fetchVideoFromAPI(encodeURIComponent(normalizedItem.title));
+        console.log('Recommendation Fetched from API:', video);
+        desktopContainer.querySelector('.views').textContent = `${video.views} views`
+        mobileContainer.querySelector('.views').textContent = `${video.views} views`
+
+        desktopContainer.querySelector('.video-date').textContent = `${timeAgo(new Date(Date.now()) - new Date(video.createdAt).getTime())}`
+      });
   });
 }
 
