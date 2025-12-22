@@ -29,6 +29,11 @@
 </head>
 <body>
     <eternity-header></eternity-header>
+    <div id="sign-in-to-continue">
+      <span>Want to Join the Conversation?</span>
+      <span>Sign in to continue</span>
+      <button>Sign in</button>
+    </div>
     <main hidden class="mobile">
       <div class="video">
         <iframe
@@ -415,8 +420,13 @@
       commentInput?.addEventListener(
         "input",
         (event) => {
+          event.stopPropagation();
           postCommentBtn.hidden = event.target.value === "";
           cancelCommentBtn.hidden = event.target.value === "";
+
+          if (!getSession()) {
+            document.getElementById('sign-in-to-continue').style.display = "flex";
+          }
         }
       );
     </script>
@@ -450,6 +460,16 @@
     <script>
       const postCommentBtnMobile = document.querySelector("main.mobile #add-comment .post-comment");
       const commentInputMobile = document.querySelector("main.mobile #add-comment input");
+
+      commentInputMobile?.addEventListener(
+        "input",
+        (event) => {
+          event.stopPropagation();
+          if (!getSession()) {
+            document.getElementById('sign-in-to-continue').style.display = "flex";
+          }
+        }
+      );
 
       postCommentBtnMobile?.addEventListener('click', async () => {
         if (!commentInputMobile.value || commentInputMobile.value === "") {
@@ -573,5 +593,15 @@
           descriptionModal.style.display = "none";
           document.querySelector('html').style.overflow = "scroll";
       })
+    </script>
+    <script>
+      const signInToContinue = document.getElementById('sign-in-to-continue');
+      document.addEventListener('click', (event) => {
+        const isClickInside = signInToContinue.contains(event.target);
+        if (!isClickInside) {
+          console.log('signInToContinue Clicked outside');
+          signInToContinue.style.display = 'none';
+        }
+      });
     </script>
 </body>

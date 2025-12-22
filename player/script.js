@@ -296,6 +296,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       const user = await getUserFromSessionToken(getSession());
+      const mobile = document.querySelector('main.mobile #like-and-dislike');
+      const desktop = document.querySelector('main.desktop #like-and-dislike');
+      const likeAndDislikeContainers = [mobile, desktop];
+
       if (user) {
         console.log('Fetching user reactions', mediaTitle, user.id);
         try {
@@ -303,10 +307,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         } catch (e) {
           console.error('Error fetching user reactions', e);
         }
-
-        const mobile = document.querySelector('main.mobile #like-and-dislike');
-        const desktop = document.querySelector('main.desktop #like-and-dislike');
-        const likeAndDislikeContainers = [mobile, desktop];
 
         for (const likeAndDislike of likeAndDislikeContainers) {
           const like = likeAndDislike.querySelector(".like");
@@ -325,16 +325,6 @@ document.addEventListener("DOMContentLoaded", async () => {
               break;
             }
           }
-
-          like.addEventListener('click', () => {
-            console.log('Like Video', user.id, mediaTitle);
-            addReaction(user.id, 'like', mediaTitle, null, like, dislike);
-          });
-
-          dislike.addEventListener('click', () => {
-            console.log('Dislike Video', user.id, mediaTitle);
-            addReaction(user.id, 'dislike', mediaTitle, null, like, dislike);
-          });
         }
 
         for (const profileImageAddComment of document.querySelectorAll("#add-comment .profile-image img")) {
@@ -346,7 +336,31 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       }
 
-      
+      for (const likeAndDislike of likeAndDislikeContainers) {
+        const like = likeAndDislike.querySelector(".like");
+        const dislike = likeAndDislike.querySelector(".dislike");
+
+        like.addEventListener('click', (e) => {
+          e.stopPropagation();
+          console.log('Like Video', user?.id, mediaTitle);
+          if (!getSession()) {
+            document.getElementById('sign-in-to-continue').style.display = "flex";
+            return;
+          }
+          addReaction(user.id, 'like', mediaTitle, null, like, dislike);
+        });
+
+        dislike.addEventListener('click', (e) => {
+          e.stopPropagation();
+          console.log('Dislike Video', user?.id, mediaTitle);
+          if (!getSession()) {
+            document.getElementById('sign-in-to-continue').style.display = "flex";
+            return;
+          }
+          addReaction(user.id, 'dislike', mediaTitle, null, like, dislike);
+        });
+      }
+
       console.log('userReactions', userReactions);
 
       renderComments(user, mediaTitle);      
@@ -975,6 +989,26 @@ async function renderComments(user, videoTitle) {
           const dislikeCount = dislike.querySelector('span:nth-child(1)');
           dislikeCount.textContent = parseInt(res.dislike);
           
+          like.addEventListener('click', (e) => {
+            e.stopPropagation();
+            console.log('Like Comment', user?.id, videoTitle, comment?.id);
+            if (!getSession()) {
+              document.getElementById('sign-in-to-continue').style.display = "flex";
+              return;
+            }
+            addReaction(user.id, 'like', videoTitle, comment.id, like, dislike);
+          });
+
+          dislike.addEventListener('click', (e) => {
+            e.stopPropagation();
+            console.log('Dislike Comment', user?.id, videoTitle, comment?.id);
+            if (!getSession()) {
+              document.getElementById('sign-in-to-continue').style.display = "flex";
+              return;
+            }
+            addReaction(user.id, 'dislike', videoTitle, comment.id, like, dislike);
+          });
+
           if (!user) { return; }
 
           for (const userReaction of userReactions) {
@@ -990,17 +1024,7 @@ async function renderComments(user, videoTitle) {
               break;
             }
           }
-
-          like.addEventListener('click', () => {
-            console.log('Like Comment', user.id, videoTitle, comment.id);
-            addReaction(user.id, 'like', videoTitle, comment.id, like, dislike);
-          });
-
-          dislike.addEventListener('click', () => {
-            console.log('Dislike Comment', user.id, videoTitle, comment.id);
-            addReaction(user.id, 'dislike', videoTitle, comment.id, like, dislike);
-          });
-        });
+      });
     }
   }
 }
