@@ -202,9 +202,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     mobile.querySelector('.descriptionModal .video-title').textContent = video.title;
     desktop.querySelector('.video-title').textContent = video.title;
 
-    mobile.querySelector('.profile-name').textContent = video.author || "Unknown author";
-    mobile.querySelector('.descriptionModal .profile-name').textContent = video.author || "Unknown author";
-    desktop.querySelector('.profile-name').textContent = video.author || "Unknown author";
+    mobile.querySelector('.profile-name').textContent = video.author || "Eternity Ready";
+    mobile.querySelector('.descriptionModal .profile-name').textContent = video.author || "Eternity Ready";
+    desktop.querySelector('.profile-name').textContent = video.author || "Eternity Ready";
 
     desktop.querySelector('.description p').innerHTML = video.description.replace(/\n/g, "<br />");
     mobile.querySelector('.descriptionModal .description p').innerHTML = video.description.replace(/\n/g, "<br />");
@@ -822,7 +822,7 @@ async function renderRecommendations(currentItem, allMedia) {
           <div id="title-name-views">
             <span class="title">${recItem.title}</span>
             <div id="name-and-views">
-              <span class="profile-name">Unknown Author</span><span class="views">1.3M views</span>
+              <span class="profile-name">Eternity Ready</span><span class="views">0 views</span>
             </div>
           </div>
           <span class="material-symbols-outlined">more_vert</span>
@@ -843,9 +843,9 @@ async function renderRecommendations(currentItem, allMedia) {
         <div class="info">
           <div>
             <span class="video-title">${recItem.title}</span>
-            <span class="profile-name">Unknown Author</span>
+            <span class="profile-name">Eternity Ready</span>
             <div>
-              <span class="views">1.3M views</span><span class="video-date">2 Years ago</span>
+              <span class="views">0 views</span><span class="video-date">2 Years ago</span>
             </div>
           </div>
           <span class="material-symbols-outlined">more_vert</span>
