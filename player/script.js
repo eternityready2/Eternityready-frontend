@@ -44,6 +44,9 @@ function debounce(func, delay) {
       normalized.sourceType = "youtube";
     } else if (item.embed) {
       normalized.sourceType = "embed";
+      if (normalized.embedCode.includes('youtube.com/embed')) {
+        normalized.embedCode += "?modestbranding=1&showinfo=0&showsearch=0&rel=0";
+      }
     }
     return normalized;
   }
