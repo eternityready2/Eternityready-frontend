@@ -788,7 +788,7 @@ async function renderRecommendations(currentItem, allMedia) {
         </div>
         <div id="title-name-views-and-more">
           <div id="title-name-views">
-            <span class="title">${recItem.title}</span>
+            <span class="title">${recItem.title || recItem.name}</span>
             <div id="name-and-views">
               <span class="profile-name">Eternity Ready</span><span class="views">0 views</span>
             </div>
@@ -810,7 +810,7 @@ async function renderRecommendations(currentItem, allMedia) {
         </a>
         <div class="info">
           <div>
-            <span class="video-title">${recItem.title}</span>
+            <span class="video-title">${recItem.title || recItem.name}</span>
             <span class="profile-name">Eternity Ready</span>
             <div>
               <span class="views">0 views</span><span class="video-date">Now</span>
