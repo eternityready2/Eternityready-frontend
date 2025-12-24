@@ -30,6 +30,9 @@
 <body>
     <eternity-header></eternity-header>
     <div id="sign-in-to-continue">
+      <div>
+        <span class="close-sign-in-to-continue material-symbols-outlined">close</span>
+      </div>
       <span>Want to Join the Conversation?</span>
       <span>Sign in to continue</span>
       <button>Sign in</button>
@@ -651,6 +654,9 @@
 
       signInToContinue.querySelector('button').addEventListener('click', () => {
         window.location.assign(`${ETERNITY_BASE_URL}/login`);
+      });
+      signInToContinue.querySelector(".close-sign-in-to-continue").addEventListener('click', () => {
+        signInToContinue.style.display = 'none';
       });
     </script>
 </body>
