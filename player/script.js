@@ -71,6 +71,7 @@ function timeAgo(diffMs) {
 }
 
 let userReactions = [];
+let hasUserSubscribed = false;
 
 async function fetchVideoFromAPI(videoTitle) {
   try {
@@ -317,6 +318,30 @@ document.addEventListener("DOMContentLoaded", async () => {
         window.open('mailto:'+'?subject='+encodedText+'&body='+encodedUrl, '_self');
       });
 
+      const mobileSubCount = document.querySelector('.mobile .profile-subscribers');
+      const desktopSubCount = document.querySelector('.desktop .profile-subscribers');
+
+      try {
+        const res = await fetch(`${API_BASE_URL}/api/subscribers`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: "keystone@eternityready.com" }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          throw data.error;
+          return;
+        }
+
+        console.log('subscribers count: ', data.subscriberCount);
+        mobileSubCount.textContent = parseInt(data.subscriberCount);
+        desktopSubCount.textContent = `${parseInt(data.subscriberCount)} subscribers`;
+
+      } catch (error) {
+        console.error('Error getting subscriber count');
+      }
+
       video = null;
       try {
         const publishedVideo = await publishVideo(mediaData);
@@ -353,6 +378,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       const user = await getUserFromSessionToken(getSession());
+      hasUserSubscribed = user?.subscriptions?.some(subscription => {
+        return subscription.email === 'keystone@eternityready.com'
+      }) ?? false;
+
       const mobile = document.querySelector('main.mobile #like-and-dislike');
       const desktop = document.querySelector('main.desktop #like-and-dislike');
       const likeAndDislikeContainers = [mobile, desktop];
@@ -415,6 +444,59 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
           }
           addReaction(user.id, 'dislike', mediaTitle, null, like, dislike);
+        });
+      }
+
+      for (const subscribeBtn of document.querySelectorAll('.subscribe')) {
+        if (hasUserSubscribed) {
+          subscribeBtn.classList.toggle('reaction');
+        }
+
+        subscribeBtn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          console.log('Subscribing', user);
+          if (!getSession()) {
+            document.getElementById('sign-in-to-continue').style.display = "flex";
+            return;
+          }
+
+          if (hasUserSubscribed) {
+            mobileSubCount.textContent = parseInt(mobileSubCount.textContent) - 1
+            desktopSubCount.textContent = `${parseInt(desktopSubCount.textContent.split(' ')[0]) - 1} subscribers`
+          }
+
+          else {
+            mobileSubCount.textContent = parseInt(mobileSubCount.textContent) + 1
+            desktopSubCount.textContent = `${parseInt(desktopSubCount.textContent.split(' ')[0]) + 1} subscribers`
+          }
+
+          subscribeBtn.classList.toggle('reaction');
+
+          hasUserSubscribed = !hasUserSubscribed;
+          try {
+            const response = await fetch(`${API_BASE_URL}/api/subscribe`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                subscriberEmail: user.email,
+                targetUserEmail: 'keystone@eternityready.com'
+              }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+              throw data.error;
+              return;
+            }
+            
+            console.log('Success subscribing', user.email);
+
+          } catch (error) {
+            console.error('Failed subscribing', user.email, error);
+          }
         });
       }
 

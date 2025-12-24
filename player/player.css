@@ -1002,3 +1002,6 @@ main.mobile .descriptionModal > .description p {
   filter: brightness(90%);
 }
 
+button.subscribe.reaction {
+  background-color: #f11325 !important;
+}
