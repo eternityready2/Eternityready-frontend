@@ -264,6 +264,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.log('params', params);
     if (mediaTitle) {
       const mediaData = await fetchMediaData(mediaTitle);
+      if (!mediaData) {
+        const mobileMain = document.querySelector('main.mobile');
+        const desktopMain = document.querySelector('main.desktop');
+        mobileMain.style.display = 'none';
+        desktopMain.style.display = 'none';
+        document.getElementById("videoNotFound").style.display = 'flex';
+        return;
+      }
+
       console.log('mediaData:', mediaTitle, mediaData);
       renderVideo(mediaData);
       renderRecommendations(mediaData, allMedia);
@@ -505,10 +514,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       renderComments(user, mediaTitle);      
 
     } else {
-      const titleElement = document.getElementById("video-title");
-      if (titleElement) {
-        titleElement.textContent = "No media selected.";
-      }
+      const mobileMain = document.querySelector('main.mobile');
+      const desktopMain = document.querySelector('main.desktop');
+      mobileMain.style.display = 'none';
+      desktopMain.style.display = 'none';
+      document.getElementById("videoNotFound").style.display = 'flex';
     }
   }
 

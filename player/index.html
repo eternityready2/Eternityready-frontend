@@ -29,6 +29,20 @@
 </head>
 <body>
     <eternity-header></eternity-header>
+    <div id="videoNotFound">
+      <span>404</span>
+      <p>This page isn't available. Sorry about that.</p>
+      <p>Try searching for something else.</p>
+      <div>
+        <div><img src="/public/eternity-header-normal-logo.png"/></div>
+        <div>
+          <input type="text" placeholder="Search" />
+          <button>
+            <span class="material-symbols-outlined">search</span>
+          </button>
+        </div>
+      </div>
+    </div>
     <div id="sign-in-to-continue">
       <div>
         <span class="close-sign-in-to-continue material-symbols-outlined">close</span>
@@ -103,7 +117,7 @@
       </div>
       <div class="info">
         <div id="title-views-date-more">
-          <h1 class="video-title">Programming a first person shooter from scratch like it's 1995</h1>
+          <h1 class="video-title">Loading video title...</h1>
           <span class="views">1.9M views</span>
           <span class="date">2 years ago</span>
           <span class="more">...more</span>
@@ -115,7 +129,7 @@
                   src="/profile/public/profileImage.png"
               />
             </div>
-            <span class="profile-name">jdh</span>
+            <span class="profile-name">Loading profile name...</span>
             <span class="profile-subscribers">0</span>
           </div>
           <button class="subscribe">Subscribe</button>
@@ -227,7 +241,7 @@
             ></iframe>
           </div>
           <div class="info">
-            <h1 class="video-title">Programming a first person shooter from scratch like it's 1995</h1>
+            <h1 class="video-title">Loading video title...</h1>
             <div id="profile-subscribe-and-action-buttons">
               <div id="profile-and-subscribe">
                 <div class="profile">
@@ -237,7 +251,7 @@
                     />
                   </div>
                   <div id="profile-name-and-subscribers">
-                    <span class="profile-name">jdh</span>
+                    <span class="profile-name">Loading profile name...</span>
                     <span class="profile-subscribers">0 subscribers</span>
                   </div>
                 </div>
@@ -269,9 +283,9 @@
           </div>
         </div>
         <div class="description">
-          <span class="views">0 Views</span><span class="date">1 year ago</span>
+          <span class="views">0 Views</span><span class="date">Loading date...</span>
           <p>
-            check out https://brilliant.org/jdh for a free 30-day trial and a 20% discount on an annual premium subscription to Brilliant!
+            Loading description...
           </p>
         </div>
         <div class="comments">
@@ -344,11 +358,13 @@
       function resizePlayerAndInfo() {
         const header = document.querySelector('eternity-header');
         const playerAndInfo = document.getElementById('player-and-info');
+        const videoNotFound = document.getElementById('videoNotFound');
 
         const vh = window.innerHeight;
         const headerHeight = header.offsetHeight;
 
         playerAndInfo.style.minHeight = (vh - headerHeight - 2.5 * 16) + 'px';
+        videoNotFound.style.minHeight = (vh - headerHeight) + 'px';
       }
 
       window.addEventListener('load', resizePlayerAndInfo);
@@ -657,6 +673,14 @@
       });
       signInToContinue.querySelector(".close-sign-in-to-continue").addEventListener('click', () => {
         signInToContinue.style.display = 'none';
+      });
+    </script>
+    <script>
+      document.querySelector('#videoNotFound button').addEventListener('click', () => {
+        const videoTitle = document.querySelector('#videoNotFound input').value;
+        if (!videoTitle || videoTitle === "") { return; }
+        const encodeUrl = `${ETERNITY_BASE_URL}/player?q=${encodeURIComponent(videoTitle)}`;
+        window.location.href = encodeUrl;
       });
     </script>
 </body>
