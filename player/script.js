@@ -258,6 +258,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   async function initializePlayerPage() {
     const params = new URLSearchParams(window.location.search);
     const mediaTitle = params.get("q");
+    const browserUrl = window.location.href;
 
     console.log('params', params);
     if (mediaTitle) {
@@ -265,7 +266,57 @@ document.addEventListener("DOMContentLoaded", async () => {
       console.log('mediaData:', mediaTitle, mediaData);
       renderVideo(mediaData);
       renderRecommendations(mediaData, allMedia);
-      
+
+      const shareModal = document.querySelector('#share-modal');
+
+      for (const shareBtn of document.querySelectorAll('button.share')) {
+        shareBtn.addEventListener('click', () => {
+          shareModal.style.display = "flex";
+        });
+      }
+
+      shareModal.querySelector('#share-and-close .close-share-modal').addEventListener('click', () => {
+        shareModal.style.display = 'none';
+      });
+
+      shareModal.querySelector('.videoLink input').value = browserUrl;
+      shareModal.querySelector('.videoLink button').addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(browserUrl);
+          console.log('Link copied to Clipboard:', browserUrl);
+          addToastAndRemoveLast(
+            "Success", "Link copied to Clipboard", "success"
+          );
+        } catch (error) {
+          console.error('Failed clipboard copying URL:', browserUrl, error);
+          addToastAndRemoveLast(
+            "Error", error.message, "error"
+          );
+        }
+      })      
+        
+      shareModal.querySelector('.platforms .platform.whatsapp').addEventListener('click', () => {
+        const encodedUrl = encodeURIComponent(browserUrl);
+        window.open(`https://api.whatsapp.com/send?text=${encodedUrl}`, '_blank');
+      });
+
+      shareModal.querySelector('.platforms .platform.facebook').addEventListener('click', () => {
+        const encodedUrl = encodeURIComponent(browserUrl);
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`, '_blank');
+      });
+
+      shareModal.querySelector('.platforms .platform.twitter').addEventListener('click', () => {
+        const encodedUrl = encodeURIComponent(browserUrl);
+        const encodedText = encodeURIComponent("Check out this Eternity Ready Video!");
+        window.open(`https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`, '_blank');
+      });
+
+      shareModal.querySelector('.platforms .platform.email').addEventListener('click', () => {
+        const encodedUrl = encodeURIComponent(browserUrl);
+        const encodedText = encodeURIComponent("Check out this Eternity Ready Video!");
+        window.open('mailto:'+'?subject='+encodedText+'&body='+encodedUrl, '_self');
+      });
+
       video = null;
       try {
         const publishedVideo = await publishVideo(mediaData);
