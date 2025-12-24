@@ -384,6 +384,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         const monthsMap = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         mobile.querySelector('.descriptionModal .date').textContent = `${monthsMap[month]} ${day}`;
         mobile.querySelector('.descriptionModal .date ~ span').textContent = year;
+
+        const now = new Date(Date.now());
+        mobile.querySelector('.info .date').textContent = `${timeAgo(now - date.getTime())}`
+        desktop.querySelector('.description .date').textContent = `${timeAgo(now - date.getTime())}`
       }
 
       const user = await getUserFromSessionToken(getSession());
