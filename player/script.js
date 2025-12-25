@@ -513,9 +513,120 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
       }
 
+      for (const reportBtn of document.querySelectorAll('.report')) {
+        reportBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          console.log('Reporting video button clicked', user);
+          if (!getSession()) {
+            document.getElementById('sign-in-to-continue').style.display = "flex";
+            return;
+          }
+          const mobileMain = document.querySelector('main.mobile');
+          const desktopMain = document.querySelector('main.desktop');
+          mobileMain.style.display = 'none';
+          desktopMain.style.display = 'none';
+          document.getElementById("videoNotFound").style.display = 'none';
+          document.getElementById("report-video").style.display = 'flex';
+        });
+      }
+
       console.log('userReactions', userReactions);
 
       renderComments(user, mediaTitle);      
+
+      document.querySelector('#report-video button:nth-child(1)').addEventListener('click', () => {
+        console.log('Closing share modal');
+        const mobileMain = document.querySelector('main.mobile');
+        const desktopMain = document.querySelector('main.desktop');
+        const isMobile = window.innerWidth < 768;
+        mobileMain.hidden = !isMobile;
+        desktopMain.hidden = isMobile;
+        mobileMain.style.display = isMobile ? 'flex' : 'none';
+        desktopMain.style.display = isMobile ? 'none' : 'flex';
+        document.getElementById("videoNotFound").style.display = 'none';
+        document.getElementById("report-video").style.display = 'none';
+      });
+
+      document.querySelector('#report-video button:nth-child(2)').addEventListener('click', async () => {
+        const textArea = document.querySelector('#report-video textarea');
+        let reason;
+        for (const reasonBtn of document.getElementsByName('report-reason')) {
+          if (reasonBtn.checked) {
+            reason = reasonBtn;
+            break;
+          }
+        }
+
+        console.log('Posting share modal', textArea.value, reason?.value);
+        if (!textArea.value || textArea.value === "" || !reason) {
+          addToastAndRemoveLast(
+            "Error", "Reason and Details fields are mandatory", "error"
+          );
+          return;
+        }
+
+        if (!video) { return; }
+
+        const query = `
+          mutation CreateReport($userId: ID!, $reasonId: ID!, $details: String!, $videoId: ID!) {
+            createReport(
+              data: {
+                user: { connect: { id: $userId } }
+                reason: { connect: { id: $reasonId } }
+                video: { connect: { id: $videoId } }
+                details: $details
+              }
+            ) {
+              id
+              details
+              createdAt
+              user { id email }
+              reason { id name }
+              video { id title }
+            }
+          }
+        `;
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/graphql`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              query: query,
+              variables: {
+                userId: user.id,
+                reasonId: reason.value,
+                details: textArea.value,
+                videoId: video.id
+              }
+            }),
+          });
+
+          const result = await response.json();
+          if (result.errors) {
+            throw result.errors;
+          }
+
+          console.log('Report created:', result);
+          addToastAndRemoveLast(
+            "Success", "Report created, our team will take a look into that.", "success"
+          );
+        } catch (e) {
+          console.error('Failed creating report: ', e);
+        }
+        console.log('Closing share modal');
+        const mobileMain = document.querySelector('main.mobile');
+        const desktopMain = document.querySelector('main.desktop');
+        const isMobile = window.innerWidth < 768;
+        mobileMain.hidden = !isMobile;
+        desktopMain.hidden = isMobile;
+        mobileMain.style.display = isMobile ? 'flex' : 'none';
+        desktopMain.style.display = isMobile ? 'none' : 'flex';
+        document.getElementById("videoNotFound").style.display = 'none';
+        document.getElementById("report-video").style.display = 'none';
+      });
 
     } else {
       const mobileMain = document.querySelector('main.mobile');

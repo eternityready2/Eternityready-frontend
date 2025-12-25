@@ -29,6 +29,24 @@
 </head>
 <body>
     <eternity-header></eternity-header>
+    <div id="report-video">
+      <span>Report Video</span>
+      <div></div>
+      <hr>
+      <textarea rows="4" placeholder="Reason details" required></textarea>
+      <div>
+        <p>
+          Flagged videos are reviewed by Eternity staff to determine whether they violate Community Guidelines.
+        </p>
+        <p>
+          Accounts are penalized for Community Guidelines violations, and serious or repeated violations can lead to account termination.
+        </p>
+      </div>
+      <div>
+        <button>Cancel</button>
+        <button>Report</button>
+      </div>
+    </div>
     <div id="videoNotFound">
       <span>404</span>
       <p>This page isn't available. Sorry about that.</p>
@@ -333,6 +351,11 @@
         const isMobile = window.innerWidth < 768;
         mobileMain.hidden = !isMobile;
         desktopMain.hidden = isMobile;
+
+        if (document.querySelector('#report-video').style.display === 'none') {
+          mobileMain.style.display = isMobile ? 'flex' : 'none';
+          desktopMain.style.display = isMobile ? 'none' : 'flex';
+        }
       }
 
       window.addEventListener('resize', updateMainVisibility);
@@ -681,6 +704,54 @@
         if (!videoTitle || videoTitle === "") { return; }
         const encodeUrl = `${ETERNITY_BASE_URL}/player?q=${encodeURIComponent(videoTitle)}`;
         window.location.href = encodeUrl;
+      });
+    </script>
+    <script>
+      async function fetchReportReasons() {
+        try {
+          const query = `
+            query GetAllReportReasons {
+              reportReasons {
+                id
+                name
+              }
+            }
+          `;
+
+          const res = await fetch(`${API_BASE_URL}/api/graphql`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ query }),
+          });
+
+          const json = await res.json();
+
+          if (json.errors) {
+            throw json.errors;
+            return;
+          }
+          return json.data.reportReasons;
+        } catch (e) {
+          console.error('Failed getting report reasons', e);
+          return null
+        }
+      }
+      fetchReportReasons().then(result => {
+        console.log('reportReasons: ', result);
+        if (result) {
+          const reasonsContainer = document.querySelector('#report-video > div:nth-child(2)');
+          console.log('reasonc', reasonsContainer);
+          for (const reason of result) {
+            const reasonContainer = document.createElement('div');
+            reasonContainer.innerHTML += `
+              <input type="radio" id="${reason.id}" name="report-reason" value="${reason.id}">
+              <label for="${reason.id}">${reason.name}</label>
+            `
+            reasonsContainer.appendChild(reasonContainer);
+          }
+        }
       });
     </script>
 </body>
