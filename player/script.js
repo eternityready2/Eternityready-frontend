@@ -44,9 +44,6 @@ function debounce(func, delay) {
       normalized.sourceType = "youtube";
     } else if (item.embed) {
       normalized.sourceType = "embed";
-      if (normalized.embedCode.includes('youtube.com/embed')) {
-        normalized.embedCode += "?modestbranding=1&showinfo=0&showsearch=0&rel=0";
-      }
     }
     return normalized;
   }
@@ -169,7 +166,6 @@ document.addEventListener("DOMContentLoaded", async () => {
    * @param {object} video The video data object.
    */
   function renderVideo(video) {
-    const players = document.querySelectorAll("video-player");
     const titleElement = document.getElementById("video-title");
     const authorElement = document.getElementById("video-author");
     const descriptionElement = document.getElementById("video-description");
@@ -189,8 +185,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     
     console.log('sourceType', video);
 
+    
+
     if (video.sourceType === "youtube" && video.videoId) {
-      playerSrc = `https://www.youtube.com/embed/${video.videoId}?autoplay=1`;
+      playerSrc = `https://www.youtube.com/embed/${video.videoId}`;
     }
 
     else if (video.sourceType === "embed" && video.embedCode) {
@@ -202,9 +200,30 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    mobile.querySelector('.video-player').src = playerSrc;
-    desktop.querySelector('.video-player').src = playerSrc;
+    if (playerSrc.includes('youtube.com/embed')) {
+      playerSrc += "?origin=https://eternityready.com&amp;iv_load_policy=3&amp;modestbranding=1&amp;playsinline=1&amp;showinfo=0&amp;rel=0&amp;enablejsapi=1";
 
+      mobile.querySelector('.video-player').src = playerSrc;
+      desktop.querySelector('.video-player').src = playerSrc;
+
+      mobile.querySelector('#video').className = 'plyr__video-embed';
+      desktop.querySelector('#video').className = 'plyr__video-embed';
+
+      mobile.querySelector('.video-player').addEventListener('load', () => {
+          return new Plyr('main.mobile #video');
+      });
+
+      desktop.querySelector('.video-player').addEventListener('load', () => {
+          return new Plyr('main.desktop #video');
+      });
+    }
+    
+    else {
+      mobile.querySelector('.video-player').src = playerSrc;
+      desktop.querySelector('.video-player').src = playerSrc;
+    }
+
+    
     mobile.querySelector('.video-title').textContent = video.title;
     mobile.querySelector('.descriptionModal .video-title').textContent = video.title;
     desktop.querySelector('.video-title').textContent = video.title;
@@ -1033,7 +1052,7 @@ async function renderRecommendations(currentItem, allMedia) {
     let mobileContainer = document.createElement("div");
     mobileContainer.className="recommendation"
     mobileContainer.innerHTML = `
-      <a class="video" href="${ETERNITY_BASE_URL}/player?q=${encodeURIComponent(recItem.name || recItem.title)}">
+      <a id="video" href="${ETERNITY_BASE_URL}/player?q=${encodeURIComponent(recItem.name || recItem.title)}">
         <img
           src="${recItem.thumbnail || recItem.logo}"
         />
@@ -1061,7 +1080,7 @@ async function renderRecommendations(currentItem, allMedia) {
     desktopContainer.className="recommendation"
     desktopContainer.innerHTML = `
       <div class="recommendation">
-        <a class="video" href="${ETERNITY_BASE_URL}/player?q=${encodeURIComponent(recItem.name || recItem.title)}">
+        <a id="video" href="${ETERNITY_BASE_URL}/player?q=${encodeURIComponent(recItem.name || recItem.title)}">
           <img
             src="${recItem.thumbnail || recItem.logo}"
           />

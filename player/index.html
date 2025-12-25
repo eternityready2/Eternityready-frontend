@@ -26,6 +26,7 @@
     />
     <link rel="icon" href="/public/favicon.ico" />
     <link rel="manifest" href="/public/site.webmanifest" />
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.8.3/plyr.css" />
 </head>
 <body>
     <eternity-header></eternity-header>
@@ -115,9 +116,9 @@
       </div>
     </div>
     <main hidden class="mobile">
-      <div class="video">
+      <div id="video" class="">
         <iframe
-          class="video-player"
+          class="video-player "
           style="
             position: absolute;
             top: 0;
@@ -127,10 +128,11 @@
             border-radius: 0px;
             display: block;
           "
-          src="https://www.youtube.com/embed/-bBzIgIaPS4"
+          src=""
           frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen
+          allowtransparency
         ></iframe>
       </div>
       <div class="info">
@@ -240,7 +242,7 @@
     <main hidden class="desktop">
       <div id="player-all">
         <div id="player-and-info">
-          <div class="video">
+          <div id="video" class="">
             <iframe
               class="video-player"
               style="
@@ -256,6 +258,7 @@
               frameborder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowfullscreen
+              allowtransparency
             ></iframe>
           </div>
           <div class="info">
@@ -343,6 +346,7 @@
     <script src="/lib/utils.js"></script>
     <script src="/lib/eternityHeader.js"></script>
     <script src="/lib/eternityFooter.js"></script>
+    <script src="https://cdn.plyr.io/3.8.3/plyr.js"></script>
     <script src="./script.js"></script>
     <script>
       function updateMainVisibility() {
@@ -365,7 +369,7 @@
       function setStickyVideoTopMobile() {
         const header = document.querySelector("eternity-header");
         const stickyVideo = document.querySelector(
-          "main.mobile .video"
+          "main.mobile #video"
         );
         if (!header || !stickyVideo) return;
 
@@ -524,7 +528,7 @@
       document.querySelector('main.mobile .comments').addEventListener(
         'click', () => {
           const header = document.querySelector('eternity-header');
-          const video = document.querySelector('main.mobile .video');
+          const video = document.querySelector('main.mobile #video');
 
           const headerHeight = header.offsetHeight;
           const videoHeight = video.offsetHeight;
@@ -662,7 +666,7 @@
       document.querySelector('main.mobile #title-views-date-more').addEventListener(
         'click', () => {
           const header = document.querySelector('eternity-header');
-          const video = document.querySelector('main.mobile .video');
+          const video = document.querySelector('main.mobile #video');
 
           const headerHeight = header.offsetHeight;
           const videoHeight = video.offsetHeight;

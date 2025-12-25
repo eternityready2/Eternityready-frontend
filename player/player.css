@@ -7,6 +7,11 @@
   box-sizing: border-box;
 }
 
+:root {
+  --plyr-color-main: #f11325;
+}
+
+
 html body {
   margin: 0;
   font-family: "Roboto", "Arial", sans-serif;
@@ -20,12 +25,12 @@ span, button, p {
   font-family: "Roboto", "Arial", sans-serif;
 }
 
-a.video {
+a#video {
   display: block;
   cursor: pointer;
 }
 
-.video img,
+#video img,
 .profile-image img,
 .platform-image img,
 main.desktop .comments .comment .image img,
@@ -94,13 +99,13 @@ main.mobile {
   flex-direction: column;
 }
 
-main.mobile .video {
+main.mobile #video {
   aspect-ratio: 16/9;
   width: 100%;
   background-color: gray;
 }
 
-main.mobile > .video {
+main.mobile > #video {
   position: sticky;
   top: 0;
 }
@@ -565,7 +570,7 @@ main.mobile .descriptionModal > .description p {
     flex-direction: column;
   }
 
-  main.desktop #player-and-info .video {
+  main.desktop #player-and-info #video {
     flex: 5.15;
     position: relative;
   }
@@ -627,7 +632,7 @@ main.mobile .descriptionModal > .description p {
     width: 100%;
   }
 
-  main.desktop .recommendations .recommendation .video {
+  main.desktop .recommendations .recommendation #video {
     flex: 1;
     width: 0;
     min-width: 0;
@@ -638,7 +643,7 @@ main.mobile .descriptionModal > .description p {
     background-color: gray;
   }
 
-  main.desktop .recommendations .recommendation .video img {
+  main.desktop .recommendations .recommendation #video img {
     border-radius: 0.5rem;
   }
 
@@ -1141,4 +1146,9 @@ button.subscribe.reaction {
 
 #report-video > div:last-child button:nth-child(2) {
   color: #f11325;
+}
+
+.plyr__video-embed iframe {
+  top: -50% !important;
+  height: 200% !important;
 }
