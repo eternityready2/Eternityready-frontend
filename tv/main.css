@@ -584,10 +584,7 @@ select {
 .midia-button::after {
   content: "";
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
+  inset: 0;
   background: radial-gradient(
     circle,
     rgba(255, 255, 255, 0.05) 0%,
