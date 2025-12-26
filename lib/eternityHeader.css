@@ -1587,7 +1587,7 @@ ul {
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 1280px) {
   #mobile_fixed_menu {
     display: flex;
   }
