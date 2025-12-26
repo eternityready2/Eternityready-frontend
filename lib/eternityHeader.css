@@ -413,7 +413,8 @@ button {
    ───────────────────────────── */
 .search-container {
   position: relative !important;
-  width: 500px !important;
+  display: flex;
+  flex: 1;
   max-width: 500px !important;
   margin: 0px 6px 0px 0px !important;
 }
@@ -1121,7 +1122,7 @@ button {
   position: sticky;
   display: flex;
   width: 100%;
-  padding: 12px;
+  padding: 6px 12px;
   justify-content: space-between;
   align-items: center;
   z-index: 50;
@@ -1145,6 +1146,8 @@ button {
 #main_header .centered_menu {
   color: #fff;
   font-weight: 600;
+  display: flex;
+  flex: 1;
 }
 
 #main_header .centered_menu ul {
@@ -1154,7 +1157,10 @@ button {
 
 #main_header .centered_menu > ul {
   display: flex;
-  gap: 32px;
+  flex: 1;
+  justify-content: space-around;
+  padding: 0 1rem;
+  gap: 1.5rem;
 }
 
 #main_header .centered_menu > ul > li {
@@ -1163,6 +1169,8 @@ button {
   gap: 8px;
   line-height: 24px;
   align-items: center;
+  margin: 0;
+  white-space: nowrap;
 }
 
 #main_header .centered_menu > ul > li span {

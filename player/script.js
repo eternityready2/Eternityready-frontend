@@ -206,15 +206,16 @@ document.addEventListener("DOMContentLoaded", async () => {
       mobile.querySelector('.video-player').src = playerSrc;
       desktop.querySelector('.video-player').src = playerSrc;
 
-      mobile.querySelector('#video').className = 'plyr__video-embed';
-      desktop.querySelector('#video').className = 'plyr__video-embed';
-
       mobile.querySelector('.video-player').addEventListener('load', () => {
-          return new Plyr('main.mobile #video');
+          new Plyr('main.mobile #video');
+          mobile.querySelector('.video-player').style.top = '-50%';
+          mobile.querySelector('.video-player').style.height = '200%';
       });
 
       desktop.querySelector('.video-player').addEventListener('load', () => {
-          return new Plyr('main.desktop #video');
+          new Plyr('main.desktop #video');
+          desktop.querySelector('.video-player').style.top = '-50%';
+          desktop.querySelector('.video-player').style.height = '200%';
       });
     }
     

@@ -553,14 +553,14 @@ main.mobile .descriptionModal > .description p {
   }
 
   main.desktop {
-    padding: 2.5rem 2.5rem 0rem 2.5rem;
+    padding: 12px 28px 0rem 28px;
     display: flex;
-    column-gap: 1.5rem;
+    column-gap: 1rem;
     flex-direction: row;
   }
 
   main.desktop #player-all {
-    flex: 2.15;
+    flex: 2.2;
     display: flex;
     flex-direction: column;
   }
@@ -571,8 +571,8 @@ main.mobile .descriptionModal > .description p {
   }
 
   main.desktop #player-and-info #video {
-    flex: 5.15;
     position: relative;
+    aspect-ratio: 16/9;
   }
 
   main.desktop #player-and-info .info {
@@ -654,6 +654,7 @@ main.mobile .descriptionModal > .description p {
 
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
   }
 
   main.desktop .recommendations .recommendation .info > div {
@@ -821,6 +822,7 @@ main.mobile .descriptionModal > .description p {
     background-color: #272727;
     border-radius: 1rem;
     padding: 0.75rem;
+    margin-top: 1.25rem;
     margin-bottom: 1.25rem;
     min-height: 4rem;
   }
