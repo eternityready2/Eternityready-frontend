@@ -715,9 +715,10 @@
         try {
           const query = `
             query GetAllReportReasons {
-              reportReasons {
+              reportReasons(orderBy: { createdAt: asc }) {
                 id
                 name
+                createdAt
               }
             }
           `;
@@ -746,7 +747,6 @@
         console.log('reportReasons: ', result);
         if (result) {
           const reasonsContainer = document.querySelector('#report-video > div:nth-child(2)');
-          console.log('reasonc', reasonsContainer);
           for (const reason of result) {
             const reasonContainer = document.createElement('div');
             reasonContainer.innerHTML += `
