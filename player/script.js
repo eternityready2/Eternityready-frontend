@@ -380,7 +380,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log('Views incremented');
         
       } catch (publishError) {
-        console.warn('Publish failed (video may already exist):', publishError.message);
+        console.warn('Publish failed (video may already exist):');
         try {
           video = await incrementVideoViews(mediaTitle);
         } catch (viewError) {
