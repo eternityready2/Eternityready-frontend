@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function setupEventListeners() {
     channelButton.addEventListener("click", () => updateView("channel"));
     movieButton.addEventListener("click", () => updateView("movie"));
-    closeModalBtn.addEventListener("click", closeModal);
+    closeModalBtn?.addEventListener("click", closeModal);
 
     // Listener para fechar o modal ao clicar fora dele
     window.addEventListener("click", (event) => {
@@ -503,6 +503,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
   function renderSavedList() {
+    return;
     const savedListContainer = document.getElementById("savedList");
     savedListContainer.innerHTML = "";
 
