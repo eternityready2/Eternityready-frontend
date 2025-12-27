@@ -405,7 +405,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     card.innerHTML = `
             <div class="content-banner-tv">TV Channel</div>
-            <img src="${channel.logo}" alt="${channel.name}">
+            <img src="${channel.logo}" alt="${channel.name} loading="lazy">
             <div class="channel-details">
                 <h3>${channel.name}</h3>
                 <p class="online">${online}</p>

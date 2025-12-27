@@ -301,7 +301,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       for (const shareBtn of document.querySelectorAll('button.share')) {
         shareBtn.addEventListener('click', () => {
+          const url = encodeURIComponent(shareBtn?.dataset?.shareTitle ?? mediaTitle);
+          shareModal.querySelector('.videoLink input').value = `${ETERNITY_BASE_URL}/player?q=${url}`;
           shareModal.style.display = "flex";
+          shareBtn.parentElement.style.display = 'none';
+
         });
       }
 
@@ -309,7 +313,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         shareModal.style.display = 'none';
       });
 
-      shareModal.querySelector('.videoLink input').value = browserUrl;
       shareModal.querySelector('.videoLink button').addEventListener('click', async () => {
         try {
           await navigator.clipboard.writeText(browserUrl);
@@ -1071,7 +1074,15 @@ async function renderRecommendations(currentItem, allMedia) {
               <span class="profile-name">Eternity Ready</span><span class="views">0 views</span>
             </div>
           </div>
-          <span class="material-symbols-outlined">more_vert</span>
+          <div id="more-and-modal">
+            <div>
+              <button class="share" data-share-title="${recItem.name || recItem.title}">
+                <span class="material-symbols-outlined">share</span>
+                <span>Share</span>
+              </button>
+            </div>
+            <span class="more-options material-symbols-outlined">more_vert</span>
+          </div>
         </div>
       </div>
     `
@@ -1094,11 +1105,30 @@ async function renderRecommendations(currentItem, allMedia) {
               <span class="views">0 views</span><span class="video-date">Now</span>
             </div>
           </div>
-          <span class="material-symbols-outlined">more_vert</span>
+          <div id="more-and-modal">
+            <div>
+              <button class="share" data-share-title="${recItem.name || recItem.title}">
+                <span class="material-symbols-outlined">share</span>
+                <span>Share</span>
+              </button>
+            </div>
+            <span class="more-options material-symbols-outlined">more_vert</span>
+          </div>
         </div>
       </div>
     `
     desktop.appendChild(desktopContainer);
+
+    mobileContainer.querySelector("#more-and-modal .more-options").addEventListener('click', () => {
+      const divBtns = mobileContainer.querySelector("#more-and-modal > div");
+      divBtns.style.display = (!divBtns.style.display || divBtns.style.display === 'none') ? 'block' : 'none';
+    })
+
+    desktopContainer.querySelector("#more-and-modal .more-options").addEventListener('click', () => {
+      const divBtns = desktopContainer.querySelector("#more-and-modal > div");
+      divBtns.style.display = (!divBtns.style.display || divBtns.style.display === 'none') ? 'block' : 'none';
+    })
+
     const normalizedItem = normalizeDataForPlayer(recItem);
     console.log('Publishing recommendation Video: ', normalizedItem);
     publishVideo(normalizedItem)
