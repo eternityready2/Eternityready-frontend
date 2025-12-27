@@ -1196,3 +1196,13 @@ button.subscribe.reaction {
   color: white;
   background-color: inherit;
 }
+
+
+#video .plyr__control--overlaid {
+  width: 80px;
+  height: 80px;
+  transition: 2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

@@ -205,17 +205,27 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       mobile.querySelector('.video-player').src = playerSrc;
       desktop.querySelector('.video-player').src = playerSrc;
+      mobile.querySelector('.video-player').style.display = 'none';
+      desktop.querySelector('.video-player').style.display = 'none';
+
 
       mobile.querySelector('.video-player').addEventListener('load', () => {
           new Plyr('main.mobile #video');
           mobile.querySelector('.video-player').style.top = '-50%';
           mobile.querySelector('.video-player').style.height = '200%';
+          mobile.querySelector('.video-player').style.display = 'inline';
+          requestAnimationFrame(() => {
+            mobile.querySelector('.video-player').style.display = 'inline';
+          });
       });
 
       desktop.querySelector('.video-player').addEventListener('load', () => {
           new Plyr('main.desktop #video');
           desktop.querySelector('.video-player').style.top = '-50%';
           desktop.querySelector('.video-player').style.height = '200%';
+          requestAnimationFrame(() => {
+            desktop.querySelector('.video-player').style.display = 'inline';
+          });
       });
     }
     
