@@ -24,6 +24,7 @@
     />
     <link rel="icon" href="/public/favicon.ico" />
     <link rel="manifest" href="/public/site.webmanifest" />
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
     <eternity-header></eternity-header>
@@ -35,6 +36,15 @@
             />
           </a>
             <h1> Sign Up </h1>
+
+            <div class="g_id_signin"
+                 data-type="standard"
+                 data-shape="rectangular"
+                 data-theme="outline"
+                 data-text="signin_with"
+                 data-size="large"
+                 data-logo_alignment="left">
+            </div>
             <form id="register">
                 <input
                     type="text"
@@ -88,6 +98,35 @@
     <script src="/lib/utils.js"></script>
     <script src="/lib/eternityHeader.js"></script>
     <script src="/lib/eternityFooter.js"></script>
+    <script>
+      function createGoogleOnloadDiv() {
+        if (document.getElementById('g_id_onload')) return;
+        
+        const gIdOnload = document.createElement('div');
+        gIdOnload.id = 'g_id_onload';
+        gIdOnload.setAttribute('data-client_id', GOOGLE_CLIENT_ID);
+        gIdOnload.setAttribute('data-context', 'signin');
+        gIdOnload.setAttribute('data-ux_mode', 'popup');
+        gIdOnload.setAttribute('data-callback', 'handleGoogleSignIn');
+        gIdOnload.setAttribute('data-auto_prompt', 'false');
+        
+        const leftDiv = document.querySelector('#left');
+        const signinButton = leftDiv.querySelector('.g_id_signin');
+        leftDiv.insertBefore(gIdOnload, signinButton);
+        
+        if (window.google && google.accounts) {
+          google.accounts.id.renderButton();
+        }
+        
+        console.log('Google onload div created:', GOOGLE_CLIENT_ID);
+      }
+
+      if (typeof GOOGLE_CLIENT_ID !== 'undefined') {
+        createGoogleOnloadDiv();
+      } else {
+        document.addEventListener('DOMContentLoaded', createGoogleOnloadDiv);
+      }
+    </script>
     <script>
         const form = document.getElementById('register');
         form.addEventListener('submit', async (event) => {
@@ -144,5 +183,39 @@
             );
           }
         });
+    </script>
+    <script>
+      function handleGoogleSignIn(response) {
+        // Send the credential to your backend
+        fetch(`${API_BASE_URL}/auth/google`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            credential: response.credential,
+          }),
+        })
+        .then(res => res.json())
+        .then(data => {
+          console.log('Auth successful:', data);
+          addToastAndRemoveLast(
+            "Success",
+            `Register In successfully: ${data.item.email}. Redirecting to eternityready.com/new-homepage...`,
+            "success"
+          );
+          setSession(data.session)
+          setTimeout(() => {
+            window.location.assign(`${ETERNITY_BASE_URL}/new-homepage`);
+          }, 2500);
+        })
+        .catch(err => {
+          console.error('Auth failed:', err);
+          addToastAndRemoveLast(
+            "Error", "Unexpected login response", "error"
+          );
+
+        });
+      }
     </script>
 </body>
