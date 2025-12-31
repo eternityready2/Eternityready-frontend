@@ -62,8 +62,8 @@
   font-family: Nunito, sans-serif;
 }
 body {
-  background: #000 !important;
 }
+
 .overflow_hidden {
   overflow: hidden;
 }
@@ -336,7 +336,6 @@ button {
 }
 
 main {
-  background-color: #000;
 }
 
 .swiper-slide {
