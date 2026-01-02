@@ -69,15 +69,38 @@
                     placeholder="Email Address"
                     required
                 />
-                <div id="password-field">
-                  <input
-                      type="password"
-                      id="password"
-                      name="password"
-                      placeholder="Type your password"
-                      required
-                  />
-                  <span class="material-symbols-outlined">visibility_off</span>
+                <div id="password-field-and-requeriments">
+                  <div id="password-field">
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Type your password"
+                    />
+                    <span class="material-symbols-outlined">visibility_off</span>
+                  </div>
+                  <div>
+                    <div id="atleastEightChars">
+                      <span class="material-symbols-outlined">close</span>
+                      <span>At least 8 characters</span>
+                    </div>
+                    <div id="containsDigit">
+                      <span class="material-symbols-outlined">close</span>
+                      <span>Contains a digit</span>
+                    </div>
+                    <div id="containsLowercase">
+                      <span class="material-symbols-outlined">close</span>
+                      <span>Contains a lowercase letter</span>
+                    </div>
+                    <div id="containsUppercase">
+                      <span class="material-symbols-outlined">close</span>
+                      <span>Contains an uppercase letter</span>
+                    </div>
+                    <div id="containsSymbol">
+                      <span class="material-symbols-outlined">close</span>
+                      <span>Contains a symbol</span>
+                    </div>
+                  </div>
                 </div>
                 <section>
                     <input
@@ -138,6 +161,19 @@
         const form = document.getElementById('register');
         form.addEventListener('submit', async (event) => {
           event.preventDefault();
+
+          const passwordInput = document.getElementById('password');
+          passwordInput.setCustomValidity('');
+
+          for (const requeriment of document.querySelectorAll('#password-field-and-requeriments .material-symbols-outlined')) {
+            if (requeriment.textContent === 'close') {
+              passwordInput.setCustomValidity('This field is required');
+              passwordInput.reportValidity();
+              return;
+            }
+          }
+          
+          passwordInput.setCustomValidity('');
 
           const firstName = document.getElementById('firstName').value;
           const lastName = document.getElementById('lastName').value;
@@ -229,6 +265,7 @@
       const passwordField = document.querySelector('#password-field');
       const visibilityBtn = passwordField.querySelector('span');
       const passwordFieldInput = passwordField.querySelector('input');
+      const requeriments = document.querySelector('#password-field-and-requeriments > div:nth-child(2)');
       visibilityBtn.addEventListener('click', () => {
         visibilityBtn.textContent = (
           visibilityBtn.textContent === 'visibility'
@@ -244,11 +281,64 @@
 
       passwordFieldInput.addEventListener('focus', () => {
         passwordField.style.outline = "1px solid red";
+        requeriments.style.display = 'block';
       });
 
       passwordFieldInput.addEventListener('blur', () => {
         passwordField.style.outline = "none";
       });
 
+    </script>
+    <script>
+      passwordFieldInput.addEventListener('input', (e) => {
+        const passwd = e.target.value;
+        const atleastEightChars = document.querySelector("#atleastEightChars span");
+        const containsDigit = document.querySelector("#containsDigit span");
+        const containsLowercase = document.querySelector("#containsLowercase span");
+        const containsUppercase = document.querySelector("#containsUppercase span");
+        const containsSymbol = document.querySelector("#containsSymbol span");
+        
+        passwordFieldInput.setCustomValidity('');
+        if (passwd.length < 8) {
+          atleastEightChars.textContent = 'close'
+        }
+
+        else {
+          atleastEightChars.textContent = 'check'
+        }
+
+
+        if (!(/\d/.test(passwd))) {
+          containsDigit.textContent = 'close'
+        }
+
+        else {
+          containsDigit.textContent = 'check'
+        }
+
+        if (!(/[a-z]/.test(passwd))) {
+          containsLowercase.textContent = 'close'
+        }
+
+        else {
+          containsLowercase.textContent = 'check'
+        }
+
+        if (!(/[A-Z]/.test(passwd))) {
+          containsUppercase.textContent = 'close'
+        }
+
+        else {
+          containsUppercase.textContent = 'check'
+        }
+
+        if (!(/[^A-Za-z0-9]/.test(passwd))) {
+          containsSymbol.textContent = 'close'
+        }
+
+        else {
+          containsSymbol.textContent = 'check'
+        }
+      });
     </script>
 </body>

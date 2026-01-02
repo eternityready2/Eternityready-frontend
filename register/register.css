@@ -74,6 +74,17 @@ form#register #password-field {
   padding-right: 0.25rem;
 }
 
+form#register #password-field-and-requeriments > div:nth-child(2) {
+  display: none;
+  margin-top: 0.5rem;
+}
+
+form#register #password-field-and-requeriments > div:nth-child(2) > div {
+  display: flex;
+  gap: 0.35rem;
+}
+
+
 form#register #password-field > input {
   flex: 1;
 }
