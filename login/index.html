@@ -24,6 +24,8 @@
     />
     <link rel="icon" href="/public/favicon.ico" />
     <link rel="manifest" href="/public/site.webmanifest" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
@@ -58,13 +60,16 @@
                 </section>
                 <section>
                     <label for="password">Password</label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        placeholder="Type your password"
-                        required
-                    />
+                    <div id="password-field">
+                      <input
+                          type="password"
+                          id="password"
+                          name="password"
+                          placeholder="Type your password"
+                          required
+                      />
+                      <span class="material-symbols-outlined">visibility_off</span>
+                    </div>
                 </section>
                 <section id="check-and-forgot-password">
                     <div>
@@ -227,5 +232,30 @@
 
         });
       }
+    </script>
+    <script>
+      const passwordField = document.querySelector('#password-field');
+      const visibilityBtn = passwordField.querySelector('span');
+      const passwordFieldInput = passwordField.querySelector('input');
+      visibilityBtn.addEventListener('click', () => {
+        visibilityBtn.textContent = (
+          visibilityBtn.textContent === 'visibility'
+            ? 'visibility_off'
+            : 'visibility'
+        );
+        if (passwordFieldInput.type === "password") {
+          passwordFieldInput.type = "text";
+        } else {
+          passwordFieldInput.type = "password";
+        }
+      });
+
+      passwordFieldInput.addEventListener('focus', () => {
+        passwordField.style.outline = "1px solid red";
+      });
+
+      passwordFieldInput.addEventListener('blur', () => {
+        passwordField.style.outline = "none";
+      });
     </script>
 </body>

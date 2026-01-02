@@ -71,6 +71,32 @@ form#login section input:focus {
   outline: 1px solid red;
 }
 
+
+form#login section #password-field {
+  display: flex;
+  background-color: #1f2937;
+  border-radius: 0.5rem;
+  padding-right: 0.25rem;
+}
+
+form#login section #password-field > input {
+  flex: 1;
+}
+
+
+form#login section #password-field > input:focus {
+  outline: none;
+}
+
+form#login section #password-field > span {
+  width: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
 form#login section label {
   color: #e0e0e0;
 }
