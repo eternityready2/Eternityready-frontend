@@ -218,10 +218,18 @@
 
             if (result.errors) {
               console.error('Error creating user:', result.errors);
-              addToastAndRemoveLast(
-                "Error", `Error creating user: ${result.errors[0].message}`, "error"
+
+              const emailExists = (
+                result.errors[0]?.extensions?.prisma?.code === 'P2002'
+                && result.errors[0]?.extensions?.prisma?.meta?.target?.includes('email')
               );
 
+              if (emailExists) {
+                addToastAndRemoveLast(
+                  "Error", `Email '${email}' is already registered...`, "error"
+                );
+              }
+              
             } else {
               addToastAndRemoveLast(
                 "Success", `User created successfully: ${email}. Redirecting to login...`, "success"
