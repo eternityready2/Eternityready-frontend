@@ -179,14 +179,38 @@
               );
             } else {
               const authResult = result.data.authenticateUserWithPassword;
-              console.log(authResult);
               if (authResult.item) {
+                if (!authResult.item.privilege || authResult.item.privilege === "normal") {
+                  addToastAndRemoveLast(
+                    "Checkout", `Redirecting ${authResult.item.email} to checkout...`, "success"
+                  );
+
+                  const res = await fetch(`${API_BASE_URL}/api/create-checkout-session`, {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json',
+                          Authorization: `Bearer ${authResult.sessionToken}`
+                      },
+                  });
+
+                  const data = await res.json();
+                  if (data.url) {
+                    setTimeout(() => {
+                      window.location.assign(data.url);
+                    }, 2500);
+                  }
+
+                  return;
+                }
+
                 addToastAndRemoveLast(
                   "Success",
-                  `Logged In successfully: ${authResult.item.email}. Redirecting to eternityready.com/new-homepage...`,
+                  `Log In successfully: ${authResult.item.email}. Redirecting to eternityready.com/new-homepage...`,
                   "success"
                 );
+
                 setSession(authResult.sessionToken)
+
                 setTimeout(() => {
                   window.location.assign(`${ETERNITY_BASE_URL}/new-homepage`);
                 }, 2500);
@@ -223,14 +247,40 @@
           }),
         })
         .then(res => res.json())
-        .then(data => {
+        .then(async (data) => {
           console.log('Auth successful:', data);
+
+          if (!data.item.privilege || data.item.privilege === "normal") {
+            addToastAndRemoveLast(
+              "Checkout", `Redirecting ${data.item.email} to checkout...`, "success"
+            );
+
+            const res = await fetch(`${API_BASE_URL}/api/create-checkout-session`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${data.session}`
+                },
+            });
+
+            const data = await res.json();
+            if (data.url) {
+              setTimeout(() => {
+                window.location.assign(data.url);
+              }, 2500);
+            }
+
+            return;
+          }
+
           addToastAndRemoveLast(
             "Success",
-            `Logged In successfully: ${data.item.email}. Redirecting to eternityready.com/new-homepage...`,
+            `Log In successfully: ${data.item.email}. Redirecting to eternityready.com/new-homepage...`,
             "success"
           );
+
           setSession(data.session)
+
           setTimeout(() => {
             window.location.assign(`${ETERNITY_BASE_URL}/new-homepage`);
           }, 2500);

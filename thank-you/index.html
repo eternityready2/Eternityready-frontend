@@ -65,4 +65,18 @@
     <script src="/lib/eternityHeader.js"></script>
     <script src="/lib/eternitySalvation.js"></script>
     <script src="/lib/eternityFooter.js"></script>
+    <script>
+      const sessionId = new URLSearchParams(window.location.search).get('session_id');
+
+      async function fetchSessionAndSave(sessionId) {
+        const response = await fetch(`${API_BASE_URL}/api/stripe-checkout-success`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ session_id: sessionId }),
+        });
+        const {session, item} = await response.json();
+        setSession(session);
+      }
+      fetchSessionAndSave(sessionId);
+    </script>
 </body>
