@@ -245,10 +245,10 @@
                   }),
               });
 
-              const data = await res.json();
-              if (data.url) {
+              const dataCheckout = await res.json();
+              if (dataCheckout.url) {
                 setTimeout(() => {
-                  window.location.assign(data.url);
+                  window.location.assign(dataCheckout.url);
                 }, 2500);
               }
             }
@@ -289,10 +289,10 @@
                 },
             });
 
-            const data = await res.json();
-            if (data.url) {
+            const dataCheckout = await res.json();
+            if (dataCheckout.url) {
               setTimeout(() => {
-                window.location.assign(data.url);
+                window.location.assign(dataCheckout.url);
               }, 2500);
             }
 
