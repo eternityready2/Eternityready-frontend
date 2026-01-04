@@ -299,16 +299,19 @@
             return;
           }
 
+          const redirectUrl = localStorage.getItem('userPosition') ?? `${ETERNITY_BASE_URL}/new-homepage`;
+          localStorage.removeItem('userPosition');
+
           addToastAndRemoveLast(
             "Success",
-            `Log In successfully: ${data.item.email}. Redirecting to eternityready.com/new-homepage...`,
+            `Log In successfully: ${authResult.item.email}. Redirecting to ${redirectUrl.slice(0, 20)}...`,
             "success"
           );
 
           setSession(data.session)
 
           setTimeout(() => {
-            window.location.assign(`${ETERNITY_BASE_URL}/new-homepage`);
+            window.location.assign(redirectUrl);
           }, 2500);
         })
         .catch(err => {

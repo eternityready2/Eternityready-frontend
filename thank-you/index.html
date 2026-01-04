@@ -74,8 +74,20 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ session_id: sessionId }),
         });
+
         const {session, item} = await response.json();
+        const redirectUrl = localStorage.getItem('userPosition') ?? `${ETERNITY_BASE_URL}/new-homepage`;
+        localStorage.removeItem('userPosition');
         setSession(session);
+        addToastAndRemoveLast(
+          "Success",
+          `Redirecting ${item.email} to ${redirectUrl.slice(0, 20)}...`,
+          "success"
+        );
+
+        setTimeout(() => {
+          window.location.assign(redirectUrl);
+        }, 5000);
       }
       fetchSessionAndSave(sessionId);
     </script>
