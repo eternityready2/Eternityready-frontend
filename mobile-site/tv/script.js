@@ -47,8 +47,8 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       // Carrega os dados de canais e filmes em paralelo
       const [channelData, movieData] = await Promise.all([
-        fetch("channels.json").then((res) => res.json()),
-        fetch("movies.json").then((res) => res.json()),
+        fetch("/data/channels.json").then((res) => res.json()),
+        fetch("/data/movies.json").then((res) => res.json()),
       ]);
 
       allChannels = channelData.channels.sort((a, b) =>

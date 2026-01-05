@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchBar = document.getElementById('searchBar');
 
     // Fetch the channel data from the JSON file
-    fetch('channels.json')
+    fetch('/data/channels.json')
         .then(response => response.json())
         .then(data => {
             const channels = data.channels;

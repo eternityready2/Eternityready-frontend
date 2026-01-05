@@ -61,7 +61,7 @@ function findCurrentProgramsFromJSON(jsonData, timezoneOffset = 0) {
     });
 }
 
-const jsonUrl = '/tv-schedule-data.json';
+const jsonUrl = '/tv/tv-schedule-data.json';
 
 window.updatePrograms = function() {
 	console.log('fetching')
