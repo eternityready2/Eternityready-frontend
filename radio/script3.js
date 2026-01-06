@@ -28,14 +28,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       const [channelData, movieData] = await Promise.all([
-        fetch("radio.json").then((res) => res.json()),
-        fetch("music.json").then((res) => res.json()),
+        fetch("/data/radio.json").then((res) => res.json()),
+        fetch("/data/music.json").then((res) => res.json()),
       ]);
 
       allChannels = channelData.channels.sort((a, b) =>
         a.name.localeCompare(b.name)
       );
-      allMovies = movieData.movies.sort((a, b) =>
+      allMovies = movieData.music.sort((a, b) =>
         a.title.localeCompare(b.title)
       );
 
