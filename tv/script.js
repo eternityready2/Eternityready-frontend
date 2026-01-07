@@ -324,8 +324,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     // 2. Renderiza a nova Grid de Todos os Filmes
     const allMoviesGridHTML = `
-            <div class="second-search-section" style="margin-top: 40px;">
+            <div class="search-section" style="margin-top: 40px;">
                 <h2>Browse channels and Movies</h2>
+            <div class="channelssearch">
                 <div class="second-search-parent">
                     <div class="second-search-bar">
                         <i class="fa-solid fa-magnifying-glass"></i>
@@ -335,6 +336,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <option value="all">All Categories</option>
                     </select>
                 </div>
+              </div>
             </div>
             <div class="cardbg">
                 <div class="main-parent">
