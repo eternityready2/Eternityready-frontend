@@ -108,7 +108,7 @@ function findAndDisplayCurrentPrograms(scheduleData, timezoneOffset = 0) {
     weekday: "long",
   });
 
-  // Filter only today’s entries and sort them by start time
+  // Only today's entries, sorted by start time
   const todayEntries = schedule
     .filter((entry) => entry.day === dayOfWeek)
     .sort((a, b) => {
@@ -117,32 +117,55 @@ function findAndDisplayCurrentPrograms(scheduleData, timezoneOffset = 0) {
       return aH * 60 + aM - (bH * 60 + bM);
     });
 
-  todayEntries.forEach((entry, index) => {
-    const [startH, startM] = entry.startTime.split(":").map(Number);
-    const [endH, endM] = entry.endTime.split(":").map(Number);
+  // Group today's entries by channel
+  const entriesByChannel = todayEntries.reduce((map, entry) => {
+    if (!map[entry.channel]) map[entry.channel] = [];
+    map[entry.channel].push(entry);
+    return map;
+  }, {});
 
-    const start = new Date();
-    start.setHours(startH, startM, 0, 0);
+  Object.keys(entriesByChannel).forEach((channelName) => {
+    const channelEntries = entriesByChannel[channelName];
 
-    const end = new Date();
-    end.setHours(endH, endM, 0, 0);
+    let currentEntry = null;
+    let nextEntry = null;
 
-    // handle programs ending after midnight
-    if (end < start) end.setDate(end.getDate() + 1);
+    channelEntries.forEach((entry, index) => {
+      const [startH, startM] = entry.startTime.split(":").map(Number);
+      const [endH, endM] = entry.endTime.split(":").map(Number);
 
-    if (currentTime >= start && currentTime < end) {
-      const nextProgram = todayEntries[index + 1]
-        ? todayEntries[index + 1].program
-        : "None (end of schedule)";
+      const start = new Date();
+      start.setHours(startH, startM, 0, 0);
 
-      const selector = `p[data-channel-name="${CSS.escape(entry.channel.toLowerCase())}"]`;
+      const end = new Date();
+      end.setHours(endH, endM, 0, 0);
+
+      // handle programs ending after midnight
+      if (end < start) end.setDate(end.getDate() + 1);
+
+      if (currentTime >= start && currentTime < end) {
+        currentEntry = entry;
+        nextEntry = channelEntries[index + 1] || null;
+      }
+    });
+
+    if (currentEntry) {
+      const selector = `p[data-channel-name="${CSS.escape(
+        channelName.toLowerCase()
+      )}"]`;
       const channelElements = $(selector);
 
+      const nextProgram = nextEntry
+        ? nextEntry.program
+        : "None (end of schedule)";
+
       if (channelElements.length == 0) {
-        console.log(`Channel "${entry.channel}" not found on DOM.`);
+        console.log(`Channel "${channelName}" not found on DOM.`);
       } else {
         channelElements.each(function () {
-          $(this).html(`<div><span>On now:</span> ${entry.program}</div><div><span>Up next:</span> ${nextProgram}</div>`);
+          $(this).html(
+            `<div><span>On now:</span> ${currentEntry.program}</div><div><span>Up next:</span> ${nextProgram}</div>`
+          );
         });
       }
     }
