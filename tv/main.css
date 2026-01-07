@@ -23,11 +23,21 @@
 .current-program{
 	text-align:left;
 display: -webkit-box;
--webkit-line-clamp: 2;
+-webkit-line-clamp: 4;
 -webkit-box-orient: vertical;
 overflow: hidden;
 text-overflow: ellipsis;
 }
+
+.current-program div {
+  text-align:left;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 #search-input {
   margin-top: 15px;
   width: 350px;

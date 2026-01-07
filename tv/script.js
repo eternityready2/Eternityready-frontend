@@ -432,6 +432,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         </div>
                     </button>
                 </div>
+                  ${
+                    channel?.name == null
+                      ? ""
+                      : `<p class="current-program" data-channel-name="${channel.name.toLowerCase()}"><span>On Now: </span>Not Known<\/p>`
+                  }
             </div>`;
 
     //card.addEventListener("click", () => openChannelModal(channel));
@@ -583,7 +588,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return matchesSearch && matchesGenre;
     });
 
-    const combinedFiltered = [...filteredChannels, ...filteredMovies]
+    const combinedFiltered = [...filteredChannels]
       .map(value => ({ value, sort: Math.random() }))
       .sort((a, b) => a.sort - b.sort)
       .map(({ value }) => value);

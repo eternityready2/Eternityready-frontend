@@ -98,6 +98,7 @@ function parseScheduleJSON(jsonData) {
   return schedule;
 }
 
+
 function findAndDisplayCurrentPrograms(scheduleData, timezoneOffset = 0) {
   const schedule = parseScheduleJSON(scheduleData);
   const currentTime = new Date();
@@ -107,9 +108,16 @@ function findAndDisplayCurrentPrograms(scheduleData, timezoneOffset = 0) {
     weekday: "long",
   });
 
-  schedule.forEach((entry) => {
-    if (entry.day !== dayOfWeek) return;
+  // Filter only today’s entries and sort them by start time
+  const todayEntries = schedule
+    .filter((entry) => entry.day === dayOfWeek)
+    .sort((a, b) => {
+      const [aH, aM] = a.startTime.split(":").map(Number);
+      const [bH, bM] = b.startTime.split(":").map(Number);
+      return aH * 60 + aM - (bH * 60 + bM);
+    });
 
+  todayEntries.forEach((entry, index) => {
     const [startH, startM] = entry.startTime.split(":").map(Number);
     const [endH, endM] = entry.endTime.split(":").map(Number);
 
@@ -119,23 +127,23 @@ function findAndDisplayCurrentPrograms(scheduleData, timezoneOffset = 0) {
     const end = new Date();
     end.setHours(endH, endM, 0, 0);
 
+    // handle programs ending after midnight
     if (end < start) end.setDate(end.getDate() + 1);
 
     if (currentTime >= start && currentTime < end) {
+      const nextProgram = todayEntries[index + 1]
+        ? todayEntries[index + 1].program
+        : "None (end of schedule)";
+
       const selector = `p[data-channel-name="${CSS.escape(entry.channel.toLowerCase())}"]`;
       const channelElements = $(selector);
 
-      if (channelElements.length == 0) 
-	  {
-        console.log(`Channel "${entry.channel}" not found on DOM. (This might be intentional if the channel is not displayed).`);
-      } 
-	  else 
-	  {
-		channelElements.each(
-			function() 
-			{
-				$(this).html(`<span>On now: </span>${entry.program}`);
-			});
+      if (channelElements.length == 0) {
+        console.log(`Channel "${entry.channel}" not found on DOM.`);
+      } else {
+        channelElements.each(function () {
+          $(this).html(`<div><span>On now:</span> ${entry.program}</div><div><span>Up next:</span> ${nextProgram}</div>`);
+        });
       }
     }
   });
