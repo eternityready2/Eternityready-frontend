@@ -588,7 +588,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return matchesSearch && matchesGenre;
     });
 
-    const combinedFiltered = [...filteredChannels]
+    const combinedFiltered = [...filteredChannels, ...filteredMovies]
       .map(value => ({ value, sort: Math.random() }))
       .sort((a, b) => a.sort - b.sort)
       .map(({ value }) => value);
