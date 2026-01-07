@@ -30,8 +30,7 @@ text-overflow: ellipsis;
 }
 #search-input {
   margin-top: 15px;
-  padding: 12px 50px;
-  width: 400px;
+  width: 350px;
   font-size: 1.2em;
   outline: none;
   transition: border-color 0.3s ease;
@@ -39,7 +38,6 @@ text-overflow: ellipsis;
   background-color: #333;
   color: #e0e0e0;
   border: 0;
-  padding-left: 30px;
   height: 100%;
 }
 
@@ -166,7 +164,8 @@ select {
   }
 
   .second-search-bar input {
-    padding: 0;
+    width: 320px !important;
+    padding: 0.5rem 0.75rem 0.5rem 0.75rem;
     text-align: center;
   }
 

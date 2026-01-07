@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (event.target.id === "search-input") {
       applyChannelFilters();
     } else if (event.target.id === "movie-search-input") {
-      applyMovieFilters();
+      applyChannelFilters();
     }
   }
 
@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (event.target.id === "categoryFilter") {
       applyChannelFilters();
     } else if (event.target.id === "movie-genre-filter") {
-      applyMovieFilters();
+      applyChannelFilters();
     }
   }
 
@@ -182,12 +182,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
 
                 <div id="channel-grid" class="channel-grid"></div>
-
-                <div class="count">
-                    <p id="movie-count">movies</p>
-                </div>
-
-                <div id="movie-grid" class="channel-grid"></div>
             </div>
         </div>
     `;
@@ -341,12 +335,6 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="cardbg">
                 <div class="main-parent">
                     <div class="count">
-                        <p id="movie-count">movies</p>
-                    </div>
-
-                    <div id="movie-grid" class="channel-grid"></div>
-
-                    <div class="count">
                         <p id="channel-count">channels</p>
                     </div>
 
@@ -362,7 +350,7 @@ document.addEventListener("DOMContentLoaded", () => {
     populateCategories(allMovies, categoryFilterElement, "categories");
     populateCategories(allChannels, categoryFilterElement, "categories");
 
-    applyMovieFilters();
+    applyChannelFilters();
   }
 
   // --- FUNÇÕES DE RENDERIZAÇÃO DE GRIDS ---
@@ -370,13 +358,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const channelGrid = document.getElementById("channel-grid");
     channelGrid.innerHTML = "";
     channelsToRender.forEach((channel) => {
-      if (!isChannelSaved(channel.name)) {
-        channelGrid.appendChild(createChannelCard(channel));
+      if (channel?.name == null || !isChannelSaved(channel.name)) {
+        channelGrid.appendChild(createChannelCard({
+          ...channel,
+          status: channel?.status ?? "ON"
+        }));
       }
     });
     document.getElementById(
       "channel-count"
-    ).textContent = `Channels found: ${channelsToRender.length}`;
+    ).textContent = `Movie & Channels found: ${channelsToRender.length}`;
   }
 
   // >>>>> NOVO: Função para renderizar a grid de filmes <<<<<
@@ -415,33 +406,32 @@ document.addEventListener("DOMContentLoaded", () => {
   function createChannelCard(channel) {
     const card = document.createElement("div");
     card.className = "channel-card";
-    const isSaved = isChannelSaved(channel.name);
+    //const isSaved = isChannelSaved(channel.name);
     const currentShowName = "Not Found";
     var online = "Online";
-    if (channel.status != "ON") {
+    if (channel?.status != "ON") {
       online = "Offline";
     }
 
     card.innerHTML = `
-            <div class="content-banner-tv">TV Channel</div>
-            <img src="${channel.logo}" alt="${channel.name} loading="lazy">
+            <div class="content-banner-tv">${channel?.name == null ? "Movie" : "TV Channel"}</div>
+            <img src="${channel.logo || channel.thumbnail}" alt="${channel.name || channel.title} loading="lazy">
             <div class="channel-details">
-                <h3>${channel.name}</h3>
+                <h3>${channel.name || channel.title}</h3>
                 <p class="online">${online}</p>
                 <div class="raiting-save">
                     <div class="rating" data-rating="${channel.rating}"></div>
                     <button class="watch-later-btn" data-channel="${
-                      channel.name
+                      channel.name || channel.title
                     }">
                         <i class="fa-solid fa-bookmark bookmark-icon ${
-                          isSaved ? "active" : ""
+                          "active"
                         }"></i>
                         <div class="spinner">
                             <i class="fa-solid fa-circle-notch fa-spin"></i>
                         </div>
                     </button>
                 </div>
-                <p class="current-program" data-channel-name="${channel.name.toLowerCase()}"><span>On Now: </span>Not Known</p>
             </div>`;
 
     //card.addEventListener("click", () => openChannelModal(channel));
@@ -568,7 +558,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const selectedCategory =
       document.getElementById("categoryFilter")?.value || "all";
 
-    let filtered = allChannels.filter((channel) => {
+    const filteredChannels = allChannels.filter((channel) => {
       const matchesSearch =
         channel.name.toLowerCase().includes(searchTerm) ||
         (channel.keywords || []).some((k) =>
@@ -582,9 +572,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return matchesSearch && matchesCategory;
     });
 
-    renderChannelGrid(filtered);
-
-    filtered = allMovies.filter((movie) => {
+    const filteredMovies = allMovies.filter((movie) => {
       const matchesSearch = movie.title.toLowerCase().includes(searchTerm);
       // Assumindo que a propriedade se chama 'genres' no seu JSON
       const matchesGenre =
@@ -595,7 +583,14 @@ document.addEventListener("DOMContentLoaded", () => {
       return matchesSearch && matchesGenre;
     });
 
-    renderMovieGrid(filtered);
+    const combinedFiltered = [...filteredChannels, ...filteredMovies]
+      .map(value => ({ value, sort: Math.random() }))
+      .sort((a, b) => a.sort - b.sort)
+      .map(({ value }) => value);
+
+    console.log('combinedFiltered', combinedFiltered);
+
+    renderChannelGrid(combinedFiltered);
 
   }
 
