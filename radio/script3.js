@@ -106,7 +106,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (event.target.id === "search-input") {
       applyChannelFilters();
     } else if (event.target.id === "movie-search-input") {
-      applyMovieFilters();
+      //applyMovieFilters();
+      applyChannelFilters();
     }
   }
 
@@ -115,7 +116,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (event.target.id === "categoryFilter") {
       applyChannelFilters();
     } else if (event.target.id === "movie-genre-filter") {
-      applyMovieFilters();
+      //applyMovieFilters();
+      applyChannelFilters();
     }
   }
 
@@ -134,7 +136,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (viewName === "channel") {
       renderChannelView();
     } else if (viewName === "movie") {
-      renderMovieView();
+      //renderMovieView();
+      renderChannelView();
     }
   }
 
@@ -148,12 +151,12 @@ document.addEventListener("DOMContentLoaded", () => {
         <div id="channel-carousels-container"></div>
         <div id="saved-channels-container"></div>
         <div class="search-section">
-            <h2>Browse Radio Stations</h2>
+            <h2>Browse Radio Stations & Music Videos</h2>
             <div class="channelssearch">
                 <div class="second-search-parent">
                     <div class="second-search-bar">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" id="search-input" placeholder="Search radio stations..."/>
+                        <input type="text" id="search-input" placeholder="Search radio & music..."/>
                     </div>
                     <select id="categoryFilter">
                         <option value="all">All Categories</option>
@@ -237,6 +240,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 2. Original channel view setup
     const categoryFilterElement = document.getElementById("categoryFilter");
     populateCategories(allChannels, categoryFilterElement, "categories");
+    populateCategories(allMovies, categoryFilterElement, "categories");
     renderSavedChannels();
     renderSavedList();
     applyChannelFilters();
@@ -345,7 +349,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     document.getElementById(
       "channel-count"
-    ).textContent = `Results found: ${channelsToRender.length}`;
+    ).textContent = `Radio Stations & Music Videos found: ${channelsToRender.length}`;
   }
 
   // >>>>> NOVO: Função para renderizar a grid de filmes <<<<<
@@ -420,24 +424,29 @@ document.addEventListener("DOMContentLoaded", () => {
   function createChannelCard(channel, index) {
     const card = document.createElement("div");
     card.className = "channel-card";
-    const isSaved = isChannelSaved(channel.name);
+    //const isSaved = isChannelSaved(channel.name);
 
     const categories = channel.categories.sort().join(", ");
 
-    const isSisterStation = channel.tags && channel.tags.includes("sister");
-    const sisterBannerHTML = isSisterStation
-      ? `<div class="sister-station-banner">Sister</div>`
-      : "";
+    let sisterBannerHTML;
+    if (channel?.title == null) {
+      const isSisterStation = channel?.title == null && channel.tags && channel.tags.includes("sister");
+      sisterBannerHTML = isSisterStation
+        ? `<div class="sister-station-banner">Sister</div>`
+        : "";
+    } else {
+      sisterBannerHTML = `<div class="sister-station-banner">Music</div>`
+    }
 
     card.innerHTML = `
             ${sisterBannerHTML}
-            <img src="${channel.logo}" alt="${channel.name}">
+            <img src="${channel.logo || channel.thumbnail}" alt="${channel.name || channel.title}">
             <div class="channel-details">
               <div class="channel-content">
-                <h3>${channel.name}</h3>
-                <button class="watch-later-btn" data-channel="${channel.name}">
+                <h3>${channel.name || channel.title}</h3>
+                <button class="watch-later-btn" data-channel="${channel.name || channel.title}">
                   <i class="fa-solid fa-bookmark bookmark-icon ${
-                    isSaved ? "active" : ""
+                    "active"
                   }"></i>
                   <div class="spinner">
                     <i class="fa-solid fa-circle-notch fa-spin"></i>
@@ -449,13 +458,17 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
             `;
 
-    card.addEventListener("click", () => {
-	    console.log('hello');
-      const eternityRadioRef = getEternityRadioPlayerRef();
-      if (eternityRadioRef && eternityRadioRef.current) {
-        eternityRadioRef.current.changeExternalStation(channel);
-      }
-    });
+      card.addEventListener("click", () => {
+        if (channel?.title != null) {
+          window.location.assign(`${ETERNITY_BASE_URL}/player?q=${encodeURIComponent(channel.title)}`)
+          return;
+        }
+
+        const eternityRadioRef = getEternityRadioPlayerRef();
+        if (eternityRadioRef && eternityRadioRef.current) {
+          eternityRadioRef.current.changeExternalStation(channel);
+        }
+      });
 
     const watchLaterBtn = card.querySelector(".watch-later-btn");
     watchLaterBtn.addEventListener("click", (e) => {
@@ -568,7 +581,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const selectedCategory =
       document.getElementById("categoryFilter")?.value || "all";
 
-    const filtered = allChannels.filter((channel) => {
+    const filteredChannels = allChannels.filter((channel) => {
       const matchesSearch =
         channel.name.toLowerCase().includes(searchTerm) ||
         (channel.keywords || []).some((k) =>
@@ -581,7 +594,26 @@ document.addEventListener("DOMContentLoaded", () => {
           .includes(selectedCategory.toLowerCase());
       return matchesSearch && matchesCategory;
     });
-    renderChannelGrid(filtered);
+
+    const filteredMovies = allMovies.filter((movie) => {
+      const matchesSearch = movie.title.toLowerCase().includes(searchTerm);
+      // Assumindo que a propriedade se chama 'genres' no seu JSON
+      const matchesGenre =
+        selectedCategory === "all" ||
+        (movie.categories || [])
+          .map((g) => g.toLowerCase())
+          .includes(selectedCategory.toLowerCase());
+      return matchesSearch && matchesGenre;
+    });
+
+    const combinedFiltered = [...filteredChannels, ...filteredMovies]
+      .map(value => ({ value, sort: Math.random() }))
+      .sort((a, b) => a.sort - b.sort)
+      .map(({ value }) => value);
+
+    console.log('combinedFiltered', combinedFiltered);
+
+    renderChannelGrid(combinedFiltered);
   }
 
   // >>>>> NOVO: Função para filtrar os filmes <<<<<
