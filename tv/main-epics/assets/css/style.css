@@ -50,11 +50,7 @@ select{
     font-family: 'Asap Condensed';
     color: white;
 }
-p#channel-count {
-    font-family: poppins;
-    font-size: 14px;
-    translate: 0 6px;
-}
+
 .main-title {
     color: white !important;
 }

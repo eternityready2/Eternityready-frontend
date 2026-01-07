@@ -160,12 +160,12 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderChannelView() {
     const channelViewHTML = `
         <div class="search-section">
-            <h2>Browse channels</h2>
+            <h2>Browse channels and Movies</h2>
             <div class="channelssearch">
                 <div class="second-search-parent">
                     <div class="second-search-bar">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" id="search-input" placeholder="Search for channels..."/>
+                        <input type="text" id="search-input" placeholder="Search for channels and movies..."/>
                     </div>
                     <select id="categoryFilter">
                         <option value="all">All Categories</option>
@@ -180,7 +180,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="count">
                     <p id="channel-count">channels</p>
                 </div>
+
                 <div id="channel-grid" class="channel-grid"></div>
+
+                <div class="count">
+                    <p id="movie-count">movies</p>
+                </div>
+
+                <div id="movie-grid" class="channel-grid"></div>
             </div>
         </div>
     `;
@@ -251,6 +258,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 2. Original channel view setup
     const categoryFilterElement = document.getElementById("categoryFilter");
     populateCategories(allChannels, categoryFilterElement, "categories");
+    populateCategories(allMovies, categoryFilterElement, "categories");
     renderSavedChannels();
     renderSavedList();
     applyChannelFilters();
@@ -317,14 +325,14 @@ document.addEventListener("DOMContentLoaded", () => {
     // 2. Renderiza a nova Grid de Todos os Filmes
     const allMoviesGridHTML = `
             <div class="second-search-section" style="margin-top: 40px;">
-                <h2>Browse all movies</h2>
+                <h2>Browse channels and Movies</h2>
                 <div class="second-search-parent">
                     <div class="second-search-bar">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" id="movie-search-input" placeholder="Search for movies..."/>
+                        <input type="text" id="search-input" placeholder="Search for channels and movies..."/>
                     </div>
-                    <select id="movie-genre-filter">
-                        <option value="all">All Genres</option>
+                    <select id="categoryFilter">
+                        <option value="all">All Categories</option>
                     </select>
                 </div>
             </div>
@@ -333,16 +341,25 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div class="count">
                         <p id="movie-count">movies</p>
                     </div>
+
                     <div id="movie-grid" class="channel-grid"></div>
+
+                    <div class="count">
+                        <p id="channel-count">channels</p>
+                    </div>
+
+                    <div id="channel-grid" class="channel-grid"></div>
                 </div>
             </div>
         `;
     // Adiciona a nova seção ao container principal
     mainContainer.insertAdjacentHTML("beforeend", allMoviesGridHTML);
 
-    const genreFilterElement = document.getElementById("movie-genre-filter");
+    const categoryFilterElement = document.getElementById("categoryFilter");
     // Assumindo que a propriedade se chama 'genres' no seu JSON de filmes
-    populateCategories(allMovies, genreFilterElement, "categories");
+    populateCategories(allMovies, categoryFilterElement, "categories");
+    populateCategories(allChannels, categoryFilterElement, "categories");
+
     applyMovieFilters();
   }
 
@@ -357,7 +374,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     document.getElementById(
       "channel-count"
-    ).textContent = `Results found: ${channelsToRender.length}`;
+    ).textContent = `Channels found: ${channelsToRender.length}`;
   }
 
   // >>>>> NOVO: Função para renderizar a grid de filmes <<<<<
@@ -369,7 +386,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     document.getElementById(
       "movie-count"
-    ).textContent = `Results found: ${moviesToRender.length}`;
+    ).textContent = `Movies found: ${moviesToRender.length}`;
   }
 
   function renderSavedChannels() {
@@ -549,7 +566,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const selectedCategory =
       document.getElementById("categoryFilter")?.value || "all";
 
-    const filtered = allChannels.filter((channel) => {
+    let filtered = allChannels.filter((channel) => {
       const matchesSearch =
         channel.name.toLowerCase().includes(searchTerm) ||
         (channel.keywords || []).some((k) =>
@@ -562,28 +579,59 @@ document.addEventListener("DOMContentLoaded", () => {
           .includes(selectedCategory.toLowerCase());
       return matchesSearch && matchesCategory;
     });
+
     renderChannelGrid(filtered);
+
+    filtered = allMovies.filter((movie) => {
+      const matchesSearch = movie.title.toLowerCase().includes(searchTerm);
+      // Assumindo que a propriedade se chama 'genres' no seu JSON
+      const matchesGenre =
+        selectedCategory === "all" ||
+        (movie.categories || [])
+          .map((g) => g.toLowerCase())
+          .includes(selectedCategory.toLowerCase());
+      return matchesSearch && matchesGenre;
+    });
+
+    renderMovieGrid(filtered);
+
   }
 
   // >>>>> NOVO: Função para filtrar os filmes <<<<<
   function applyMovieFilters() {
     const searchTerm =
-      document.getElementById("movie-search-input")?.value.toLowerCase() || "";
-    const selectedGenre =
-      document.getElementById("movie-genre-filter")?.value || "all";
+      document.getElementById("search-input")?.value.toLowerCase() || "";
+    const selectedCategory =
+      document.getElementById("categoryFilter")?.value || "all";
 
-    const filtered = allMovies.filter((movie) => {
+    let filtered = allMovies.filter((movie) => {
       const matchesSearch = movie.title.toLowerCase().includes(searchTerm);
       // Assumindo que a propriedade se chama 'genres' no seu JSON
       const matchesGenre =
-        selectedGenre === "all" ||
+        selectedCategory === "all" ||
         (movie.categories || [])
           .map((g) => g.toLowerCase())
-          .includes(selectedGenre.toLowerCase());
+          .includes(selectedCategory.toLowerCase());
       return matchesSearch && matchesGenre;
     });
 
     renderMovieGrid(filtered);
+
+    filtered = allChannels.filter((channel) => {
+      const matchesSearch =
+        channel.name.toLowerCase().includes(searchTerm) ||
+        (channel.keywords || []).some((k) =>
+          k.toLowerCase().includes(searchTerm)
+        );
+      const matchesCategory =
+        selectedCategory === "all" ||
+        (channel.categories || [])
+          .map((c) => c.toLowerCase())
+          .includes(selectedCategory.toLowerCase());
+      return matchesSearch && matchesCategory;
+    });
+
+    renderChannelGrid(filtered);
   }
 
   // =================================================================================

@@ -23,3 +23,7 @@ body {
 .button-container {
   display: none;
 }
+
+#movie-count {
+  margin-top: 1rem;
+}
