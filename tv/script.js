@@ -446,10 +446,12 @@ document.addEventListener("DOMContentLoaded", () => {
                         </div>
                     </button>
                 </div>
-                  ${
-                    channel?.name == null
-                      ? ""
-                      : `<p class="current-program" data-channel-name="${channel.name.toLowerCase()}"><span>On Now: </span>Not Known<\/p>`
+                  ${channel?.name == null
+                    ? ""
+                    : `<div class="current-program" data-channel-name="${channel.name.toLowerCase()}">
+                         <div><span>On now:</span> Not Known</div>
+                         <div><span>Up next:</span> Not Known</div>
+                       </div>`
                   }
             </div>`;
 

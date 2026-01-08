@@ -150,7 +150,7 @@ function findAndDisplayCurrentPrograms(scheduleData, timezoneOffset = 0) {
     });
 
     if (currentEntry) {
-      const selector = `p[data-channel-name="${CSS.escape(
+      const selector = `div[data-channel-name="${CSS.escape(
         channelName.toLowerCase()
       )}"]`;
       const channelElements = $(selector);
@@ -163,7 +163,7 @@ function findAndDisplayCurrentPrograms(scheduleData, timezoneOffset = 0) {
         console.log(`Channel "${channelName}" not found on DOM.`);
       } else {
         channelElements.each(function () {
-          $(this).html(
+          $(this).empty().html(
             `<div><span>On now:</span> ${currentEntry.program}</div><div><span>Up next:</span> ${nextProgram}</div>`
           );
         });
