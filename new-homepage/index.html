@@ -1218,29 +1218,6 @@
 
   </script>
  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script>
-  async function runAfterAllMedia(allMedia) {
-    console.log('runAfterAllMedia', allMedia);
-  }
-
-  function waitForAllMedia() {
-    if ( isNormalized == true) {
-      runAfterAllMedia([
-        ...normalizedData.channels,
-        ...normalizedData.movies,
-        ...normalizedData.music,
-      ]);
-    } else {
-      setTimeout(waitForAllMedia, 50);
-    }
-  }
-
-  waitForAllMedia();
-</script>
-
-    
-    
-   
 </body>
 
 </html>
