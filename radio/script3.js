@@ -134,10 +134,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Renderiza a view correspondente
     if (viewName === "channel") {
-      renderChannelView();
+      renderChannelView("radio");
     } else if (viewName === "movie") {
       //renderMovieView();
-      renderChannelView();
+      renderChannelView("music");
     }
   }
 
@@ -146,7 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // =================================================================================
 
   // --- RENDERIZAÇÃO DA VIEW DE CANAIS ---
-  function renderChannelView() {
+  function renderChannelView(groupContent = "all") {
     const channelViewHTML = `
         <div id="channel-carousels-container"></div>
         <div id="saved-channels-container"></div>
@@ -243,7 +243,7 @@ document.addEventListener("DOMContentLoaded", () => {
     populateCategories(allMovies, categoryFilterElement, "categories");
     renderSavedChannels();
     renderSavedList();
-    applyChannelFilters();
+    applyChannelFilters(groupContent);
   }
 
   // --- RENDERIZAÇÃO DA VIEW DE FILMES (MODIFICADA) ---
@@ -338,7 +338,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // --- FUNÇÕES DE RENDERIZAÇÃO DE GRIDS ---
-  function renderChannelGrid(channelsToRender) {
+  function renderChannelGrid(channelsToRender, groupContent) {
     const channelGrid = document.getElementById("channel-grid");
     channelGrid.innerHTML = "";
 
@@ -347,9 +347,23 @@ document.addEventListener("DOMContentLoaded", () => {
     channelsToRender.forEach((channel, index) => {
       channelGrid.appendChild(createChannelCard(channel, index));
     });
+
+    let channelCountText;
+    if (groupContent == "all") {
+      channelCountText = `Radio & Music found: ${channelsToRender.length}`
+    }
+
+    else if (groupContent == "radio") {
+      channelCountText = `Radio found: ${channelsToRender.length}`
+    }
+    
+    else {
+      channelCountText = `Music found: ${channelsToRender.length}`
+    }
+
     document.getElementById(
       "channel-count"
-    ).textContent = `Radio Stations & Music Videos found: ${channelsToRender.length}`;
+    ).textContent = channelCountText;
   }
 
   // >>>>> NOVO: Função para renderizar a grid de filmes <<<<<
@@ -575,7 +589,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function applyChannelFilters() {
+  function applyChannelFilters(groupContent = "all") {
     const searchTerm =
       document.getElementById("search-input")?.value.toLowerCase() || "";
     const selectedCategory =
@@ -606,14 +620,21 @@ document.addEventListener("DOMContentLoaded", () => {
       return matchesSearch && matchesGenre;
     });
 
-    const combinedFiltered = [...filteredChannels, ...filteredMovies]
+    let combinedFiltered = [
+        ...(groupContent == "all" || groupContent == "radio" ? filteredChannels : []),
+        ...(groupContent == "all" || groupContent == "music" ? filteredMovies : []),
+      ];
+
+    if (groupContent == "all") {
+      combinedFiltered = combinedFiltered
       .map(value => ({ value, sort: Math.random() }))
       .sort((a, b) => a.sort - b.sort)
       .map(({ value }) => value);
+    }
 
     console.log('combinedFiltered', combinedFiltered);
 
-    renderChannelGrid(combinedFiltered);
+    renderChannelGrid(combinedFiltered, groupContent);
   }
 
   // >>>>> NOVO: Função para filtrar os filmes <<<<<

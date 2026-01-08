@@ -255,7 +255,7 @@ document.addEventListener("DOMContentLoaded", () => {
     populateCategories(allMovies, categoryFilterElement, "categories");
     renderSavedChannels();
     renderSavedList();
-    applyChannelFilters();
+    applyChannelFilters("channels");
 
     if (typeof startProgramUpdates === "function") {
       startProgramUpdates();
@@ -350,11 +350,11 @@ document.addEventListener("DOMContentLoaded", () => {
     populateCategories(allMovies, categoryFilterElement, "categories");
     populateCategories(allChannels, categoryFilterElement, "categories");
 
-    applyChannelFilters();
+    applyChannelFilters("movies");
   }
 
   // --- FUNÇÕES DE RENDERIZAÇÃO DE GRIDS ---
-  function renderChannelGrid(channelsToRender) {
+  function renderChannelGrid(channelsToRender, groupContent) {
     const channelGrid = document.getElementById("channel-grid");
     channelGrid.innerHTML = "";
     channelsToRender.forEach((channel) => {
@@ -365,9 +365,23 @@ document.addEventListener("DOMContentLoaded", () => {
         }));
       }
     });
+
+    let channelCountText;
+    if (groupContent == "all") {
+      channelCountText = `Movie & Channels found: ${channelsToRender.length}`
+    }
+
+    else if (groupContent == "channels") {
+      channelCountText = `Channels found: ${channelsToRender.length}`
+    }
+    
+    else {
+      channelCountText = `Movies found: ${channelsToRender.length}`
+    }
+
     document.getElementById(
       "channel-count"
-    ).textContent = `Movie & Channels found: ${channelsToRender.length}`;
+    ).textContent = channelCountText;
   }
 
   // >>>>> NOVO: Função para renderizar a grid de filmes <<<<<
@@ -557,7 +571,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function applyChannelFilters() {
+  function applyChannelFilters(groupContent = "all") {
     const searchTerm =
       document.getElementById("search-input")?.value.toLowerCase() || "";
     const selectedCategory =
@@ -588,14 +602,21 @@ document.addEventListener("DOMContentLoaded", () => {
       return matchesSearch && matchesGenre;
     });
 
-    const combinedFiltered = [...filteredChannels, ...filteredMovies]
+    let combinedFiltered = [
+        ...(groupContent == "all" || groupContent == "channels" ? filteredChannels : []),
+        ...(groupContent == "all" || groupContent == "movies" ? filteredMovies : []),
+      ];
+
+    if (groupContent == "all") {
+      combinedFiltered = combinedFiltered
       .map(value => ({ value, sort: Math.random() }))
       .sort((a, b) => a.sort - b.sort)
       .map(({ value }) => value);
+    }
 
     console.log('combinedFiltered', combinedFiltered);
 
-    renderChannelGrid(combinedFiltered);
+    renderChannelGrid(combinedFiltered, groupContent);
 
   }
 
