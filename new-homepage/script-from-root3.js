@@ -1120,10 +1120,15 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    const [featuredVideos, recentVideos, apiCategories] = await Promise.all([
+    const [featuredVideos, recentVideos, apiCategories, recommendedContent] = await Promise.all([
       fetchFeaturedVideos(),
       fetchRecentVideos(20),
       fetchCategories(),
+      fetchRecommendation([
+        ...normalizedData.channels,
+        ...normalizedData.movies,
+        ...normalizedData.music,
+      ])
     ]);
 
     if (featuredVideos.length >= MIN_ITEMS_PER_SLIDER) {
@@ -1136,6 +1141,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // 2. Recentes (Recent)
+
+    console.log("RecommendedContent", recommendedContent);
+    if (recommendedContent.length >= MIN_ITEMS_PER_SLIDER) {
+      masterSliderData.push({
+        title: "Recommended Content",
+        items: recommendedContent,
+        sectionClass: "recommend-videos-section",
+        link: "/categories/?category=recommend",
+      });
+    }
+
     if (recentVideos.length >= MIN_ITEMS_PER_SLIDER) {
       masterSliderData.push({
         title: "Newest Stuff",

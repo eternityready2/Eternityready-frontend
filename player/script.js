@@ -304,6 +304,20 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       console.log('mediaData:', mediaTitle, mediaData);
+
+      let stored = localStorage.getItem("categoriesConsumed");
+      let categoriesConsumed = stored ? JSON.parse(stored) : {};
+
+      for (const categoryConsumed of mediaData?.categories ?? []) {
+        categoriesConsumed[categoryConsumed] =
+          (categoriesConsumed[categoryConsumed] ?? 0) + 1;
+      }
+
+      localStorage.setItem(
+        "categoriesConsumed",
+        JSON.stringify(categoriesConsumed)
+      );
+
       renderVideo(mediaData);
       renderRecommendations(mediaData, allMedia);
 
