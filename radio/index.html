@@ -852,6 +852,10 @@
 
       async function runAfterAllMedia(allMedia) {
           const recommendations = await fetchRecommendation(allMedia);
+          if (!recommendations || recommendations.length == 0) {
+            return;
+          }
+
           const sectionHeader = document.createElement('div');
           sectionHeader.className = "section-header";
           sectionHeader.innerHTML += `
