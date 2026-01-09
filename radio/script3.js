@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="second-search-parent">
                     <div class="second-search-bar">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" id="search-input" placeholder="Search radio & music..."/>
+                        <input type="text" id="search-input" placeholder="Search for content..."/>
                     </div>
                     <select id="categoryFilter">
                         <option value="all">All Categories</option>
