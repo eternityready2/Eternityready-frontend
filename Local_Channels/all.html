@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Plyr HLS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.plyr.io/3.7.8/plyr.css"
+    />
+    <style>
+      html, body {
+        margin: 0;
+        height: 100%;
+        background-color: #060d17;
+      }
+      video {
+        width: 100%;
+        height: auto;
+        max-height: 100vh;
+        display: block;
+        background-color: #060d17;
+      }
+      
+      :root {
+        --plyr-color-main: #f11325;
+      }
+
+      .plyr__control--overlaid {
+        width: 80px !important;
+        height: 80px !important;
+        transition: 2s !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+      }
+    </style>
+  </head>
+  <body>
+    <video id="player" controls playsinline></video>
+
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const videoSrc = params.get("q");
+
+      const video = document.getElementById('player');
+
+      if (window.Hls && Hls.isSupported()) {
+        const hls = new Hls();
+        hls.loadSource(videoSrc);
+        hls.attachMedia(video);
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = videoSrc;
+      } else {
+        console.error('HLS is not supported in this browser.');
+      }
+
+      const player = new Plyr(video);
+      window.player = player;
+    </script>
+  </body>
+</html>

@@ -99,7 +99,7 @@
       "name": "3ABN Russia",
       "logo": "https://tv.eternityready.com/img/logos_2/14.jpg",
       "link": "",
-      "embed": "https://eternityready.com/Local_Channels/3abn-russia.html",
+      "embed": "https://3abn.bozztv.com/3abn2/Rus_live/smil:Rus_live.smil/playlist.m3u8",
       "keywords": [],
       "rating": 3,
       "categories": [
@@ -133,7 +133,7 @@
       "name": "SAT7 PARS",
       "logo": "https://tv.eternityready.com/img/logos_2/15.jpg",
       "link": "",
-      "embed": "https://www.eternityready.com/Local_Channels/sat7pars.html",
+      "embed": "https://www.eternityready.com/Local_Channels/all.html?q=https://svs.itworkscdn.net/sat7arabiclive/sat7arabic.smil/sat7arabicpublish/sat7arabic_source/chunks_dvr.m3u8",
       "keywords": [],
       "rating": 3,
       "categories": [
@@ -220,7 +220,7 @@
       "name": "GEB America",
       "logo": "https://tv.eternityready.com/img/logos_2/20.jpg",
       "link": "",
-      "embed": "https://www.eternityready.com/Local_Channels/gebamerica.html",
+      "embed": "https://www.eternityready.com/Local_Channels/all.html?q=https://edge1.lifestreamcdn.com/live/geb/playlist.m3u8",
       "keywords": [],
       "rating": 3,
       "categories": [
@@ -248,7 +248,7 @@
       "name": "World Harvest Television",
       "logo": "https://tv.eternityready.com/img/logos_2/22.jpg",
       "link": "",
-      "embed": "https://www.eternityready.com/Local_Channels/worldharvest.html",
+      "embed": "https://www.eternityready.com/Local_Channels/all.html?q=https://597865f6e4114.streamlock.net/live/leseaorigin.stream/playlist.m3u8",
       "keywords": [],
       "rating": 3,
       "categories": [
@@ -276,7 +276,7 @@
       "name": "Firstlight",
       "logo": "https://tv.eternityready.com/img/logos_2/24.jpg",
       "link": "",
-      "embed": "https://www.eternityready.com/Local_Channels/firstlight.html",
+      "embed": "https://www.eternityready.com/Local_Channels/all.html?q=https://rpn.bozztv.com/firstlight/firstlight/firstlight.smil/chunklist_w2122279999_b900000_slen.m3u8",
       "keywords": [],
       "rating": 3,
       "categories": [
@@ -304,7 +304,7 @@
       "name": "3ABN",
       "logo": "https://tv.eternityready.com/img/logos_2/26.jpg",
       "link": "",
-      "embed": "https://www.eternityready.com/Local_Channels/3abn.html",
+      "embed": "https://eternityready.com/Local_Channels/all.html?q=https://3abn.bozztv.com/3abn2/3abn_live/smil:3abn_live.smil/playlist.m3u8",
       "keywords": [
         "help"
       ],
@@ -335,7 +335,7 @@
       "logo": "https://tv.eternityready.com/img/logos_2/28.jpg",
       "link": "",
       "embed": "https://embed.vhx.tv/videos/3642977?api=1&autoplay",
-      "embed": "https://www.eternityready.com/Local_Channels/tct-hd-stream.html",
+      "embed": "https://www.eternityready.com/Local_Channels/all.html?q=https://livecdn.use1-0004.jwplive.com/live/sites/LXqYX6Kr/media/frRD2nUK/live.isml/.m3u8",
       "keywords": [],
       "rating": 3,
       "categories": [
@@ -349,7 +349,7 @@
       "name": "Christian Television Network",
       "logo": "https://tv.eternityready.com/img/logos_2/29.jpg",
       "link": "",
-      "embed": "https://www.eternityready.com/Local_Channels/ctn.html",
+      "embed": "http://127.0.0.1:8000/Local_Channels/all.html?q=https://hls-live-stream-gc.cdn01.net/mpegts/232076_1523529/RpOnpZopv8L9tJrlcchAmw/1768165273/media_mpegts_0.m3u8?channel_id=55511&source=WebApp&app_id=5957&device_id=8052442052-90a101f911df0e337e17a526bc7093d8&lcp=3&client_id=443220059518621193&play_id=1768078873413478",
       "keywords": [],
       "rating": 3,
       "categories": [
@@ -391,7 +391,7 @@
       "name": "NEW HOPE TV",
       "logo": "https://tv.eternityready.com/img/logos_2/32.jpg",
       "link": "",
-      "embed": "https://eternityready.com/Local_Channels/newhopetv.html",
+      "embed": "https://eternityready.com/Local_Channels/all.html?q=https://shashwatha.com/hls/show/newhopetv.m3u8",
       "keywords": [],
       "rating": 3,
       "categories": [
@@ -433,7 +433,7 @@
       "name": "3ABN Francias",
       "logo": "https://tv.eternityready.com/img/logos_2/35.jpg",
       "link": "",
-      "embed": "https://eternityready.com/Local_Channels/3abn-francis.html",
+      "embed": "https://eternityready.com/Local_Channels/all.html?q=https://3abn.bozztv.com/3abn2/Fre_live/smil:Fre_live.smil/playlist.m3u8",
       "keywords": [],
       "rating": 3,
       "categories": [
@@ -447,7 +447,7 @@
       "name": "3ABN Latino",
       "logo": "https://tv.eternityready.com/img/logos_2/36.jpg",
       "link": "",
-      "embed": "https://www.eternityready.com/Local_Channels/3abn-latino.html",
+      "embed": "https://www.eternityready.com/Local_Channels/all.html?q=https://3abn.bozztv.com/3abn2/Lat_live/smil:Lat_live.smil/playlist.m3u8",
       "keywords": [],
       "rating": 3,
       "categories": [
@@ -461,7 +461,7 @@
       "name": "3ABN International",
       "logo": "https://tv.eternityready.com/img/logos_2/37.jpg",
       "link": "",
-      "embed": "https://eternityready.com/Local_Channels/3abn-international.html",
+      "embed": "https://eternityready.com/Local_Channels/all.html?q=https://3abn.bozztv.com/3abn2/Int_live/smil:Int_live.smil/playlist.m3u8",
       "keywords": [],
       "rating": 3,
       "categories": [
@@ -489,7 +489,7 @@
       "name": "SuperChannel Orlando",
       "logo": "https://tv.eternityready.com/img/logos_2/39.jpg",
       "link": "",
-      "embed": "https://eternityready.com/Local_Channels/superchannelorlando.html",
+      "embed": "https://eternityready.com/Local_Channels/all.html?q=https://632c1f303ef2e.streamlock.net/live/live/playlist.m3u8",
       "keywords": [],
       "rating": 3,
       "categories": [
@@ -518,7 +518,7 @@
       "name": "ICFN",
       "logo": "https://tv.eternityready.com/img/logos_2/12.jpg",
       "link": "",
-      "embed": "https://eternityready.com/Local_Channels/icfn.html",
+      "embed": "https://eternityready.com/Local_Channels/all.html?q=https://stream.streampathway.link/hls/0/stream.m3u8",
       "keywords": [],
       "rating": 3,
       "categories": [
@@ -589,7 +589,7 @@
       "name": "CBN Family",
       "logo": "https://tv.eternityready.com/img/logos_2/45.jpg",
       "link": "",
-      "embed": "https://eternityready.com/Local_Channels/cbnfamily.html",
+      "embed": "https://eternityready.com/Local_Channels/all.html?q=https://fastly.live.brightcove.com/6380399588112/us-east-1/734546207001/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJob3N0IjoiczFpM3ZpLmVncmVzcy50N2M3emwiLCJhY2NvdW50X2lkIjoiNzM0NTQ2MjA3MDAxIiwiZWhuIjoiZmFzdGx5LmxpdmUuYnJpZ2h0Y292ZS5jb20iLCJpc3MiOiJibGl2ZS1wbGF5YmFjay1zb3VyY2UtYXBpIiwic3ViIjoicGF0aG1hcHRva2VuIiwiYXVkIjpbIjczNDU0NjIwNzAwMSJdLCJqdGkiOiI2MzgwMzk5NTg4MTEyIn0.LYfIeObmX4AEStY_xCnPZwMJHXgOAPFMTKfztq-9F8U/chunklist__3.m3u8",
       "keywords": [],
       "rating": 3,
       "categories": [
@@ -659,7 +659,7 @@
       "name": "3ABN Kids",
       "logo": "https://tv.eternityready.com/img/logos_2/51.jpg",
       "link": "",
-      "embed": "https://eternityready.com/Local_Channels/3abn-kids.html",
+      "embed": "https://eternityready.com/Local_Channels/all.html?q=https://3abn.bozztv.com/3abn2/Kids_live/smil:Kids_live.smil/playlist.m3u8",
       "keywords": [],
       "rating": 3,
       "categories": [
@@ -687,7 +687,7 @@
       "name": "The Word Network",
       "logo": "https://tv.eternityready.com/img/logos_2/53.jpg",
       "link": "",
-      "embed": "https://www.eternityready.com/Local_Channels/thewordnetwork.html",
+      "embed": "https://www.eternityready.com/Local_Channels/all.html?q=https://clouditize.piksel.tech/hls/live/2043070/ClouditizeStream1/Clouditize-Stream3/chunklist.m3u8",
       "keywords": [],
       "rating": 3,
       "categories": [
@@ -743,7 +743,7 @@
       "name": "Son Broadcasting Network",
       "logo": "https://tv.eternityready.com/img/logos_2/57.jpg",
       "link": "",
-      "embed": "https://www.eternityready.com/Local_Channels/kchftv.html",
+      "embed": "https://www.eternityready.com/Local_Channels/all.html?q=https://5f75ff9cd9f1d.streamlock.net/kchf/kchf_studio_mq/chunklist_w104548780.m3u8",
       "keywords": [],
       "rating": 3,
       "categories": [
@@ -757,7 +757,7 @@
       "name": "ABN AFRICA",
       "logo": "https://tv.eternityready.com/img/logos_2/59.jpg",
       "link": "",
-      "embed": "https://www.eternityready.com/Local_Channels/abn-africa.html",
+      "embed": "https://www.eternityready.com/Local_Channels/all.html?q=https://mediaserver.abnvideos.com/streams/abnafrica.m3u8",
       "keywords": [],
       "rating": 3,
       "categories": [
@@ -859,7 +859,7 @@
       "name": "Newsmax",
       "logo": "https://tv.eternityready.com/img/logos_2/67.jpg",
       "link": "",
-      "embed": "https://www.eternityready.com/Local_Channels/newsmax.html",
+      "embed": "https://www.eternityready.com/Local_Channels/all.html?q=https://nmxlive.akamaized.net/hls/live/529965/Live_1/4.m3u8",
       "keywords": [],
       "rating": 3,
       "categories": [
@@ -888,7 +888,7 @@
       "name": "3ABN! Dare to Dream",
       "logo": "https://tv.eternityready.com/img/logos_2/70.jpg",
       "link": "",
-      "embed": "https://www.eternityready.com/Local_Channels/3abn-daretodream.html",
+      "embed": "https://www.eternityready.com/Local_Channels/all.html?q=https://3abn.bozztv.com/3abn2/d2d_live/smil:d2d_live.smil/playlist.m3u8",
       "keywords": [],
       "rating": 3,
       "categories": [
@@ -902,7 +902,7 @@
       "name": "3ABN Proclaim",
       "logo": "https://tv.eternityready.com/img/logos_2/71.jpg",
       "link": "",
-      "embed": "https://eternityready.com/Local_Channels/3abn-proclaim.html",
+      "embed": "https://eternityready.com/Local_Channels/all.html?q=https://3abn.bozztv.com/3abn2/Pro_live/smil:Pro_live.smil/playlist.m3u8",
       "keywords": [],
       "rating": 3,
       "categories": [
@@ -958,7 +958,7 @@
       "name": "HARVEST TV",
       "logo": "https://tv.eternityready.com/img/logos_2/77.jpg",
       "link": "",
-      "embed": "https://www.eternityready.com/Local_Channels/harvestv.html",
+      "embed": "https://www.eternityready.com/Local_Channels/all.html?q=https://7mbd4ogkr3gx-hls-live.wmncdn.net/harvesttvlive1/bbb19eae240ec100af921d511efc86a0.sdp/chunks.m3u8",
       "keywords": [],
       "rating": 3,
       "categories": [
@@ -1027,7 +1027,7 @@
       "name": "Gospel Truth TV",
       "logo": "https://tv.eternityready.com/img/logos_2/1.jpg",
       "link": "",
-      "embed": "https://www.eternityready.com/Local_Channels/gospeltruthtv.html",
+      "embed": "https://www.eternityready.com/Local_Channels/all.html?q=https://na.linear.zype.com/bf94f9f4-383c-40e0-9d49-279a4f33ab8d/f29b8836-d990-4c8d-b421-192a8f43edc4-zype/manifest/live_13.m3u8?rendition=1080&session_id=9424ef6c-b35d-4db8-adeb-afbc228c134c",
       "keywords": [],
       "rating": 3,
       "categories": [
@@ -1071,7 +1071,7 @@
       "name": "Mission TV",
       "logo": "https://tv.eternityready.com/img/logos_2/4.jpg",
       "link": "",
-      "embed": "https://www.eternityready.com/Local_Channels/missiontv.html",
+      "embed": "https://www.eternityready.com/Local_Channels/all.html?q=http://stream.missiontv.com:1935/live/missiontv_720p/playlist.m3u8",
       "keywords": [],
       "rating": 3,
       "categories": [
@@ -1101,7 +1101,7 @@
       "name": "Total Living Network",
       "logo": "https://tv.eternityready.com/img/logos_2/6.jpg",
       "link": "",
-      "embed": "https://eternityready.com/Local_Channels/tln.html",
+      "embed": "https://eternityready.com/Local_Channels/all.html?q=https://fuel-streaming-prod01.fuelmedia.io/v1/sep/38b3498c-5f89-44ac-9ec1-67c76ee53d02/b29d27bb-88af-42d1-937a-5bdf76b71c17/6S600K360AWS/SM/content.m3u8",
       "keywords": [],
       "rating": 3,
       "categories": [
