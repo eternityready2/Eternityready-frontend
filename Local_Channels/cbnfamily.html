@@ -1,38 +1,43 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Player M3U8</title>
-  <style>
-    #video-player {
-      width: 100%;
-      height: 100%;
-      background: #000;
-    }
-  </style>
+  <title>3abn</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background-color: #060d17;
+  }
+
+  video {
+    width: 100%;
+    height: auto;
+    max-height: 100vh;
+    display: block;
+    background-color: #060d17;
+  }
+</style>
 </head>
 <body>
 
-  <div id="video-player">
-    <video id="video" controls autoplay style="width: 100%; height: 100%;"></video>
-  </div>
+  <video id="video" width="100%" height="100%" controls autoplay></video>
 
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <script>
     const video = document.getElementById('video');
-    const videoSrc = 'https://bcovlive-a.akamaihd.net/r602a47f47fee47bb83239eb1b1e1ac83/us-east-1/us-east-1/734546207001/profile_0/chunklist.m3u8';
+    const videoSrc = 'https://fastly.live.brightcove.com/6380399588112/us-east-1/734546207001/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJob3N0IjoiczFpM3ZpLmVncmVzcy50N2M3emwiLCJhY2NvdW50X2lkIjoiNzM0NTQ2MjA3MDAxIiwiZWhuIjoiZmFzdGx5LmxpdmUuYnJpZ2h0Y292ZS5jb20iLCJpc3MiOiJibGl2ZS1wbGF5YmFjay1zb3VyY2UtYXBpIiwic3ViIjoicGF0aG1hcHRva2VuIiwiYXVkIjpbIjczNDU0NjIwNzAwMSJdLCJqdGkiOiI2MzgwMzk5NTg4MTEyIn0.LYfIeObmX4AEStY_xCnPZwMJHXgOAPFMTKfztq-9F8U/chunklist__3.m3u8';
 
     if (Hls.isSupported()) {
       const hls = new Hls();
       hls.loadSource(videoSrc);
       hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, function() {
+      hls.on(Hls.Events.MANIFEST_PARSED, function () {
         video.play();
       });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
       video.src = videoSrc;
-      video.addEventListener('loadedmetadata', function() {
+      video.addEventListener('loadedmetadata', function () {
         video.play();
       });
     }
