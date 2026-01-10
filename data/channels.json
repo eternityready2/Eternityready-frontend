@@ -99,7 +99,7 @@
       "name": "3ABN Russia",
       "logo": "https://tv.eternityready.com/img/logos_2/14.jpg",
       "link": "",
-      "embed": "https://3abn.bozztv.com/3abn2/Rus_live/smil:Rus_live.smil/playlist.m3u8",
+      "embed": "https://www.eternityready.com/Local_Channels/all.html?q=https://3abn.bozztv.com/3abn2/Rus_live/smil:Rus_live.smil/playlist.m3u8",
       "keywords": [],
       "rating": 3,
       "categories": [
@@ -349,7 +349,7 @@
       "name": "Christian Television Network",
       "logo": "https://tv.eternityready.com/img/logos_2/29.jpg",
       "link": "",
-      "embed": "http://127.0.0.1:8000/Local_Channels/all.html?q=https://hls-live-stream-gc.cdn01.net/mpegts/232076_1523529/RpOnpZopv8L9tJrlcchAmw/1768165273/media_mpegts_0.m3u8?channel_id=55511&source=WebApp&app_id=5957&device_id=8052442052-90a101f911df0e337e17a526bc7093d8&lcp=3&client_id=443220059518621193&play_id=1768078873413478",
+      "embed": "https://www.eternityready.com/Local_Channels/all.html?q=https://hls-live-stream-gc.cdn01.net/mpegts/232076_1523529/RpOnpZopv8L9tJrlcchAmw/1768165273/media_mpegts_0.m3u8?channel_id=55511&source=WebApp&app_id=5957&device_id=8052442052-90a101f911df0e337e17a526bc7093d8&lcp=3&client_id=443220059518621193&play_id=1768078873413478",
       "keywords": [],
       "rating": 3,
       "categories": [
