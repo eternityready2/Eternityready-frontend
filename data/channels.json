@@ -602,7 +602,7 @@
       "name": "Safe TV",
       "logo": "https://tv.eternityready.com/img/logos_2/46.jpg",
       "link": "",
-      "embed": "https://player.lightcast.com/live/EDMyUDM",
+      "embed": "https://www.lightcast.com/embed/player.php?autoStart=0&type=live&site=playerLanding&id=10250",
       "keywords": [],
       "rating": 3,
       "categories": [
