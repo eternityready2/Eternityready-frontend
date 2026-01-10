@@ -1071,7 +1071,7 @@
       "name": "Mission TV",
       "logo": "https://tv.eternityready.com/img/logos_2/4.jpg",
       "link": "",
-      "embed": "https://www.eternityready.com/Local_Channels/all.html?q=http://stream.missiontv.com:1935/live/missiontv_720p/playlist.m3u8",
+      "embed": "https://www.eternityready.com/Local_Channels/missiontv.html",
       "keywords": [],
       "rating": 3,
       "categories": [
