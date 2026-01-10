@@ -1,3 +1,18 @@
+let lastMobile = null;
+function setPlayerForBreakpoint(mobile, desktop, playerSrc) {
+  const isMobile = window.innerWidth < 768;
+  if (lastMobile == isMobile) { return; }
+  lastMobile = isMobile;
+
+  if (isMobile) {
+    mobile.src  = playerSrc;
+    desktop.src = 'about:blank';
+  } else {
+    desktop.src = playerSrc;
+    mobile.src  = 'about:blank';
+  }
+}
+
 /**
  * Returns a function that, as long as it continues to be invoked, will not
  * be triggered. The function will be called after it stops being called for
@@ -230,8 +245,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     
     else {
-      mobile.querySelector('.video-player').src = playerSrc;
-      desktop.querySelector('.video-player').src = playerSrc;
+      setPlayerForBreakpoint(mobile.querySelector('.video-player'), desktop.querySelector('.video-player'), playerSrc);
+      window.addEventListener(
+        'resize',
+        () => setPlayerForBreakpoint(mobile.querySelector('.video-player'), desktop.querySelector('.video-player'), playerSrc)
+      );
     }
 
     
