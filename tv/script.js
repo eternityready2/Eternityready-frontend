@@ -1,3 +1,146 @@
+
+function initializeSliderControls(context = document) {
+  context.querySelectorAll(".slider-wrapper").forEach((wrapper) => {
+
+    let slider = wrapper.querySelector(".media-grid");
+
+    const prevBtn = wrapper.querySelector(".slider-arrow.prev");
+    const nextBtn = wrapper.querySelector(".slider-arrow.next");
+
+    if (!slider || !prevBtn || !nextBtn) return;
+
+    let itemCount = slider.querySelectorAll(".media-card-link").length;
+
+    if (itemCount > 5) {
+      const scrollAmount = slider.clientWidth * 0.8;
+      prevBtn.addEventListener("click", () =>
+        slider.scrollBy({ left: -scrollAmount, behavior: "smooth" })
+      );
+      nextBtn.addEventListener("click", () =>
+        slider.scrollBy({ left: scrollAmount, behavior: "smooth" })
+      );
+    } else {
+      prevBtn.style.display = "none";
+      nextBtn.style.display = "none";
+    }
+  });
+
+  context.querySelectorAll(".media-grid").forEach((slider) => {
+    let isDown = false,
+      startX,
+      scrollLeft;
+    const startDrag = (e) => {
+      isDown = true;
+      slider.classList.add("dragging");
+      startX = (e.pageX || e.touches[0].pageX) - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+    };
+    const moveDrag = (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = (e.pageX || e.touches[0].pageX) - slider.offsetLeft;
+      const walk = (x - startX) * 1.5;
+      slider.scrollLeft = scrollLeft - walk;
+    };
+    const endDrag = () => {
+      isDown = false;
+      slider.classList.remove("dragging");
+    };
+    slider.addEventListener("mousedown", startDrag);
+    slider.addEventListener("mousemove", moveDrag);
+    slider.addEventListener("mouseup", endDrag);
+    slider.addEventListener("mouseleave", endDrag);
+    slider.addEventListener("touchstart", startDrag, { passive: true });
+    slider.addEventListener("touchmove", moveDrag, { passive: false });
+    slider.addEventListener("touchend", endDrag);
+  });
+}
+
+async function runAfterAllMedia(allMedia, position) {
+    const recommendations = await fetchRecommendation(allMedia);
+    if (!recommendations || recommendations.length == 0) {
+      return;
+    }
+
+    const mediaSection = document.createElement('div');
+    mediaSection.className = 'media-section';
+    mediaSection.innerHTML += `
+    <div
+      class="section-header"
+    >
+      <h2 class="section-title"><a href="/categories/?category=recommend">Recommended Content</a></h2><a href="/categories/?category=recommend" class="section-link"><i class="fa fa-chevron-right"></i></a></div>
+  <div class="slider-wrapper">
+      <button class="slider-arrow prev" aria-label="Anterior"><i class="fa fa-chevron-left"></i></button>
+      <div class="media-grid">
+      </div>
+      <button class="slider-arrow next" aria-label="Próximo"><i class="fa fa-chevron-right"></i></button>
+    </div>
+    `;
+    const mediaGrid = mediaSection.querySelector('.media-grid');
+    for (const video of recommendations) {
+      const id = encodeURIComponent(video.title || video.name);
+      const videoUrl = `${ETERNITY_BASE_URL}/player/?q=${id}`;
+      const imageUrl = video.thumbnail?.url?.startsWith("http")
+          ? video.thumbnail.url
+          : `${API_BASE_URL}${video.thumbnail.url.replace(/^\//, "")}`;
+
+      const mediaCardLink = document.createElement('a');
+      mediaCardLink.className = "media-card-link";
+      mediaCardLink.href = videoUrl;
+      mediaCardLink.innerHTML += `
+        <div
+          class="media-card"
+        >
+          <div class="media-thumb">
+            <img
+              src="${imageUrl || "/images/placeholder.jpg"}"
+              alt="${video.title}"
+              loading="lazy"
+              class="media-thumbnail"
+            />
+          </div>
+          <div class="media-info-col">
+            <p class="media-title">${video.title}</p>
+            <div class="media-subinfo">
+              <p class="media-genre">
+                ${
+                  (video.categories || [])
+                    .map((c) => c.name)
+                    .join(", ")
+                }
+              </p>
+              <p class="media-by">
+                by <span class="media-author">${video.author || "EternityReady"}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      `
+        mediaGrid.appendChild(mediaCardLink);
+    }
+    
+    if (position === "channels") {
+      document.querySelector('.search-section').insertAdjacentElement('afterend', mediaSection);
+    }
+    
+    else {
+      document.querySelector('#main-container').insertAdjacentElement('afterbegin', mediaSection);
+    }
+    initializeSliderControls(mediaSection);
+}
+
+function waitForAllMedia(position) {
+  if ( isNormalized == true) {
+    runAfterAllMedia([
+      ...normalizedData.channels,
+      ...normalizedData.movies,
+      ...normalizedData.music,
+    ], position);
+  } else {
+    setTimeout(() => waitForAllMedia(position), 50);
+  }
+}
+
 // Aguarda o DOM estar completamente carregado para executar o script
 document.addEventListener("DOMContentLoaded", () => {
   /*
@@ -147,9 +290,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // Renderiza a view correspondente
     if (viewName === "channel") {
       renderChannelView();
+      waitForAllMedia("channels");
+      
     } else if (viewName === "movie") {
       renderMovieView();
+      waitForAllMedia("movies");
     }
+    
   }
 
   // =================================================================================

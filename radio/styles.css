@@ -1295,7 +1295,7 @@ header .cta-button a {
 
 .media-section {
   background: var(--bg-dark);
-  padding: 4rem;
+  padding: 1.25rem 4rem 0rem 4rem;
 }
 
 .media-section a {
