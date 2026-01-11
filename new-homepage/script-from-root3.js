@@ -50,7 +50,6 @@ fetch("https://beta.ourmanna.com/api/v1/get/?format=json&order=daily")
   });
 
 document.addEventListener("DOMContentLoaded", () => {
-  const API_BASE_URL = "https://api.eternityready.com/";
   const PODCAST_API_URL =
     "https://keystone.eternityready.com/api/podcasts?limit=9999";
 
@@ -65,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function loadAllDataSources() {
     const promises = [
-      fetch(`${API_BASE_URL}api/categories`), // API
+      fetch(`${API_BASE_URL}/api/categories`), // API
       fetch(PODCAST_API_URL), // Podcast
       fetch("/data/channels.json"), // Local
       fetch("/data/movies.json"), // Local
@@ -153,7 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function fetchRecentVideos(limit = 20) {
     try {
-      const response = await fetch(`${API_BASE_URL}api/search?limit=${limit}`);
+      const response = await fetch(`${API_BASE_URL}/api/search?limit=${limit}`);
 
       if (!response.ok) {
         console.error(`Failed fetchting recent API videos:`, response.status);
@@ -173,7 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function fetchFeaturedVideos() {
     try {
-      const response = await fetch(`${API_BASE_URL}api/search?featured=true`);
+      const response = await fetch(`${API_BASE_URL}/api/search?featured=true`);
 
       if (!response.ok) {
         console.error(`Failed fetching featured API videos:`, response.status);
@@ -260,7 +259,7 @@ document.addEventListener("DOMContentLoaded", () => {
   async function fetchVideosByCategory(categoryName) {
     try {
       const response = await fetch(
-        `${API_BASE_URL}api/search?category=${encodeURIComponent(categoryName)}`
+        `${API_BASE_URL}/api/search?category=${encodeURIComponent(categoryName)}`
       );
       if (!response.ok) {
         console.error(
@@ -527,7 +526,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const lowerCaseQuery = query.toLowerCase();
 
       const apiSearchPromise = fetch(
-        `${API_BASE_URL}api/search?search_query=${encodeURIComponent(query)}`
+        `${API_BASE_URL}/api/search?search_query=${encodeURIComponent(query)}`
       )
         .then((res) => (res.ok ? res.json() : Promise.resolve({ videos: [] })))
         .then((data) => data.videos || [])
@@ -629,7 +628,7 @@ document.addEventListener("DOMContentLoaded", () => {
             break;
           default:
             videoUrl = `/player/?q=${id}`;
-            imageUrl = `${API_BASE_URL}${video.thumbnail.url.replace(
+            imageUrl = `${API_BASE_URL}/${video.thumbnail.url.replace(
               /^\//,
               ""
             )}`;
@@ -825,7 +824,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const imageUrl = video.thumbnail?.url?.startsWith("http")
           ? video.thumbnail.url
           : video.thumbnail?.url
-          ? `${API_BASE_URL}${video.thumbnail.url.replace(/^\//, "")}`
+          ? `${API_BASE_URL}/${video.thumbnail.url.replace(/^\//, "")}`
           : "/images/placeholder.jpg";
 
         const playerUrl = `/player/?q=${encodeURIComponent(video.title || video.name)}`;
@@ -969,7 +968,7 @@ document.addEventListener("DOMContentLoaded", () => {
               videoUrl = `/player/?q=${id}`;
               imageUrl = video.thumbnail?.url?.startsWith("http")
                 ? video.thumbnail.url
-                : `${API_BASE_URL}${video.thumbnail.url.replace(/^\//, "")}`;
+                : `${API_BASE_URL}/${video.thumbnail.url.replace(/^\//, "")}`;
               break;
           }
 
@@ -1120,8 +1119,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    const [featuredVideos, recentVideos, apiCategories, recommendedContent] = await Promise.all([
-      fetchFeaturedVideos(),
+    const [recentVideos, apiCategories, recommendedContent] = await Promise.all([
       fetchRecentVideos(20),
       fetchCategories(),
       fetchRecommendation([
@@ -1130,16 +1128,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ...normalizedData.music,
       ])
     ]);
-
-    if (featuredVideos.length >= MIN_ITEMS_PER_SLIDER) {
-      masterSliderData.push({
-        title: "Featured Videos",
-        items: featuredVideos,
-        sectionClass: "featured-videos-section",
-        link: "/categories/?category=featured",
-      });
-    }
-
+    
     // 2. Recentes (Recent)
 
     console.log("RecommendedContent", recommendedContent);
@@ -1369,7 +1358,7 @@ document.addEventListener("DOMContentLoaded", () => {
    * @returns {Promise<Array>}
    */
   async function fetchHeroVideos() {
-    const endpoint = `${API_BASE_URL}api/highlight`;
+    const endpoint = `${API_BASE_URL}/api/highlight`;
     try {
       const response = await fetch(endpoint);
       if (!response.ok) {
