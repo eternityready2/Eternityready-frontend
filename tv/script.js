@@ -1,3 +1,37 @@
+async function fetchMostViewedChannelVideos(take = 10) {
+  const query = `
+    query MostViewedChannelVideos($take: Int!) {
+      videos(
+        where: { origin: { equals: "channels" } }
+        orderBy: { views: desc }
+        take: $take
+      ) {
+        id
+        title
+        views
+        origin
+        thumbnail {
+          url
+        }
+      }
+    }
+  `;
+
+  const res = await fetch(`${API_BASE_URL}/api/graphql`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      query,
+      variables: { take },
+    }),
+  });
+
+  const { data, errors } = await res.json();
+  if (errors) throw new Error(errors[0].message);
+  return data.videos;
+}
 
 function initializeSliderControls(context = document) {
   context.querySelectorAll(".slider-wrapper").forEach((wrapper) => {
@@ -82,7 +116,7 @@ async function runAfterAllMedia(allMedia, position) {
       const videoUrl = `${ETERNITY_BASE_URL}/player/?q=${id}`;
       const imageUrl = video.thumbnail?.url?.startsWith("http")
           ? video.thumbnail.url
-          : `${API_BASE_URL}${video.thumbnail.url.replace(/^\//, "")}`;
+          : `${API_BASE_URL}/${video.thumbnail.url.replace(/^\//, "")}`;
 
       const mediaCardLink = document.createElement('a');
       mediaCardLink.className = "media-card-link";
@@ -167,6 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // =================================================================================
   // Armazena os dados carregados para evitar novas requisições
   let allChannels = [];
+  let mostViewedChannels = [];
   let allMovies = [];
   let savedChannels = []; // Array que será a fonte da verdade para canais salvos
 
@@ -187,10 +222,13 @@ document.addEventListener("DOMContentLoaded", () => {
     savedChannels = getSavedChannelsFromCookies();
 
     try {
-      const [channelData, movieData] = await Promise.all([
+      const [channelData, movieData, mostViewedData] = await Promise.all([
         fetch("/data/channels.json").then((res) => res.json()),
         fetch("/data/movies.json").then((res) => res.json()),
+        fetchMostViewedChannelVideos()
       ]);
+
+      mostViewedChannels = mostViewedData;
 
       allChannels = channelData.channels.sort((a, b) =>
         a.name.localeCompare(b.name)
@@ -338,9 +376,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const groupedChannels = { featured: [], popular: [], sports: [] };
     allChannels.forEach((channel) => {
       (channel.tags || []).forEach((tag) => {
-        if (groupedChannels[tag]) groupedChannels[tag].push(channel);
+        if (groupedChannels[tag] && groupedChannels[tag] != 'popular') groupedChannels[tag].push(channel);
       });
     });
+
+    console.log('mostViewed', mostViewedChannels);
+    groupedChannels.popular = mostViewedChannels;
 
     const carouselsContainer = document.getElementById(
       "channel-carousels-container"
@@ -570,13 +611,29 @@ document.addEventListener("DOMContentLoaded", () => {
     //const isSaved = isChannelSaved(channel.name);
     const currentShowName = "Not Found";
     var online = "Online";
+    /*
     if (channel?.status != "ON") {
       online = "Offline";
+    }
+    */
+
+    let thumbnailSrc;
+    if (channel.logo) {
+      thumbnailSrc = channel.logo
+    }
+
+    else if (typeof channel.thumbnail === 'string') {
+      thumbnailSrc = channel.thumbnail
+    }
+    
+    else {
+      thumbnailSrc = `${API_BASE_URL}/${channel.thumbnail.url.replace(/^\//, "")}`;
+      channel.name = channel.title;
     }
 
     card.innerHTML = `
             <div class="content-banner-tv">${channel?.name == null ? "Movie" : "TV Channel"}</div>
-            <img src="${channel.logo || channel.thumbnail}" alt="${channel.name || channel.title} loading="lazy">
+            <img src="${thumbnailSrc}" alt="${channel.name || channel.title} loading="lazy">
             <div class="channel-details">
                 <h3>${channel.name || channel.title}</h3>
                 <p class="online">${online}</p>
