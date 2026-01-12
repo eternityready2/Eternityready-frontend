@@ -1,10 +1,12 @@
-async function fetchMostViewedChannelVideos(take = 10) {
+async function fetchMostViewedVideos(origin, take) {
+  const hasLimit = typeof take === "number";
+
   const query = `
-    query MostViewedChannelVideos($take: Int!) {
+    query MostViewedVideos($origin: String!${hasLimit ? ", $take: Int" : ""}) {
       videos(
-        where: { origin: { equals: "channels" } }
+        where: { origin: { equals: $origin } }
         orderBy: { views: desc }
-        take: $take
+        ${hasLimit ? "take: $take" : ""}
       ) {
         id
         title
@@ -18,22 +20,20 @@ async function fetchMostViewedChannelVideos(take = 10) {
     }
   `;
 
+  const variables = hasLimit ? { origin, take } : { origin };
+
   const res = await fetch(`${API_BASE_URL}/api/graphql`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      query,
-      variables: { take },
-    }),
+    body: JSON.stringify({ query, variables }),
   });
 
   const { data, errors } = await res.json();
   if (errors) throw new Error(errors[0].message);
   return data.videos;
 }
-
 function initializeSliderControls(context = document) {
   context.querySelectorAll(".slider-wrapper").forEach((wrapper) => {
 
@@ -224,19 +224,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       const [channelData, movieData, mostViewedData] = await Promise.all([
-        fetch("/data/channels.json").then((res) => res.json()),
-        fetch("/data/movies.json").then((res) => res.json()),
-        fetchMostViewedChannelVideos()
+        fetchMostViewedVideos(origin='channels'),
+        fetchMostViewedVideos(origin='movies'),
+        fetchMostViewedVideos(origin='channels', take=10)
       ]);
 
       mostViewedChannels = mostViewedData;
 
+      /*
       allChannels = channelData.channels.sort((a, b) =>
         a.name.localeCompare(b.name)
       );
       allMovies = movieData.movies.sort((a, b) =>
         a.title.localeCompare(b.title)
       );
+      */
+
+      
+      allChannels = [...channelData.map(x => ({...x, name: x.title}))];
+      allMovies = [...movieData];
 
       const urlParams = new URLSearchParams(window.location.search);
 
@@ -381,7 +387,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-    console.log('mostViewed', mostViewedChannels);
     groupedChannels.popular = mostViewedChannels;
 
     const carouselsContainer = document.getElementById(
@@ -551,7 +556,7 @@ document.addEventListener("DOMContentLoaded", () => {
         channelGrid.appendChild(createChannelCard({
           ...channel,
           status: channel?.status ?? "ON"
-        }));
+        }, groupContent));
       }
     });
 
@@ -567,6 +572,8 @@ document.addEventListener("DOMContentLoaded", () => {
     else {
       channelCountText = `Movies found: ${channelsToRender.length}`
     }
+
+    console.log('channelCountText', channelCountText);
 
     document.getElementById(
       "channel-count"
@@ -606,7 +613,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // =================================================================================
   // 6. CRIAÇÃO DE ELEMENTOS (CARDS)
   // =================================================================================
-  function createChannelCard(channel) {
+  function createChannelCard(channel, groupContent) {
     const card = document.createElement("div");
     card.className = "channel-card";
     //const isSaved = isChannelSaved(channel.name);
@@ -629,7 +636,6 @@ document.addEventListener("DOMContentLoaded", () => {
     
     else {
       thumbnailSrc = `${API_BASE_URL}/${channel.thumbnail.url.replace(/^\//, "")}`;
-      channel.name = channel.title;
     }
 
     card.innerHTML = `
@@ -651,9 +657,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         </div>
                     </button>
                 </div>
-                  ${channel?.name == null
+                  ${(channel.origin && channel.origin === "movies")
                     ? ""
-                    : `<div class="current-program" data-channel-name="${channel.name.toLowerCase()}">
+                    : `<div class="current-program" data-channel-name="${channel.title.toLowerCase()}">
                          <div><span>On now:</span> Not Known</div>
                          <div><span>Up next:</span> Not Known</div>
                        </div>`
@@ -784,6 +790,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const selectedCategory =
       document.getElementById("categoryFilter")?.value || "all";
 
+    console.log('gr', allChannels, allMovies);
+
     const filteredChannels = allChannels.filter((channel) => {
       const matchesSearch =
         channel.name.toLowerCase().includes(searchTerm) ||
@@ -810,16 +818,19 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     let combinedFiltered = [
-        ...(groupContent == "all" || groupContent == "channels" ? filteredChannels : []),
-        ...(groupContent == "all" || groupContent == "movies" ? filteredMovies : []),
-      ];
+      ...(groupContent == "all" || groupContent == "channels" ? filteredChannels : []),
+      ...(groupContent == "all" || groupContent == "movies" ? filteredMovies : []),
+    ];
+    combinedFiltered.sort((a, b) => b.views - a.views);
 
+    /*
     if (groupContent == "all") {
       combinedFiltered = combinedFiltered
       .map(value => ({ value, sort: Math.random() }))
       .sort((a, b) => a.sort - b.sort)
       .map(({ value }) => value);
     }
+    */
 
     console.log('combinedFiltered', combinedFiltered);
 
