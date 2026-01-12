@@ -13,6 +13,7 @@ async function fetchMostViewedChannelVideos(take = 10) {
         thumbnail {
           url
         }
+        rating
       }
     }
   `;
