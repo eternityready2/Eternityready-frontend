@@ -47,6 +47,7 @@ function debounce(func, delay) {
       sourceType: "unknown",
       videoId: null,
       thumbnailUrl: item.logo || item.thumbnail || null,
+      origin: item.origin,
       categories: item.categories
     };
 
@@ -139,9 +140,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       const moviesData = await moviesRes.json();
 
       allMedia = [
-        ...channelsData.channels,
-        ...musicData.music,
-        ...moviesData.movies
+        ...channelsData.channels.map(x => ({...x, origin: 'channels'})),
+        ...musicData.music.map(x => ({...x, origin: 'music'})),
+        ...moviesData.movies.map(x => ({...x, origin: 'movies'})),
       ];
 
       let foundItem = null;
@@ -1035,7 +1036,7 @@ async function publishVideo(videoData) {
     const result = await response.json();
     
     if (!result.success) {
-      throw result.errors;
+      throw result.error;
     }
 
     console.log('Created categories: ', result.createdCategories, videoData);
