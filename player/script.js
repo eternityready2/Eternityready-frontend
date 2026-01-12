@@ -48,6 +48,7 @@ function debounce(func, delay) {
       videoId: null,
       thumbnailUrl: item.logo || item.thumbnail || null,
       origin: item.origin,
+      rating: item.rating,
       categories: item.categories
     };
 
