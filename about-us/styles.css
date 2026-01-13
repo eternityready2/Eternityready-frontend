@@ -1551,11 +1551,14 @@ body {
     width: 280px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     animation: fadeInUp 2s ease-in-out;
+    border: 1px solid rgba(255, 60, 60, 0.3);
+    box-shadow: 0 4px 30px rgba(255, 60, 60, 0.1);
 }
 
 .mission-item:hover {
     transform: translateY(-10px);
-    box-shadow: 0 10px 30px rgb(10 1 4 / 30%);
+    box-shadow: 0 8px 40px rgba(255, 60, 60, 0.25);
+    border-color: rgba(255, 60, 60, 0.5);
 }
 
 .mission-item img {
@@ -1759,8 +1762,9 @@ body {
 
 .stat-box {
     background: #1b2027;
-    border: 1px solid rgba(229, 9, 20, 0.7);
-    box-shadow: 0 0 10px #101828;
+    border: 1px solid rgba(255, 60, 60, 0.3);
+    box-shadow: 0 4px 30px rgba(255, 60, 60, 0.1);
+    backdrop-filter: blur(12px);
     padding: 40px 30px;
     border-radius: 12px;
     width: 220px;
@@ -1769,6 +1773,8 @@ body {
 
 .stat-box:hover {
     transform: scale(1.05);
+    box-shadow: 0 8px 40px rgba(255, 60, 60, 0.25);
+    border-color: rgba(255, 60, 60, 0.5);
 }
 
 /* .icon {
@@ -2597,7 +2603,13 @@ border-radius: 50%;
   width: 300px;
   position: relative;
   text-align: left;
-  box-shadow: 0 0 10px rgba(255, 0, 0, 0.05);
+  border: 1px solid rgba(255, 60, 60, 0.3);
+  box-shadow: 0 4px 30px rgba(255, 60, 60, 0.1);
+}
+
+.testimonials .testimonial-card:hover {
+    box-shadow: 0 8px 40px rgba(255, 60, 60, 0.25);
+    border-color: rgba(255, 60, 60, 0.5);
 }
 
 .testimonials .logo {
