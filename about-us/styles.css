@@ -1545,7 +1545,7 @@ body {
 }
 
 .mission-item {
-    background-color: #101010;
+    background-color: #1b2027;
     padding: 30px;
     border-radius: 15px;
     width: 280px;
@@ -1758,7 +1758,7 @@ body {
 }
 
 .stat-box {
-    background: #1a1a1a;
+    background: #1b2027;
     border: 1px solid rgba(229, 9, 20, 0.7);
     box-shadow: 0 0 10px #101828;
     padding: 40px 30px;
@@ -2444,7 +2444,7 @@ strong {
 .team-card,
 .testimonial {
     max-width: 300px;
-    background: #101010;
+    background: #1b2027;
     padding: 20px;
     border-radius: 16px;
     text-align: center;
@@ -2591,7 +2591,7 @@ border-radius: 50%;
 }
 
 .testimonials .testimonial-card {
-  background-color: #1e1e1e;
+  background-color: #1b2027;
   border-radius: 8px;
   padding: 25px;
   width: 300px;
@@ -2827,7 +2827,7 @@ border-radius: 50%;
   }
 
   .media-kit-card {
-    background: rgba(25, 25, 25, 0.9);
+    background: #1b2027;
     backdrop-filter: blur(12px);
     padding: 2.5rem;
     border-radius: 16px;
@@ -2985,7 +2985,7 @@ border-radius: 50%;
 
 
 .hq-card {
-    background: rgba(25, 25, 25, 0.9);
+    background: #1b2027;
     backdrop-filter: blur(10px);
     padding: 2.5rem;
     border-radius: 20px;
