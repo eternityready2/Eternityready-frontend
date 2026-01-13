@@ -9,7 +9,7 @@
   ];
   const SELECTED_MESSAGE_INDEX = 0;     // 0, 1, or 2
   const DONATION_URL = "https://eternityready.com/donate";
-  const LOGO_URL = "https://eternityready.com/uploads/custom-logo.png";
+  const LOGO_URL = "https://eternityready.com/public/eternity-header-normal-logo.png";
   const POPUP_BG_OPACITY = 0.0;        // use for container background (Effectively transparent, was 0.85)
   const CONTENT_BG_OPACITY = 0.70;      // use for content background (Changed from 0.76 to 0.50)
   const OVERLAY_BG_OPACITY = 0.10;      // use for overlay (Changed from 0.60 to 0.10)
