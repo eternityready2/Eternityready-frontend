@@ -2942,3 +2942,73 @@ border-radius: 50%;
 .menuButton:hover{
   background: #de0000 !important;   
 }
+
+
+.hq-card {
+    background: rgba(25, 25, 25, 0.9);
+    backdrop-filter: blur(10px);
+    padding: 2.5rem;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 60, 60, 0.3);
+    box-shadow: 0 8px 40px rgba(255, 60, 60, 0.15);
+    transition: all 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .hq-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 50px rgba(255, 60, 60, 0.25);
+    border-color: rgba(255, 60, 60, 0.5);
+  }
+
+  .hq-section {
+    position: relative;
+    padding-left: 1rem;
+  }
+
+  .hq-section::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #ff3c3c, #ff6b6b);
+    border-radius: 2px;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+  }
+
+  .hq-card:hover .hq-section::before {
+    opacity: 1;
+  }
+
+/**/
+@media (max-width: 768px) {
+
+    .hq-card {
+      padding: 1.5rem;
+    }
+
+    .hq-section h3 {
+      font-size: 1.5rem;
+    }
+
+    .hq-section p,
+    .hq-section ul {
+      font-size: 1rem;
+    }
+}
+
+@media (min-width: 992px) {
+    .hq-card {
+      flex-direction: row;
+      gap: 4rem;
+    }
+
+    .hq-section {
+      flex: 1;
+    }
+  }
