@@ -1596,3 +1596,21 @@ ul {
     justify-content: center;
   }
 }
+
+.nav-links .material-icons {
+  font-family: 'Material Icons';
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.5rem;
+  color: white;
+  display: flex;
+  border-radius: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav-links li a {
+  display: flex;
+  align-items: center;
+  column-gap: 0.5rem;
+}
