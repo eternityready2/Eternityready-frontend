@@ -224,25 +224,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       const [channelData, movieData, mostViewedData] = await Promise.all([
-        fetchMostViewedVideos(origin='channels'),
-        fetchMostViewedVideos(origin='movies'),
+        fetch("/data/channels.json").then((res) => res.json()),
+        fetch("/data/movies.json").then((res) => res.json()),
         fetchMostViewedVideos(origin='channels', take=10)
       ]);
 
       mostViewedChannels = mostViewedData;
 
-      /*
       allChannels = channelData.channels.sort((a, b) =>
         a.name.localeCompare(b.name)
       );
       allMovies = movieData.movies.sort((a, b) =>
         a.title.localeCompare(b.title)
       );
-      */
 
       
+      /*
       allChannels = [...channelData.map(x => ({...x, name: x.title}))];
       allMovies = [...movieData];
+      */
 
       const urlParams = new URLSearchParams(window.location.search);
 
@@ -659,7 +659,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
                   ${(channel.origin && channel.origin === "movies")
                     ? ""
-                    : `<div class="current-program" data-channel-name="${channel.title.toLowerCase()}">
+                    : `<div class="current-program" data-channel-name="${channel?.title?.toLowerCase() || channel?.name?.toLowerCase()}">
                          <div><span>On now:</span> Not Known</div>
                          <div><span>Up next:</span> Not Known</div>
                        </div>`
@@ -821,16 +821,15 @@ document.addEventListener("DOMContentLoaded", () => {
       ...(groupContent == "all" || groupContent == "channels" ? filteredChannels : []),
       ...(groupContent == "all" || groupContent == "movies" ? filteredMovies : []),
     ];
-    combinedFiltered.sort((a, b) => b.views - a.views);
 
-    /*
+    // combinedFiltered.sort((a, b) => b.views - a.views);
+
     if (groupContent == "all") {
       combinedFiltered = combinedFiltered
       .map(value => ({ value, sort: Math.random() }))
       .sort((a, b) => a.sort - b.sort)
       .map(({ value }) => value);
     }
-    */
 
     console.log('combinedFiltered', combinedFiltered);
 
