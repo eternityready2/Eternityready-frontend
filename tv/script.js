@@ -639,7 +639,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     card.innerHTML = `
-            <div class="content-banner-tv">${channel?.name == null ? "Movie" : "TV Channel"}</div>
+            <div class="content-banner-tv">${channel?.name == null && !channel.origin ? "Movie" : "TV Channel"}</div>
             <img src="${thumbnailSrc}" alt="${channel.name || channel.title} loading="lazy">
             <div class="channel-details">
                 <h3>${channel.name || channel.title}</h3>
