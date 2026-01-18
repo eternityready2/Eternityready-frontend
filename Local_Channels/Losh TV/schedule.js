@@ -1,7 +1,7 @@
 const params = new URLSearchParams(window.location.search);
 const channel = params.get('channel') || 'default-channel';
 
-fetch(`${channel}/schedule.json`)
+fetch(`./${channel}/schedule.json`)
   .then(response => response.text())
   .then(text => {
     const timezoneMatch = text.match(/"timezone"\s*:\s*"([^"]+)"/);
