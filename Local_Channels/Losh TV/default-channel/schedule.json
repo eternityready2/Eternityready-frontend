@@ -1,5 +1,6 @@
 {
   "timezone": "America/Chicago",
+  "randomPlayback": false,
   "default": "https://www.youtube.com/watch?v=FrxmJLDw7qI",
   "shows": {
     "Monday 6:00 AM to 8:00 AM": "https://www.youtube.com/watch?v=0DWP3Pk7xN0",

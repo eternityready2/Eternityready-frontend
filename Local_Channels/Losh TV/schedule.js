@@ -4,18 +4,18 @@ const channel = params.get('channel') || 'default-channel';
 fetch(`${channel}/schedule.json`)
   .then(response => response.json())
   .then(scheduleData => {
-    const { timezone, default: defaultVideo, shows } = scheduleData;
+    const { timezone, randomPlayback, default: defaultVideo, shows } = scheduleData;
 
     // Helper: Convert "6:00 AM" → minutes since midnight
     const timeToMinutes = timeStr => {
       const [time, modifier] = timeStr.split(' ');
       let [hours, minutes] = time.split(':').map(Number);
-      if (modifier === 'PM' && hours !== 12) hours += 12;
-      if (modifier === 'AM' && hours === 12) hours = 0;
+      if (modifier.toUpperCase() === 'PM' && hours !== 12) hours += 12;
+      if (modifier.toUpperCase() === 'AM' && hours === 12) hours = 0;
       return hours * 60 + minutes;
     };
 
-    // Helper: Get the current time and weekday in the provided timezone
+    // Helper: Get the current time and weekday in the given timezone
     const getLocalTimeData = () => {
       const now = new Date();
       const day = now.toLocaleDateString('en-US', {
@@ -29,38 +29,44 @@ fetch(`${channel}/schedule.json`)
         hour12: false
       });
       const [hours, minutes] = timeStr.split(':').map(Number);
-      const currentMinutes = hours * 60 + minutes;
-      return { day, currentMinutes };
+      return { day, currentMinutes: hours * 60 + minutes };
     };
 
-    // Determine which video should play now
+    // Determine the video URL to play
     const getVideoURL = () => {
-      const { day, currentMinutes } = getLocalTimeData();
       let candidate = "";
 
-      for (const [slot, url] of Object.entries(shows)) {
-        // Example slot: "Monday 6:00 AM to 8:00 AM"
-        const match = slot.match(/([A-Za-z]+)\s+(\d{1,2}:\d{2}\s*(?:AM|PM))\s*to\s*(\d{1,2}:\d{2}\s*(?:AM|PM))/);
-        if (!match) continue;
+      if (randomPlayback === true) {
+        // Play videos randomly from the show list and default
+        const allVideos = Object.values(shows).concat(defaultVideo);
+        candidate = allVideos[Math.floor(Math.random() * allVideos.length)];
+      } else {
+        // Scheduled playback based on time and day
+        const { day, currentMinutes } = getLocalTimeData();
+        for (const [slot, url] of Object.entries(shows)) {
+          // Match pattern like "Monday 6:00 AM to 8:00 AM"
+          const match = slot.match(/([A-Za-z]+)\s+(\d{1,2}:\d{2}\s*(?:AM|PM))\s*to\s*(\d{1,2}:\d{2}\s*(?:AM|PM))/);
+          if (!match) continue;
 
-        const [, slotDay, startStr, endStr] = match;
-        if (slotDay !== day) continue;
+          const [, slotDay, startStr, endStr] = match;
+          if (slotDay !== day) continue;
 
-        const start = timeToMinutes(startStr);
-        const end = timeToMinutes(endStr);
+          const start = timeToMinutes(startStr);
+          const end = timeToMinutes(endStr);
 
-        // If current time falls within this range, pick this video
-        if (currentMinutes >= start && currentMinutes <= end) {
-          candidate = url;
-          break;
+          if (currentMinutes >= start && currentMinutes <= end) {
+            candidate = url;
+            break;
+          }
         }
+        // Fallback to default video
+        if (!candidate) candidate = defaultVideo;
       }
 
-      // Fallback: play the default video if no match
-      return candidate || defaultVideo;
+      return candidate;
     };
 
-    // Check validity of MP4 videos via HEAD requests
+    // Validate MP4 URLs via HEAD requests
     function checkMp4Video(url) {
       return fetch(url, { method: 'HEAD' }).then(response => {
         if (response.ok) return true;
@@ -68,7 +74,7 @@ fetch(`${channel}/schedule.json`)
       });
     }
 
-    // Check YouTube video availability
+    // Validate YouTube videos via the oEmbed API
     function checkYouTubeVideo(url) {
       const match = url.match(/(?:youtube\.com\/.*[?&]v=|youtu\.be\/)([^&]+)/);
       if (!match) return Promise.reject(new Error('Invalid YouTube URL'));
@@ -80,7 +86,6 @@ fetch(`${channel}/schedule.json`)
       });
     }
 
-    // Select correct validator based on URL type
     function validateVideo(url) {
       if (url.includes("youtube.com") || url.includes("youtu.be")) {
         return checkYouTubeVideo(url);
@@ -89,7 +94,7 @@ fetch(`${channel}/schedule.json`)
       }
     }
 
-    // Recursive loader to ensure a valid video is always chosen
+    // Load a valid video, retrying if necessary
     function loadValidatedVideo() {
       const url = getVideoURL();
       return validateVideo(url)
@@ -100,7 +105,7 @@ fetch(`${channel}/schedule.json`)
         });
     }
 
-    // Initialize player once a valid video is found
+    // Initialize player with the selected video
     loadValidatedVideo().then(validUrl => {
       const videoType = validUrl.includes("youtube") ? "video/youtube" : "video/mp4";
       const player = videojs('kazaa-video', {
@@ -109,7 +114,7 @@ fetch(`${channel}/schedule.json`)
         sources: [{ src: validUrl, type: videoType }]
       });
 
-      // Clone logo into the player's container
+      // Add channel logo overlay
       player.ready(function() {
         const link = document.createElement('a');
         link.href = '/';
@@ -121,7 +126,7 @@ fetch(`${channel}/schedule.json`)
         this.el().appendChild(link);
       });
 
-      // Reload or recover when a video ends or errors
+      // On end or error, load a new video (re-randomizes if needed)
       function loadNextVideo() {
         loadValidatedVideo().then(newUrl => {
           const newType = newUrl.includes("youtube") ? "video/youtube" : "video/mp4";
