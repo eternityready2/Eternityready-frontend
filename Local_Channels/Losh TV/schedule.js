@@ -2,9 +2,26 @@ const params = new URLSearchParams(window.location.search);
 const channel = params.get('channel') || 'default-channel';
 
 fetch(`${channel}/schedule.json`)
-  .then(response => response.json())
-  .then(scheduleData => {
-    const { timezone, randomPlayback, default: defaultVideo, shows } = scheduleData;
+  .then(response => response.text())
+  .then(text => {
+    const timezoneMatch = text.match(/"timezone"\s*:\s*"([^"]+)"/);
+    const randomPlaybackMatch = text.match(/"randomPlayback"\s*:\s*(true|false)/);
+    const defaultMatch = text.match(/"default"\s*:\s*"([^"]+)"/);
+
+    const timezone = timezoneMatch ? timezoneMatch[1] : "America/Toronto";
+    const randomPlayback = randomPlaybackMatch ? randomPlaybackMatch[1] === "true" : false;
+    const defaultVideo = defaultMatch ? defaultMatch[1] : "";
+
+    // Parse the custom shows block
+    // Each line looks like:
+    // "Monday 6:00 AM to 8:00 AM" "Title: Show name" "https://example.com"
+    const shows = [];
+    const showRegex = /"([^"]+)"\s*"Title:\s*([^"]+)"\s*"([^"]+)"/g;
+    let match;
+    while ((match = showRegex.exec(text)) !== null) {
+      const [_, timeRange, showName, url] = match;
+      shows.push({ timeRange, showName, url });
+    }
 
     // Helper: Convert "6:00 AM" → minutes since midnight
     const timeToMinutes = timeStr => {
@@ -32,20 +49,26 @@ fetch(`${channel}/schedule.json`)
       return { day, currentMinutes: hours * 60 + minutes };
     };
 
-    // Determine the video URL to play
     const getVideoURL = () => {
       let candidate = "";
+      let currentShowTitle = "";
 
-      if (randomPlayback === true) {
-        // Play videos randomly from the show list and default
-        const allVideos = Object.values(shows).concat(defaultVideo);
-        candidate = allVideos[Math.floor(Math.random() * allVideos.length)];
+      if (randomPlayback) {
+        const allVideos = shows
+          .map(show => ({ title: show.showName, url: show.url, isDefault: false }))
+          .concat({ title: "Default Channel Video", url: defaultVideo, isDefault: true });
+        
+        const randomVideo = allVideos[Math.floor(Math.random() * allVideos.length)];
+        candidate = randomVideo.url;
+        currentShowTitle = randomVideo.title;
+        
+        console.log(`Random playback: ${currentShowTitle}`);
       } else {
-        // Scheduled playback based on time and day
         const { day, currentMinutes } = getLocalTimeData();
-        for (const [slot, url] of Object.entries(shows)) {
-          // Match pattern like "Monday 6:00 AM to 8:00 AM"
-          const match = slot.match(/([A-Za-z]+)\s+(\d{1,2}:\d{2}\s*(?:AM|PM))\s*to\s*(\d{1,2}:\d{2}\s*(?:AM|PM))/);
+        console.log(`Current time in ${timezone}: ${day}, ${currentMinutes} minutes since midnight.`);
+
+        for (const s of shows) {
+          const match = s.timeRange.match(/([A-Za-z]+)\s+(\d{1,2}:\d{2}\s*(?:AM|PM))\s*to\s*(\d{1,2}:\d{2}\s*(?:AM|PM))/);
           if (!match) continue;
 
           const [, slotDay, startStr, endStr] = match;
@@ -55,12 +78,18 @@ fetch(`${channel}/schedule.json`)
           const end = timeToMinutes(endStr);
 
           if (currentMinutes >= start && currentMinutes <= end) {
-            candidate = url;
+            console.log(`Now playing: ${s.showName} (${s.timeRange})`);
+            candidate = s.url;
+            currentShowTitle = s.showName;
             break;
           }
         }
-        // Fallback to default video
-        if (!candidate) candidate = defaultVideo;
+
+        if (!candidate) {
+          console.log("No scheduled show is playing right now - using default video.");
+          candidate = defaultVideo;
+          currentShowTitle = "Default Channel Video";
+        }
       }
 
       return candidate;
