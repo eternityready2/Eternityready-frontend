@@ -213,24 +213,31 @@
                 updateStatus('Error: ' + error.message);
             }
         });
+
+        function stopPlayer() {
+          try {
+            if (player) player.stop();
+
+            document.getElementById('playBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+            document.getElementById('metadata').innerHTML = '⏹️ Stopped';
+            updateStatus('⏹️ Stopped');
+
+            clearInterval(updateInterval);
+            document.getElementById('progress-bar').style.width = '0%';
+            document.getElementById('current-time').textContent = '00:00';
+            startTime = 0;
+          } catch (error) {
+            updateStatus('❌ Error stopping: ' + error.message);
+          }
+        }
         
-        document.getElementById('stopBtn').addEventListener('click', () => {
-            try {
-                if (player) player.stop();
-                
-                document.getElementById('playBtn').disabled = false;
-                document.getElementById('stopBtn').disabled = true;
-                document.getElementById('metadata').innerHTML = '⏹️ Stopped';
-                updateStatus('⏹️ Stopped');
-                
-                clearInterval(updateInterval);
-                document.getElementById('progress-bar').style.width = '0%';
-                document.getElementById('current-time').textContent = '00:00';
-                startTime = 0;
-                
-            } catch (error) {
-                updateStatus('❌ Error stopping: ' + error.message);
-            }
+        document.getElementById('stopBtn').addEventListener('click', stopPlayer);
+
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) {
+            stopPlayer();
+          }
         });
     </script>
 </body>
