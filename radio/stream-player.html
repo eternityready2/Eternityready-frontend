@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Icecast Metadata Stream Player</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 10px;
+            text-align: center;
+            background: linear-gradient(135deg, #1a0000 0%, #330000 50%, #660000 100%);
+            color: #ffcccc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        h1 { 
+            color: #ff4444; 
+            text-shadow: 0 0 20px #ff4444;
+            font-size: 2.5em;
+            margin: 0;
+        }
+        #player-container {
+            background: rgba(20, 0, 0, 0.95);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(255, 68, 68, 0.3);
+            border: 2px solid #ff4444;
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+        }
+        button {
+            background: linear-gradient(145deg, #ff4444, #cc0000);
+            color: white;
+            border: none;
+            padding: 7.5px 15px;
+            font-size: 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 0 10px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(255, 68, 68, 0.4);
+            transition: all 0.3s ease;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+        button:hover:not(:disabled) { 
+            background: linear-gradient(145deg, #ff6666, #ff4444);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 68, 68, 0.6);
+        }
+        button:disabled { 
+            background: #660000; 
+            cursor: not-allowed;
+            box-shadow: 0 2px 5px rgba(102, 0, 0, 0.3);
+        }
+        #metadata {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #ff9999;
+            min-height: 2em;
+            padding: 12.5px;
+            background: rgba(51, 0, 0, 0.8);
+            border: 2px solid #ff6666;
+            border-radius: 12px;
+            margin: 20px 0;
+            font-family: monospace;
+            text-shadow: 0 0 10px #ff6666;
+            box-shadow: inset 0 0 20px rgba(255, 102, 102, 0.2);
+        }
+        .stream-info {
+            background: rgba(51, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-family: monospace;
+            border: 1px solid #cc3333;
+            color: #ff9999;
+        }
+        #status { 
+            margin: 10px 0; 
+            padding: 7.5px; 
+            background: rgba(102, 0, 0, 0.9); 
+            border: 1px solid #ff6666;
+            border-radius: 8px; 
+            font-size: 1em;
+            color: #ffcccc;
+            box-shadow: 0 0 15px rgba(255, 102, 102, 0.3);
+        }
+        /* Progress Bar */
+        .progress-container {
+            margin: 20px 0;
+            background: rgba(102, 0, 0, 0.8);
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            border: 1px solid #cc3333;
+        }
+        #progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ff4444, #ff6666, #ff9999);
+            width: 0%;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 15px #ff4444;
+        }
+        #time-display {
+            font-size: 1.2em;
+            margin: 15px 0;
+            font-family: monospace;
+            color: #ff9999;
+            text-shadow: 0 0 8px #ff6666;
+        }
+        code {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2px 4px;
+            border-radius: 4px;
+            color: #ffcccc;
+            border: 1px solid #cc3333;
+        }
+    </style>
+</head>
+<body>
+    <div class="stream-info">
+        <strong>Station</strong> <br>
+        <h1 id="station-name">Eternity Ready</h1>
+    </div>
+    
+    <div id="player-container">
+        <button id="playBtn">▶️ PLAY</button>
+        <button id="stopBtn" disabled>⏹️ STOP</button>
+        <div id="status"></div>
+        
+        <div id="metadata">Click PLAY to start streaming...</div>
+        
+        <div id="time-display">
+            <span id="current-time">00:00</span> / <span id="total-duration">--:--</span>
+        </div>
+        
+        <div class="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+
+    <script src="https://eshaz.github.io/icecast-metadata-js/icecast-metadata-player-1.17.13.main.min.js"></script>
+    
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const streamUrl = urlParams.get('stream')
+        const stationName = urlParams.get('station')
+        
+        document.getElementById('station-name').textContent = stationName;
+        
+        let player;
+        let startTime = 0;
+        let totalDuration = 300;
+        let updateInterval;
+        
+        const updateStatus = (msg) => {
+            document.getElementById('status').textContent = msg;
+        };
+        
+        const formatTime = (seconds) => {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        };
+        
+        const updateProgress = () => {
+            if (!startTime) return;
+            
+            const elapsed = (Date.now() - startTime) / 1000;
+            const progress = Math.min((elapsed / totalDuration) * 100, 100);
+            
+            document.getElementById('progress-bar').style.width = progress + '%';
+            document.getElementById('current-time').textContent = formatTime(elapsed);
+            
+            /*
+            if (progress >= 100) {
+                startTime = Date.now() - (totalDuration * 1000 * 0.9);
+            }
+            */
+        };
+        
+        const onMetadata = (metadata) => {
+            const title = metadata.StreamTitle || 'Live Stream';
+            document.getElementById('metadata').innerHTML = title;
+            updateStatus('Playing...');
+        };
+        
+        const initPlayer = () => {
+            player = new IcecastMetadataPlayer(streamUrl, {
+                onMetadata: onMetadata
+            });
+        };
+        
+        document.getElementById('playBtn').addEventListener('click', () => {
+            try {
+                if (!player) initPlayer();
+                player.play();
+                
+                document.getElementById('playBtn').disabled = true;
+                document.getElementById('stopBtn').disabled = false;
+                document.getElementById('metadata').innerHTML = ' Loading stream...';
+                updateStatus('Connecting to stream...');
+                
+                startTime = Date.now();
+                updateInterval = setInterval(updateProgress, 1000);
+                
+            } catch (error) {
+                updateStatus('Error: ' + error.message);
+            }
+        });
+        
+        document.getElementById('stopBtn').addEventListener('click', () => {
+            try {
+                if (player) player.stop();
+                
+                document.getElementById('playBtn').disabled = false;
+                document.getElementById('stopBtn').disabled = true;
+                document.getElementById('metadata').innerHTML = '⏹️ Stopped';
+                updateStatus('⏹️ Stopped');
+                
+                clearInterval(updateInterval);
+                document.getElementById('progress-bar').style.width = '0%';
+                document.getElementById('current-time').textContent = '00:00';
+                startTime = 0;
+                
+            } catch (error) {
+                updateStatus('❌ Error stopping: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>
