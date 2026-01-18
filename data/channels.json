@@ -1,6 +1,6 @@
 {
   "Title": "Guide - Eternity Ready TV",
-  "Number of channels": 82,
+  "Number of channels": 83,
   "channels": [
     {
       "name": "KSCE Life! End Times TV",
@@ -1208,6 +1208,19 @@
       "status": "ON",
       "description": "Faith Points TV is dedicated to strengthing your walk with Jesus by making points about Faoth. Learn more @ <a href='https://www.faithpoints.org/' target='_blank'>Faith Points.org</a>",
       "id": "f841d968-f0c2-44ca-a14d-jbmd1k543s37"
+    },
+    {
+      "name": "LoshTV",
+      "logo": "https://eternityready.com/tv/img/loshtv.png",
+      "link": "",
+      "embed": "https://eternityready.com/Local_Channels/Losh TV/index.html",
+      "keywords": [],
+      "rating": 5,
+      "categories": [
+      ],
+      "status": "ON",
+      "description": "LoshTv",
+      "id": "f841d968-f0c2-44ca-a14d-jfmk1k583s37"
     }
   ]
 }
