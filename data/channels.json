@@ -1210,13 +1210,14 @@
       "id": "f841d968-f0c2-44ca-a14d-jbmd1k543s37"
     },
     {
-      "name": "LoshTV",
+      "name": "Losh TV",
       "logo": "https://eternityready.com/tv/img/loshtv.png",
       "link": "",
       "embed": "https://eternityready.com/Local_Channels/Losh TV/index.html",
       "keywords": [],
       "rating": 5,
       "categories": [
+        "Classic TV"
       ],
       "status": "ON",
       "description": "LoshTv",
