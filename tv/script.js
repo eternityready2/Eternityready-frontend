@@ -238,6 +238,8 @@ document.addEventListener("DOMContentLoaded", () => {
         a.title.localeCompare(b.title)
       );
 
+      allChannels = [...allChannels.map(x => ({...x, origin: "channels"}))];
+      allMovies = [...allMovies.map(x => ({...x, origin: "movies"}))];
       
       /*
       allChannels = [...channelData.map(x => ({...x, name: x.title}))];
@@ -338,7 +340,6 @@ document.addEventListener("DOMContentLoaded", () => {
       waitForAllMedia("channels");
       
     } else if (viewName === "movie") {
-      console.log('aqui estamos');
       renderMovieView();
       waitForAllMedia("movies");
     }
@@ -640,7 +641,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     card.innerHTML = `
-            <div class="content-banner-tv">${channel?.name == null && !channel.origin ? "Movie" : "TV Channel"}</div>
+            <div class="content-banner-tv">${channel.origin == "movies" ? "Movie" : "TV Channel"}</div>
             <img src="${thumbnailSrc}" alt="${channel.name || channel.title} loading="lazy">
             <div class="channel-details">
                 <h3>${channel.name || channel.title}</h3>
@@ -658,7 +659,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         </div>
                     </button>
                 </div>
-                  ${((!channel.origin && channel?.name == null) || (channel.origin && channel.origin === "movies"))
+                  ${(channel.origin && channel.origin === "movies")
                     ? ""
                     : `<div class="current-program" data-channel-name="${channel?.title?.toLowerCase() || channel?.name?.toLowerCase()}">
                          <div><span>On now:</span> Not Known</div>
