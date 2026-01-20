@@ -338,6 +338,7 @@ document.addEventListener("DOMContentLoaded", () => {
       waitForAllMedia("channels");
       
     } else if (viewName === "movie") {
+      console.log('aqui estamos');
       renderMovieView();
       waitForAllMedia("movies");
     }
@@ -657,7 +658,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         </div>
                     </button>
                 </div>
-                  ${(channel.origin && channel.origin === "movies")
+                  ${((!channel.origin && channel?.name == null) || (channel.origin && channel.origin === "movies"))
                     ? ""
                     : `<div class="current-program" data-channel-name="${channel?.title?.toLowerCase() || channel?.name?.toLowerCase()}">
                          <div><span>On now:</span> Not Known</div>
