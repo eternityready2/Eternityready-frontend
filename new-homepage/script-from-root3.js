@@ -1,5 +1,81 @@
 // script.js
+function setActiveMidiaButton(typeTo) {
+  const midiaButton = document.querySelector('.midia-button');
+  const typesMap = {
+    'all': "All",
+    'channels': "Channels",
+    'radio': "Radio",
+    'music': "Music",
+    'movies': "Movies",
+    'podcasts': "Podcasts",
+  };
 
+  for (const button of midiaButton.querySelectorAll('button')) {
+    if (button.classList.contains('ativo')) {
+      button.classList.toggle('ativo');
+    }
+
+    if (button.textContent == typesMap[typeTo]) {
+      button.classList.toggle('ativo');
+    }
+  }
+}
+
+function getActiveMidiaButton() {
+  const activeMidiaButton = document.querySelector('.midia-button .ativo');
+  const typesMap = {
+    'All': "all",
+    'Channels': "channels",
+    'Radio': "radio",
+    'Music': "music",
+    'Movies': "movies",
+    'Podcasts': "podcasts",
+  };
+
+  return typesMap[activeMidiaButton.textContent]
+}
+
+function normalizeRadioItem(item) {
+  const categories = Array.isArray(item.categories)
+    ? item.categories.map((name) => ({ name }))
+    : [];
+
+  return {
+    id: item.name,
+    title: item.name,
+    description: item.description || "",
+    thumbnail: { url: item.logo },
+    categories: categories,
+    author: "EternityReady",
+    duration: null,
+    sourceType: "radio",
+    videoId: null,
+    src: item.src,
+  };
+}
+
+function normalizePodcastItem(item) {
+  const id = item.slug || item.id;
+  let categories = [];
+  if (Array.isArray(item.podcastCategories)) {
+    categories = item.podcastCategories.map((cat) => ({ name: cat.name || cat }));
+  } else if (typeof item.categories === "string") {
+    categories = [{ name: item.categories }];
+  }
+
+  return {
+    id: id,
+    slug: item.slug,
+    title: item.title,
+    description: item.description || "",
+    thumbnail: { url: item.imageUrl },
+    categories: categories,
+    author: item.author || "EternityReady",
+    duration: item.duration || null,
+    sourceType: "podcasts",
+    videoId: null,
+  };
+}
 /**
  * @param {Function} func
  * @param {number} delay
@@ -69,6 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
       fetch("/data/channels.json"), // Local
       fetch("/data/movies.json"), // Local
       fetch("/data/music.json"), // Local
+      fetch("/data/radio.json"), // Local
     ];
 
     const results = await Promise.allSettled(promises);
@@ -100,7 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
       );
     }
 
-    const localFiles = ["channels", "movies", "music"];
+    const localFiles = ["channels", "movies", "music", "radio"];
     for (let i = 0; i < localFiles.length; i++) {
       const result = results[i + 2];
       const fileName = localFiles[i];
@@ -108,7 +185,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const response = result.value;
         if (response.ok) {
           const data = await response.json();
-          localData[fileName] = data[fileName] || [];
+          if (fileName === "radio") {
+            localData.radio = data.channels || [];
+          } else {
+            localData[fileName] = data[fileName] || [];
+          }
         } else {
           console.error(
             `Failed loading /data/${fileName}.json:`,
@@ -129,27 +210,6 @@ document.addEventListener("DOMContentLoaded", () => {
       localData
     );
   }
-
-  function normalizePodcastItem(item) {
-    const id = item.slug || item.id;
-    const categories = Array.isArray(item.podcastCategories)
-      ? item.podcastCategories.map((cat) => ({ name: cat.name || cat }))
-      : [];
-
-    return {
-      id: id,
-      slug: item.slug,
-      title: item.title,
-      description: item.description || "",
-      thumbnail: { url: item.imageUrl },
-      categories: categories,
-      author: item.author || "EternityReady",
-      duration: item.duration || null,
-      sourceType: "podcasts",
-      videoId: null,
-    };
-  }
-
   async function fetchRecentVideos(limit = 20) {
     try {
       const response = await fetch(`${API_BASE_URL}/api/search?limit=${limit}`);
@@ -196,6 +256,8 @@ document.addEventListener("DOMContentLoaded", () => {
     for (const key of Object.keys(localData)) {
       if (key === "podcasts") {
         normalizedData[key] = localData[key].map(normalizePodcastItem);
+      } else if (key === "radio") {
+        normalizedData[key] = localData[key].map(normalizeRadioItem);
       } else {
         normalizedData[key] = localData[key].map((item) => {
           const normalizedItem = normalizeLocalItem(item);
@@ -205,7 +267,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    localData = { channels: [], movies: [], music: [], podcasts: [] };
+    localData = { channels: [], movies: [], music: [], podcasts: [], radio: [] };
   }
 
   function normalizeLocalItem(item) {
@@ -279,14 +341,14 @@ document.addEventListener("DOMContentLoaded", () => {
   // ─── LÓGICA DO GRID DE CONTEÚDO LOCAL E FILTROS ──────────────────────────────
   function initializeLocalContentGrid() {
     const nameFilter = document.getElementById("name-filter");
-    const mediaTypeFilter = document.getElementById("media-type-filter");
+    const midiaButton = document.querySelector(".midia-button");
     const categoryFilter = document.getElementById("category-filter");
     const contentGrid = document.getElementById("content-grid");
     const gridContainer = document.getElementById("local-content-section"); // O contêiner que envolve a grade
 
     if (
       !nameFilter ||
-      !mediaTypeFilter ||
+      !midiaButton ||
       !categoryFilter ||
       !contentGrid ||
       !gridContainer
@@ -316,7 +378,7 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
           const filters = JSON.parse(savedFilters);
           nameFilter.value = filters.name || "";
-          mediaTypeFilter.value = filters.mediaType || "all";
+          setActiveMidiaButton(filters.mediaType || "all")
           return filters.category || "all";
         } catch (e) {
           console.error("Erro ao ler os filtros da grid do cookie:", e);
@@ -339,7 +401,9 @@ document.addEventListener("DOMContentLoaded", () => {
       ...normalizedData.movies,
       ...normalizedData.music,
       ...normalizedData.podcasts,
+      ...normalizedData.radio,
     ];
+
 
     function populateCategoryFilter() {
       const allCategories = allLocalData.flatMap((item) =>
@@ -379,7 +443,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Show friendly label: when the user filters by 'radio', display 'Radio'
         // for items whose sourceType is 'music'. Otherwise show the sourceType.
         const displayType =
-          mediaTypeFilter.value === "radio" && item.sourceType === "music"
+          getActiveMidiaButton() === "radio" && item.sourceType === "radio"
             ? "Radio"
             : item.sourceType
             ? item.sourceType.charAt(0).toUpperCase() + item.sourceType.slice(1)
@@ -436,18 +500,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function renderContentGrid() {
       const nameQuery = nameFilter.value.toLowerCase();
-      const mediaTypeQuery = mediaTypeFilter.value;
+      const mediaTypeQuery = document.querySelector('#media-type-filter').value;
       const categoryQuery = categoryFilter.value;
 
       // Filtra todos os dados, mas não renderiza ainda
       fullFilteredData = allLocalData
         .filter((item) => {
           const nameMatch = item.title.toLowerCase().includes(nameQuery);
-          // Treat "radio" filter as matching items with sourceType "music"
+          // Show only items with matching sourceType
           const mediaTypeMatch =
             mediaTypeQuery === "all" ||
-            item.sourceType === mediaTypeQuery ||
-            (mediaTypeQuery === "radio" && item.sourceType === "music");
+            item.sourceType === mediaTypeQuery;
           const categoryMatch =
             categoryQuery === "all" ||
             item.categories.some((cat) => cat.name === categoryQuery);
@@ -488,7 +551,21 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     nameFilter.addEventListener("input", debouncedRenderAndSave);
-    mediaTypeFilter.addEventListener("change", renderAndSave);
+    const typesMap = {
+      'All': "all",
+      'Channels': "channels",
+      'Radio': "radio",
+      'Music': "music",
+      'Movies': "movies",
+      'Podcasts': "podcasts",
+    };
+
+    for (const mButton of document.querySelectorAll('.midia-button button')) {
+      mButton.addEventListener('click', () => {
+        setActiveMidiaButton(typesMap[mButton.textContent]);
+        renderAndSave()
+      });
+    }
     categoryFilter.addEventListener("change", renderAndSave);
 
     renderContentGrid();
@@ -541,7 +618,9 @@ document.addEventListener("DOMContentLoaded", () => {
           ...normalizedData.movies,
           ...normalizedData.music,
           ...normalizedData.podcasts,
+          ...normalizedData.radio,
         ];
+
         const results = allLocalItems.filter(
           (item) =>
             item.title.toLowerCase().includes(lowerCaseQuery) ||
@@ -879,15 +958,11 @@ document.addEventListener("DOMContentLoaded", () => {
       "dynamic-sliders-container"
     );
     const nameFilter = document.getElementById("sliders-name-filter");
-    const mediaTypeFilter = document.getElementById(
-      "sliders-media-type-filter"
-    );
     const categoryFilter = document.getElementById("sliders-category-filter");
 
     if (
       !slidersContainer ||
       !nameFilter ||
-      !mediaTypeFilter ||
       !categoryFilter
     ) {
       console.error(
@@ -901,7 +976,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function saveFiltersToCookie() {
       const filters = {
         name: nameFilter.value,
-        mediaType: mediaTypeFilter.value,
+        mediaType: getActiveMidiaButton(),
         category: categoryFilter.value,
       };
       setCookie(FILTERS_COOKIE_NAME, JSON.stringify(filters), 7);
@@ -913,7 +988,7 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
           const filters = JSON.parse(savedFilters);
           nameFilter.value = filters.name || "";
-          mediaTypeFilter.value = filters.mediaType || "all";
+          setActiveMidiaButton(filters.mediaType || "all")
           return filters.category || "all";
         } catch (e) {
           console.error("Erro ao ler os filtros do cookie:", e);
@@ -932,6 +1007,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let masterSliderData = [];
     let allSliderElements = [];
     let loadMoreSlidersBtn;
+    let redirectBtn;
 
     slidersContainer.innerHTML = "";
 
@@ -949,6 +1025,11 @@ document.addEventListener("DOMContentLoaded", () => {
             case "music":
               imageUrl = video.thumbnail?.url;
               videoUrl = `/player/?q=${id}`;
+              //videoUrl = `/radio/?id=${id}`;
+              break;
+            case "radio":
+              imageUrl = video.thumbnail?.url;
+              videoUrl = `#`;
               //videoUrl = `/radio/?id=${id}`;
               break;
             case "channels":
@@ -1046,8 +1127,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function applyFiltersAndRenderSliders() {
       const nameQuery = nameFilter.value.toLowerCase().trim();
-      const mediaTypeQuery = mediaTypeFilter.value;
+      const mediaTypeQuery = getActiveMidiaButton();
       const categoryQuery = categoryFilter.value;
+
+      console.log("Filtering with mediaTypeQuery:", mediaTypeQuery);
 
       const filteredSlidersData = masterSliderData
         .map((slider) => {
@@ -1056,11 +1139,10 @@ document.addEventListener("DOMContentLoaded", () => {
               nameQuery === "" || item.title.toLowerCase().includes(nameQuery);
 
             const itemType = item.sourceType || "youtube";
-            // Also allow slider "radio" filter to match local music items
+            // Updated to match the logic in initializeLocalContentGrid
             const mediaTypeMatch =
               mediaTypeQuery === "all" ||
-              itemType === mediaTypeQuery ||
-              (mediaTypeQuery === "radio" && itemType === "music");
+              itemType === mediaTypeQuery;
 
             const categoryMatch =
               categoryQuery === "all" ||
@@ -1068,6 +1150,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             return nameMatch && mediaTypeMatch && categoryMatch;
           });
+
+          console.log("Filtered items:", filteredItems);
 
           if (filteredItems.length >= MIN_ITEMS_PER_SLIDER) {
             return { ...slider, items: filteredItems };
@@ -1094,7 +1178,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       loadMoreSliders();
     }
-
     function loadMoreSliders(isInitialLoad = false) {
       const batchSize = isInitialLoad
         ? INITIAL_SLIDER_LIMIT
@@ -1106,16 +1189,62 @@ document.addEventListener("DOMContentLoaded", () => {
         initializeSliderControls(sliderEl);
       });
 
+      const activeMidiaButton = getActiveMidiaButton()
       if (loadMoreSlidersBtn) loadMoreSlidersBtn.remove();
+      if (redirectBtn) {
+        redirectBtn.remove();
+        if (activeMidiaButton == "all") {
+          redirectBtn = null;
+        }
+      }
+      
 
       if (allSliderElements.length > 0) {
+        container = document.createElement('div');
+        container.style.display = 'flex';
+        container.style.gap = '0.5rem';
+        container.style.justifyContent = 'center';
+        container.style.alignItems = 'center';
         loadMoreSlidersBtn = document.createElement("button");
         loadMoreSlidersBtn.textContent = "See More Category";
         loadMoreSlidersBtn.className = "btn-load-more";
         loadMoreSlidersBtn.addEventListener("click", () =>
           loadMoreSliders(false)
         );
-        slidersContainer.appendChild(loadMoreSlidersBtn);
+        container.appendChild(loadMoreSlidersBtn);
+
+        if (activeMidiaButton !== "all") {
+          const typesMap = {
+            'channels': [
+              "TV Page to see more Channels",
+              "https://eternityready.com/tv",
+            ],
+            'radio': [
+              "Radio Page to see more Radio",
+              "https://eternityready.com/radio"
+            ],
+            'music': [
+              "Radio Page to see more Music",
+              "https://eternityready.com/radio"
+            ],
+            'movies': [
+              "TV Page to see more Movies",
+              "https://eternityready.com/tv?view=movies"
+            ],
+            'podcasts': [
+              "Podcast Page to see more Podcasts",
+              "https://podcasts.eternityready.com"
+            ],
+          };
+          redirectBtn = document.createElement("button");
+          redirectBtn.textContent = typesMap[activeMidiaButton][0];
+          redirectBtn.className = "btn-load-more";
+          redirectBtn.addEventListener("click", () => {
+            window.location.assign(typesMap[activeMidiaButton][1]);
+          });
+          container.appendChild(redirectBtn);
+        }
+        slidersContainer.appendChild(container);
       }
     }
 
@@ -1150,7 +1279,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    // 3. Categorias da API ('youtube')
+    /*
     if (apiCategories && apiCategories.length > 0) {
       for (const category of apiCategories) {
         const videosDaCategoria = await fetchVideosByCategory(category.name);
@@ -1170,6 +1299,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
     }
+    */
 
     // 4. Categorias dos Dados Locais
     const allLocalItems = [
@@ -1177,7 +1307,9 @@ document.addEventListener("DOMContentLoaded", () => {
       ...normalizedData.movies,
       ...normalizedData.music,
       ...normalizedData.podcasts,
+      ...normalizedData.radio,
     ];
+
 
     // =======================================================================
     const localContentPageLinks = {
@@ -1235,7 +1367,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Configura os listeners dos filtros
     nameFilter.addEventListener("input", debouncedFilterAndSave);
-    mediaTypeFilter.addEventListener("change", filterAndSave);
+    const typesMap = {
+      'All': "all",
+      'Channels': "channels",
+      'Radio': "radio",
+      'Music': "music",
+      'Movies': "movies",
+      'Podcasts': "podcasts",
+    };
+
+    for (const mButton of document.querySelectorAll('.midia-button button')) {
+      mButton.addEventListener('click', () => {
+        setActiveMidiaButton(typesMap[mButton.textContent]);
+        filterAndSave()
+      });
+    }
     categoryFilter.addEventListener("change", filterAndSave);
 
     // Primeira renderização

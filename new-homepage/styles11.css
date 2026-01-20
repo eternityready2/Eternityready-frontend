@@ -1760,7 +1760,7 @@ header .cta-button a {
 
 .btn-load-more {
   display: block;
-  margin: 2rem auto;
+  margin: 0;
   font-family: "Poppins", sans-serif;
   background-color: #1f2937;
   color: #e0e0e0;
