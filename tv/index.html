@@ -43,6 +43,8 @@
             "name": "Eternity Ready TV"
           } 
       </script>
+
+    <link href="main-epics/assets/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -368,7 +370,105 @@
     <script src="script.js"></script>
     <script src="main-epics/plugin/swiper-bundle.min.js"></script>
     <script src="main-epics/plugin/jquery.min.js"></script>
+    <script src="main-epics/assets/js/bootstrap.bundle.min.js"></script>
     <script src="playingNow.js?v=1"></script>
+    <!-- this is watch later pop btn-->
+    <button class="MV_watch_later_btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#watchlater"
+    aria-controls="watchlater">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20ZM12.5 7H11V13L16.2 16.2L17 14.9L12.5 12.2V7Z"
+        fill="currentColor" />
+    </svg>
+    Watch Later
+  </button>
+
+<div class="offcanvas offcanvas-end MX_watchlater_canvas" style="z-index: 9999;" tabindex="-1" id="watchlater"
+    aria-labelledby="watchlaterLabel">
+    <div class="offcanvas-header MX_watchlater_header">
+      <!-- <h5>Watch Later</h5> -->
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body MX_watchlater_body">
+      <div class="MX_watchlater_items">
+        <script>
+          // Get watch later data from cookies
+          var existingData = document.cookie.match(/watchLater=([^;]*)/);
+          if (existingData) {
+            try {
+              var watchLaterData = JSON.parse(decodeURIComponent(existingData[1]));
+
+              // Display each saved item
+              watchLaterData.forEach(function (item) {
+                document.write(`
+                  <div class="watch-later-item">
+                    <img src="main-epics/${item.slider_image}" alt="${item.slider_title}">
+                    <div class="item-details">
+                      <h4>${item.slider_title}</h4>
+                      <p>${item.slider_description}</p>
+                      <a href="${item.slider_link}" class="watch-btn">Watch Now</a>
+                      <button id="forMX_remove_watchlater">Remove ?</button>
+                    </div>
+                  </div>
+                `);
+              });
+            } catch (e) {
+              document.write('<p>No items in watch later</p>');
+            }
+          } else {
+            document.write('<p class="wejaskdscs">No items in watch later</p>');
+          }
+        </script>
+      </div>
+      
+      <!-- for chanles -->
+      
+        <div id="savedChannels" class="saved-channels">
+      <h2>Saved Channels</h2>
+      <div id="savedList" class="saved-list"></div>
+    </div>
+
+    
+
+
+      
+      <!-- end -->
+    </div>
+  </div>
+  <!-- end -->
+
+        <script>
+    // Remove item from watch later when remove button clicked
+    document.addEventListener('click', function (e) {
+      if (e.target && e.target.id === 'forMX_remove_watchlater') {
+        // Get the watch later item container
+        const watchLaterItem = e.target.closest('.watch-later-item');
+
+        // Get the title of item to remove
+        const itemTitle = watchLaterItem.querySelector('h4').textContent;
+
+        // Get existing watch later data from cookies
+        var existingData = document.cookie.match(/watchLater=([^;]*)/);
+        if (existingData) {
+          try {
+            var watchLaterData = JSON.parse(decodeURIComponent(existingData[1]));
+
+            // Remove the item with matching title
+            watchLaterData = watchLaterData.filter(item => item.slider_title !== itemTitle);
+
+            // Save updated data back to cookie
+            document.cookie = 'watchLater=' + encodeURIComponent(JSON.stringify(watchLaterData));
+
+            // Reload the page
+            window.location.reload();
+
+          } catch (e) {
+            console.error('Error updating watch later data:', e);
+          }
+        }
+      }
+    });
+  </script>
 	<script>
         let vimeoPlayer = null;
 		let video_timeout;

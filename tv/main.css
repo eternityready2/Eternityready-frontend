@@ -30,6 +30,7 @@ text-overflow: ellipsis;
 }
 
 .current-program div {
+  color: white;
   text-align:left;
   display: -webkit-box;
   -webkit-line-clamp: 2;

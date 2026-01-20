@@ -744,7 +744,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
   function renderSavedList() {
-    return;
     const savedListContainer = document.getElementById("savedList");
     savedListContainer.innerHTML = "";
 
