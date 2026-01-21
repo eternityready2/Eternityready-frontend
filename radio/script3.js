@@ -684,7 +684,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function updateSavedChannelsUI() {
     renderSavedList();
-    applyChannelFilters();
+    // Only update filters if needed
+    if (document.getElementById("categoryFilter").value !== "all") {
+      applyChannelFilters();
+    }
   }
   function renderSavedList() {
     const savedListContainer = document.getElementById("savedList");
