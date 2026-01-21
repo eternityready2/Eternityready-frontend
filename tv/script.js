@@ -739,11 +739,11 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateSavedChannelsUI() {
     // Efficiently update both saved channels displays
     renderSavedList();
-
     // Only update filters if needed
     if (document.getElementById("categoryFilter").value !== "all") {
       applyChannelFilters();
     }
+    fetchAndUpdate();
   }
   function renderSavedList() {
     const savedListContainer = document.getElementById("savedList");

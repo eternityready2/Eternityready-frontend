@@ -172,21 +172,20 @@ function findAndDisplayCurrentPrograms(scheduleData, timezoneOffset = 0) {
   });
 }
 
-function startProgramUpdates() {
-  const jsonUrl = "./tv-schedule-data.json";
-  ("");
-  const fetchAndUpdate = () => {
-    console.log("Fetching program schedule...");
-    fetch(jsonUrl)
-      .then((response) => response.json())
-      .then((jsonData) => {
-        findAndDisplayCurrentPrograms(jsonData, 0);
-      })
-      .catch((error) => {
-        console.error("Error fetching or parsing schedule JSON:", error);
-      });
-  };
+const playingNowScheduleJson = "./tv-schedule-data.json";
+const fetchAndUpdate = () => {
+  console.log("Fetching program schedule...");
+  fetch(playingNowScheduleJson)
+    .then((response) => response.json())
+    .then((jsonData) => {
+      findAndDisplayCurrentPrograms(jsonData, 0);
+    })
+    .catch((error) => {
+      console.error("Error fetching or parsing schedule JSON:", error);
+    });
+};
 
+function startProgramUpdates() {
   fetchAndUpdate();
   setInterval(fetchAndUpdate, 60000);
 }
