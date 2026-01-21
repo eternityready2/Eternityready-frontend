@@ -379,7 +379,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const categoryFilterElement = document.getElementById("categoryFilter");
     populateCategories(allChannels, categoryFilterElement, "categories");
     populateCategories(allMovies, categoryFilterElement, "categories");
-    renderSavedChannels();
     renderSavedList();
     applyChannelFilters(groupContent);
   }
@@ -662,13 +661,14 @@ document.addEventListener("DOMContentLoaded", () => {
     await new Promise((resolve) => setTimeout(resolve, 500));
 
     // Toggle save state
-    const isCurrentlySaved = isChannelSaved(channel.name);
+    const title = channel.name ?? channel.title
+    const isCurrentlySaved = isChannelSaved(title);
     if (isCurrentlySaved) {
-      removeChannelFromCookies(channel.name);
-      savedChannels = savedChannels.filter((name) => name !== channel.name);
+      removeChannelFromCookies(title);
+      savedChannels = savedChannels.filter((name) => name !== title);
     } else {
-      saveChannelToCookies(channel.name);
-      savedChannels.push(channel.name);
+      saveChannelToCookies(title);
+      savedChannels.push(title);
     }
 
     // Update ONLY the clicked card's visual state
@@ -683,7 +683,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function updateSavedChannelsUI() {
-    renderSavedChannels();
     renderSavedList();
     applyChannelFilters();
   }
@@ -691,8 +690,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const savedListContainer = document.getElementById("savedList");
     savedListContainer.innerHTML = "";
 
-    const savedChannelObjects = allChannels.filter((ch) =>
-      isChannelSaved(ch.name)
+    const savedChannelObjects = [...allChannels, ...allMovies].filter((ch) =>
+      isChannelSaved(ch.name ?? ch.title)
     );
     const emptyMessage = document.querySelector(".wejaskdscs");
 
