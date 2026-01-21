@@ -422,7 +422,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const swiperWrapper = sectionDiv.querySelector(".swiper-wrapper");
         channelsInGroup.forEach((channel) => {
-          const channelWithOrigin = {...channel, origin: channel.name == null ? 'movies' : 'channels'};
+          const channelWithOrigin = {...channel, origin: channel.origin ? channel.origin : (channel.name == null ? 'movies' : 'channels')};
           const card = createChannelCard(channelWithOrigin);
           const slide = document.createElement("div");
           slide.className = "swiper-slide";
