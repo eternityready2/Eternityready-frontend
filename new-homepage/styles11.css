@@ -2948,3 +2948,73 @@ header .cta-button a {
 #userProfileLink > div > div > h1 {
   font-weight: bold;
 }
+
+/**/
+
+#customize-homepage {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#customize-homepage > button {
+  margin: 0;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: #d32f2f;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+#customize-modal {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 123456789;
+  background-color: var(--bg-dark);
+  width: 100vw;
+  height: 100vh;
+  transform: translate(-50%, -50%);
+  padding: 2.5rem;
+}
+
+#customize-modal button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background-color: #4a5568;
+  color: white;
+  padding: 0.5rem;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 20;
+}
+
+#customize-modal button:hover {
+  background-color: #2d3748;
+}
+
+#customize-modal > #reorder-sections-customize-modal {
+  display: flex;
+  flex-direction: column;
+  row-gap: 1rem;
+}
+
+#customize-modal > #reorder-sections-customize-modal span {
+  background-color: #161d25;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+#customize-modal > #reorder-sections-customize-modal span.draggable.dragging {
+  background-color: #4a5568;
+}

@@ -201,7 +201,7 @@
 
         <eternity-header></eternity-header>
         <main>
-          <div class="content free-container">
+          <div id="hero-slider" class="content free-container">
               <div id="mute_button" class="off">
                   <svg
                       class="mute"
@@ -656,331 +656,342 @@
           </div>
           <!-- end slider main -->
 
-          <section id="verse-of-the-day" class="fade-in verse-section">
-              <div class="container">
-                  <h2 class="section-title">Verse of the Day</h2>
-                  <blockquote class="verse">
-                      <p id="verse-text">Loading verse...</p>
-                      <footer id="verse-ref"></footer>
-                  </blockquote>
-              </div>
-          </section>
-          <!-- DISCOVER CONTENT SECTION -->
-          <section class="discover-section">
-              <div class="container">
-                  <h2 class="section-title">Discover Content</h2>
-                  <p class="section-subtitle">
-                      Explore our diverse range of faith-building content across multiple formats
-                  </p>
-
-                  <!-- Top Row: Gradient Cards -->
-                  <div class="discover-grid top-row">
-                      <div class="eternity-card gradient purple">
-                          <h3>Feature<br />Films</h3>
-                      </div>
-                      <div class="eternity-card gradient green">
-                          <h3>Nonfiction<br />Films &amp; Series</h3>
-                      </div>
-                      <div class="eternity-card gradient gold">
-                          <h3>Kids &amp;<br />Family</h3>
-                      </div>
-                      <div class="eternity-card gradient blue">
-                          <h3>Drama<br />Series</h3>
-                      </div>
-                      <div class="eternity-card gradient teal">
-                          <h3>Comedy<br />Series</h3>
-                      </div>
-                  </div>
-
-                  <!-- Bottom Row: Image-backed Media Cards -->
-                  <div class="discover-grid bottom-row">
-                      <a href="https://eternityready.tv/">
-                          <div class="eternity-card media tv">
-                              <i class="fa fa-tv"></i>
-                              <h4>Eternity Ready Television</h4>
-                              <p>Faith-based shows &amp; series</p>
-                              <img alt="Christian TV" class="cd-item__image" src="/images/index.jpg" />
-                          </div>
-                      </a>
-                      <a href="https://eternityready.com/radio/">
-                          <div class="eternity-card media radio">
-                              <i class="fa fa-broadcast-tower"></i>
-                              <h4>Radio &amp; Music</h4>
-                              <p>24/7 inspiration &amp; worship</p>
-                              <img alt="Christian TV" class="cd-item__image" src="/images/3.webp" />
-                          </div>
-                      </a>
-                      <a href="http://podcasts.eternityready.com/">
-                          <div class="eternity-card media podcast">
-                              <i class="fa fa-podcast"></i>
-                              <h4>Podcasts</h4>
-                              <p>Discussions &amp; teachings</p>
-                              <img alt="Christian TV" class="cd-item__image" src="/images/6.webp" />
-                          </div>
-                      </a>
-                      <div class="eternity-card media movies">
-                          <i class="fa fa-music"></i>
-                          <h4>Movies &amp; Music</h4>
-                          <p>Films &amp; music videos</p>
-                          <img alt="Christian TV" class="cd-item__image" src="/images/2.webp" />
-                      </div>
+          <div id="customize-homepage">
+              <button>Customize Homepage</button>
+              <div id="customize-modal">
+                  <button id="close-customize-modal">×</button>
+                  <h1>Reorder sections in Homepage</h1>
+                  <div id="reorder-sections-customize-modal">
                   </div>
               </div>
-          </section>
-          <!-- THIRD SECTION: TOP 10 TV SHOWS & NEWEST STUFF -->
-          <section class="media-section container">
-              <div class="midia-button">
-                  <div>
-                      <button class="left-button ativo">All</button>
-                      <button class="central-button">Channels</button>
-                      <button class="central-button">Music</button>
+          </div>
+
+          <div id="homepage-sections">
+              <section id="verse-of-the-day" class="fade-in verse-section">
+                  <div class="container">
+                      <h2 class="section-title">Verse of the Day</h2>
+                      <blockquote class="verse">
+                          <p id="verse-text">Loading verse...</p>
+                          <footer id="verse-ref"></footer>
+                      </blockquote>
                   </div>
-                  <button class="central-button">Movies</button>
-                  <button class="central-button">Radio</button>
-                  <button class="right-button">Podcasts</button>
-              </div>
-              <div id="sliders-filters-container" class="filters-container">
-                  <input type="text" id="sliders-name-filter" placeholder="Filter by name..." />
+              </section>
+              <!-- DISCOVER CONTENT SECTION -->
+              <section id="discover-content"class="discover-section">
+                  <div class="container">
+                      <h2 class="section-title">Discover Content</h2>
+                      <p class="section-subtitle">
+                          Explore our diverse range of faith-building content across multiple formats
+                      </p>
 
-                  <select id="sliders-category-filter">
-                      <option value="all">All categories</option>
-                  </select>
-              </div>
-              <div id="dynamic-sliders-container"></div>
-          </section>
-          <!-- FOURTH SECTION: BROWSE BY SERVICE -->
-          <section id="browse-by-service" class="browse-section">
-              <div class="container">
-                  <div class="section-header">
-                      <h2 class="section-title">Browse By Service</h2>
-                      <a href="#" class="section-link"><i class="fa fa-chevron-right"></i></a>
-                  </div>
-
-                  <div class="slider-wrapper">
-                      <button class="slider-arrow prev" aria-label="Previous">
-                          <i class="fa fa-chevron-left"></i>
-                      </button>
-
-                      <div class="browse-slider">
-                          <div class="service-card">
-                              <div class="service-header">
-                                  <div class="service-label free">FREE</div>
-                                  <h3 class="service-title">Best of What’s Free</h3>
-                              </div>
-                              <div class="service-thumbs">
-                                  <div class="thumb">
-                                      <img src="/images/sticklong.jpeg" alt="Stick" />
-                                      <span class="tv-badge">TV</span>
-                                  </div>
-                                  <div class="thumb">
-                                      <img src="/images/thebetter.jpeg" alt="The Better Sister" />
-                                      <span class="tv-badge">TV</span>
-                                  </div>
-                              </div>
+                      <!-- Top Row: Gradient Cards -->
+                      <div class="discover-grid top-row">
+                          <div class="eternity-card gradient purple">
+                              <h3>Feature<br />Films</h3>
                           </div>
-
-                          <div class="service-card">
-                              <div class="service-header">
-                                  <div class="service-label netflix"><span>Netflix</span></div>
-                                  <h3 class="service-title">Best of Netflix</h3>
-                              </div>
-                              <div class="service-thumbs">
-                                  <div class="thumb">
-                                      <img src="/images/sticklong.jpeg" alt="Dept. Q" />
-                                      <span class="tv-badge">TV</span>
-                                  </div>
-                                  <div class="thumb">
-                                      <img src="/images/thebetter.jpeg" alt="The Waterfront" />
-                                      <span class="tv-badge">TV</span>
-                                  </div>
-                              </div>
+                          <div class="eternity-card gradient green">
+                              <h3>Nonfiction<br />Films &amp; Series</h3>
                           </div>
-
-                          <div class="service-card">
-                              <div class="service-header">
-                                  <div class="service-label hulu"><span>Hulu</span></div>
-                                  <h3 class="service-title">Best of Hulu</h3>
-                              </div>
-                              <div class="service-thumbs">
-                                  <div class="thumb">
-                                      <img src="/images/sticklong.jpeg" alt="Love Island" />
-                                      <span class="tv-badge">TV</span>
-                                  </div>
-                                  <div class="thumb">
-                                      <img src="/images/thebetter.jpeg" alt="The Bear" />
-                                      <span class="tv-badge">TV</span>
-                                  </div>
-                              </div>
+                          <div class="eternity-card gradient gold">
+                              <h3>Kids &amp;<br />Family</h3>
                           </div>
-
-                          <div class="service-card">
-                              <div class="service-header">
-                                  <div class="service-label primevideo">
-                                      <span>Prime Video</span>
-                                  </div>
-                                  <h3 class="service-title">Best of Prime Video</h3>
-                              </div>
-                              <div class="service-thumbs">
-                                  <div class="thumb">
-                                      <img src="/images/sticklong.jpeg" alt="Stick" />
-                                      <span class="tv-badge">TV</span>
-                                  </div>
-                                  <div class="thumb">
-                                      <img src="/images/thebetter.jpeg" alt="The Better Sister" />
-                                      <span class="tv-badge">TV</span>
-                                  </div>
-                              </div>
+                          <div class="eternity-card gradient blue">
+                              <h3>Drama<br />Series</h3>
                           </div>
-
-                          <div class="service-card">
-                              <div class="service-header">
-                                  <div class="service-label directv">
-                                      <span>DIRECTV<br />Stream</span>
-                                  </div>
-                                  <h3 class="service-title">Best of DIRECTV Stream</h3>
-                              </div>
-                              <div class="service-thumbs">
-                                  <div class="thumb">
-                                      <img src="/images/sticklong.jpeg" alt="Resident Alien" />
-                                      <span class="tv-badge">TV</span>
-                                  </div>
-                                  <div class="thumb">
-                                      <img src="/images/thebetter.jpeg" alt="Another Show" />
-                                      <span class="tv-badge">TV</span>
-                                  </div>
-                              </div>
+                          <div class="eternity-card gradient teal">
+                              <h3>Comedy<br />Series</h3>
                           </div>
                       </div>
 
-                      <button class="slider-arrow next" aria-label="Next">
-                          <i class="fa fa-chevron-right"></i>
-                      </button>
+                      <!-- Bottom Row: Image-backed Media Cards -->
+                      <div class="discover-grid bottom-row">
+                          <a href="https://eternityready.tv/">
+                              <div class="eternity-card media tv">
+                                  <i class="fa fa-tv"></i>
+                                  <h4>Eternity Ready Television</h4>
+                                  <p>Faith-based shows &amp; series</p>
+                                  <img alt="Christian TV" class="cd-item__image" src="/images/index.jpg" />
+                              </div>
+                          </a>
+                          <a href="https://eternityready.com/radio/">
+                              <div class="eternity-card media radio">
+                                  <i class="fa fa-broadcast-tower"></i>
+                                  <h4>Radio &amp; Music</h4>
+                                  <p>24/7 inspiration &amp; worship</p>
+                                  <img alt="Christian TV" class="cd-item__image" src="/images/3.webp" />
+                              </div>
+                          </a>
+                          <a href="http://podcasts.eternityready.com/">
+                              <div class="eternity-card media podcast">
+                                  <i class="fa fa-podcast"></i>
+                                  <h4>Podcasts</h4>
+                                  <p>Discussions &amp; teachings</p>
+                                  <img alt="Christian TV" class="cd-item__image" src="/images/6.webp" />
+                              </div>
+                          </a>
+                          <div class="eternity-card media movies">
+                              <i class="fa fa-music"></i>
+                              <h4>Movies &amp; Music</h4>
+                              <p>Films &amp; music videos</p>
+                              <img alt="Christian TV" class="cd-item__image" src="/images/2.webp" />
+                          </div>
+                      </div>
                   </div>
+              </section>
+              <!-- THIRD SECTION: TOP 10 TV SHOWS & NEWEST STUFF -->
+              <section id="content-slider" class="media-section container">
+                  <div class="midia-button">
+                      <div>
+                          <button class="left-button ativo">All</button>
+                          <button class="central-button">Channels</button>
+                          <button class="central-button">Music</button>
+                      </div>
+                      <button class="central-button">Movies</button>
+                      <button class="central-button">Radio</button>
+                      <button class="right-button">Podcasts</button>
+                  </div>
+                  <div id="sliders-filters-container" class="filters-container">
+                      <input type="text" id="sliders-name-filter" placeholder="Filter by name..." />
+
+                      <select id="sliders-category-filter">
+                          <option value="all">All categories</option>
+                      </select>
+                  </div>
+                  <div id="dynamic-sliders-container"></div>
+              </section>
+              <!-- FOURTH SECTION: BROWSE BY SERVICE -->
+              <section id="browse-by-service" class="browse-section">
+                  <div class="container">
+                      <div class="section-header">
+                          <h2 class="section-title">Browse By Service</h2>
+                          <a href="#" class="section-link"><i class="fa fa-chevron-right"></i></a>
+                      </div>
+
+                      <div class="slider-wrapper">
+                          <button class="slider-arrow prev" aria-label="Previous">
+                              <i class="fa fa-chevron-left"></i>
+                          </button>
+
+                          <div class="browse-slider">
+                              <div class="service-card">
+                                  <div class="service-header">
+                                      <div class="service-label free">FREE</div>
+                                      <h3 class="service-title">Best of What’s Free</h3>
+                                  </div>
+                                  <div class="service-thumbs">
+                                      <div class="thumb">
+                                          <img src="/images/sticklong.jpeg" alt="Stick" />
+                                          <span class="tv-badge">TV</span>
+                                      </div>
+                                      <div class="thumb">
+                                          <img src="/images/thebetter.jpeg" alt="The Better Sister" />
+                                          <span class="tv-badge">TV</span>
+                                      </div>
+                                  </div>
+                              </div>
+
+                              <div class="service-card">
+                                  <div class="service-header">
+                                      <div class="service-label netflix"><span>Netflix</span></div>
+                                      <h3 class="service-title">Best of Netflix</h3>
+                                  </div>
+                                  <div class="service-thumbs">
+                                      <div class="thumb">
+                                          <img src="/images/sticklong.jpeg" alt="Dept. Q" />
+                                          <span class="tv-badge">TV</span>
+                                      </div>
+                                      <div class="thumb">
+                                          <img src="/images/thebetter.jpeg" alt="The Waterfront" />
+                                          <span class="tv-badge">TV</span>
+                                      </div>
+                                  </div>
+                              </div>
+
+                              <div class="service-card">
+                                  <div class="service-header">
+                                      <div class="service-label hulu"><span>Hulu</span></div>
+                                      <h3 class="service-title">Best of Hulu</h3>
+                                  </div>
+                                  <div class="service-thumbs">
+                                      <div class="thumb">
+                                          <img src="/images/sticklong.jpeg" alt="Love Island" />
+                                          <span class="tv-badge">TV</span>
+                                      </div>
+                                      <div class="thumb">
+                                          <img src="/images/thebetter.jpeg" alt="The Bear" />
+                                          <span class="tv-badge">TV</span>
+                                      </div>
+                                  </div>
+                              </div>
+
+                              <div class="service-card">
+                                  <div class="service-header">
+                                      <div class="service-label primevideo">
+                                          <span>Prime Video</span>
+                                      </div>
+                                      <h3 class="service-title">Best of Prime Video</h3>
+                                  </div>
+                                  <div class="service-thumbs">
+                                      <div class="thumb">
+                                          <img src="/images/sticklong.jpeg" alt="Stick" />
+                                          <span class="tv-badge">TV</span>
+                                      </div>
+                                      <div class="thumb">
+                                          <img src="/images/thebetter.jpeg" alt="The Better Sister" />
+                                          <span class="tv-badge">TV</span>
+                                      </div>
+                                  </div>
+                              </div>
+
+                              <div class="service-card">
+                                  <div class="service-header">
+                                      <div class="service-label directv">
+                                          <span>DIRECTV<br />Stream</span>
+                                      </div>
+                                      <h3 class="service-title">Best of DIRECTV Stream</h3>
+                                  </div>
+                                  <div class="service-thumbs">
+                                      <div class="thumb">
+                                          <img src="/images/sticklong.jpeg" alt="Resident Alien" />
+                                          <span class="tv-badge">TV</span>
+                                      </div>
+                                      <div class="thumb">
+                                          <img src="/images/thebetter.jpeg" alt="Another Show" />
+                                          <span class="tv-badge">TV</span>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+
+                          <button class="slider-arrow next" aria-label="Next">
+                              <i class="fa fa-chevron-right"></i>
+                          </button>
+                      </div>
+                      <hr class="media-separator" />
+                  </div>
+              </section>
+              <section id="local-content-section" class="media-section container">
+                  <div id="filters-container" class="filters-container">
+                      <input type="text" id="name-filter" placeholder="Filter by name..." />
+
+                      <select id="media-type-filter">
+                          <option value="all">All types</option>
+                          <option value="channels">TV Channels</option>
+                          <option value="movies">Movies</option>
+                          <option value="music">Music videos</option>
+                          <option value="podcasts">Podcasts</option>
+                      </select>
+                      <select id="category-filter">
+                          <option value="all">All categories</option>
+                      </select>
+                  </div>
+                  <div id="content-grid" class="media-grid"></div>
                   <hr class="media-separator" />
-              </div>
-          </section>
-          <section id="local-content-section" class="media-section container">
-              <div id="filters-container" class="filters-container">
-                  <input type="text" id="name-filter" placeholder="Filter by name..." />
+              </section>
 
-                  <select id="media-type-filter">
-                      <option value="all">All types</option>
-                      <option value="channels">TV Channels</option>
-                      <option value="movies">Movies</option>
-                      <option value="music">Music videos</option>
-                      <option value="podcasts">Podcasts</option>
-                  </select>
-                  <select id="category-filter">
-                      <option value="all">All categories</option>
-                  </select>
-              </div>
-              <div id="content-grid" class="media-grid"></div>
-              <hr class="media-separator" />
-          </section>
-
-          <section id="browse-by-people" class="people-section">
-              <div class="container">
-                  <div class="section-header">
-                      <h2 class="section-title">Popular Actors & Directors</h2>
-                      <i class="fa fa-chevron-right"></i>
-                  </div>
-
-                  <div class="slider-wrapper">
-                      <button class="slider-arrow prev" aria-label="Previous">
-                          <i class="fa fa-chevron-left"></i>
-                      </button>
-
-                      <div class="people-slider">
-                          <div class="person-card" style="background: #161d25; border-radius: 12px">
-                              <div class="avatar" style="background: linear-gradient(60deg, #fbff00, #4a6625)">MG</div>
-                              <p class="name">Manuel Garcia-Rulfo</p>
-                          </div>
-                          <div class="person-card">
-                              <div class="avatar" style="background: linear-gradient(60deg, #026244, #97f5cf)">TH</div>
-                              <p class="name">Tom Holland</p>
-                          </div>
-                          <div class="person-card">
-                              <div class="avatar" style="background: linear-gradient(60deg, #9800fd, #25baff)">DS</div>
-                              <p class="name">Daniel Scheinert</p>
-                          </div>
-                          <div class="person-card">
-                              <div class="avatar" style="background: linear-gradient(60deg, #f7f26e, #24e61a)">TC</div>
-                              <p class="name">Tom Cruise</p>
-                          </div>
-                          <div class="person-card">
-                              <div class="avatar" style="background: linear-gradient(60deg, #ff3300, #f9d339)">DR</div>
-                              <p class="name">Daniel Radcliffe</p>
-                          </div>
-                          <div class="person-card">
-                              <div class="avatar" style="background: linear-gradient(60deg, #f34141, #c90b77)">BC</div>
-                              <p class="name">Benedict Cumberbatch</p>
-                          </div>
-                          <div class="person-card">
-                              <div class="avatar" style="background: linear-gradient(60deg, #8c00ff, #253eff)">CT</div>
-                              <p class="name">Channing Tatum</p>
-                          </div>
-                          <div class="person-card">
-                              <div class="avatar" style="background: linear-gradient(60deg, #9c074f, #ff2d11)">AS</div>
-                              <p class="name">Alexander Skarsgård</p>
-                          </div>
-                          <div class="person-card">
-                              <div class="avatar" style="background: linear-gradient(135deg, #ff5252, #ff217b)">JL</div>
-                              <p class="name">Jared Leto</p>
-                          </div>
-                          <div class="person-card">
-                              <div class="avatar" style="background: linear-gradient(135deg, #db00f1, #8b00a3)">TP</div>
-                              <p class="name">Trey Parker</p>
-                          </div>
-                          <div class="person-card">
-                              <div class="avatar" style="background: linear-gradient(135deg, #d400ff, #ff6fdb)">AN</div>
-                              <p class="name">Adam Nee</p>
-                          </div>
-                          <div class="person-card">
-                              <div class="avatar" style="background: linear-gradient(135deg, #d1b51e, #f5db3f)">DA</div>
-                              <p class="name">David Attenborough</p>
-                          </div>
-                      </div>
-
-                      <button class="slider-arrow next" aria-label="Next">
+              <section id="browse-by-people" class="people-section">
+                  <div class="container">
+                      <div class="section-header">
+                          <h2 class="section-title">Popular Actors & Directors</h2>
                           <i class="fa fa-chevron-right"></i>
-                      </button>
-                  </div>
-              </div>
-          </section>
+                      </div>
 
-          <section id="modal-section">
-              <div id="modal" class="modal-container hidden">
-                  <div class="modal-content">
-                      <button id="closeBtn" class="close-btn-vid">&times;</button>
+                      <div class="slider-wrapper">
+                          <button class="slider-arrow prev" aria-label="Previous">
+                              <i class="fa fa-chevron-left"></i>
+                          </button>
 
-                      <div class="left-content">
-                          <h1 class="title" id="modal-title"></h1>
-                          <p id="channel-desc"></p>
-                          <div class="categories">
-                              <p class="text-gray-300" id="modal-categories">Categories will appear here</p>
-                              <div class="flex items-center space-x-3"></div>
+                          <div class="people-slider">
+                              <div class="person-card" style="background: #161d25; border-radius: 12px">
+                                  <div class="avatar" style="background: linear-gradient(60deg, #fbff00, #4a6625)">MG</div>
+                                  <p class="name">Manuel Garcia-Rulfo</p>
+                              </div>
+                              <div class="person-card">
+                                  <div class="avatar" style="background: linear-gradient(60deg, #026244, #97f5cf)">TH</div>
+                                  <p class="name">Tom Holland</p>
+                              </div>
+                              <div class="person-card">
+                                  <div class="avatar" style="background: linear-gradient(60deg, #9800fd, #25baff)">DS</div>
+                                  <p class="name">Daniel Scheinert</p>
+                              </div>
+                              <div class="person-card">
+                                  <div class="avatar" style="background: linear-gradient(60deg, #f7f26e, #24e61a)">TC</div>
+                                  <p class="name">Tom Cruise</p>
+                              </div>
+                              <div class="person-card">
+                                  <div class="avatar" style="background: linear-gradient(60deg, #ff3300, #f9d339)">DR</div>
+                                  <p class="name">Daniel Radcliffe</p>
+                              </div>
+                              <div class="person-card">
+                                  <div class="avatar" style="background: linear-gradient(60deg, #f34141, #c90b77)">BC</div>
+                                  <p class="name">Benedict Cumberbatch</p>
+                              </div>
+                              <div class="person-card">
+                                  <div class="avatar" style="background: linear-gradient(60deg, #8c00ff, #253eff)">CT</div>
+                                  <p class="name">Channing Tatum</p>
+                              </div>
+                              <div class="person-card">
+                                  <div class="avatar" style="background: linear-gradient(60deg, #9c074f, #ff2d11)">AS</div>
+                                  <p class="name">Alexander Skarsgård</p>
+                              </div>
+                              <div class="person-card">
+                                  <div class="avatar" style="background: linear-gradient(135deg, #ff5252, #ff217b)">JL</div>
+                                  <p class="name">Jared Leto</p>
+                              </div>
+                              <div class="person-card">
+                                  <div class="avatar" style="background: linear-gradient(135deg, #db00f1, #8b00a3)">TP</div>
+                                  <p class="name">Trey Parker</p>
+                              </div>
+                              <div class="person-card">
+                                  <div class="avatar" style="background: linear-gradient(135deg, #d400ff, #ff6fdb)">AN</div>
+                                  <p class="name">Adam Nee</p>
+                              </div>
+                              <div class="person-card">
+                                  <div class="avatar" style="background: linear-gradient(135deg, #d1b51e, #f5db3f)">DA</div>
+                                  <p class="name">David Attenborough</p>
+                              </div>
                           </div>
-                      </div>
 
-                      <div class="video-container">
-                          <iframe
-                              class="video-iframe"
-                              src=""
-                              frameborder="0"
-                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                              referrerpolicy="strict-origin-when-cross-origin"
-                              allowfullscreen
-                          ></iframe>
-                      </div>
-
-                      <div class="recommendations-section">
-                          <h2>You may also like</h2>
-                          <div id="modal-recommendations-grid" class="recommendations-grid"></div>
+                          <button class="slider-arrow next" aria-label="Next">
+                              <i class="fa fa-chevron-right"></i>
+                          </button>
                       </div>
                   </div>
-              </div>
-          </section>
+              </section>
+          </div>
         </main>
+        <section id="modal-section">
+          <div id="modal" class="modal-container hidden">
+              <div class="modal-content">
+                  <button id="closeBtn" class="close-btn-vid">&times;</button>
+
+                  <div class="left-content">
+                      <h1 class="title" id="modal-title"></h1>
+                      <p id="channel-desc"></p>
+                      <div class="categories">
+                          <p class="text-gray-300" id="modal-categories">Categories will appear here</p>
+                          <div class="flex items-center space-x-3"></div>
+                      </div>
+                  </div>
+
+                  <div class="video-container">
+                      <iframe
+                          class="video-iframe"
+                          src=""
+                          frameborder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          referrerpolicy="strict-origin-when-cross-origin"
+                          allowfullscreen
+                      ></iframe>
+                  </div>
+
+                  <div class="recommendations-section">
+                      <h2>You may also like</h2>
+                      <div id="modal-recommendations-grid" class="recommendations-grid"></div>
+                  </div>
+              </div>
+          </div>
+        </section>
         <eternity-salvation></eternity-salvation>
         <eternity-footer></eternity-footer>
         <script src="/lib/constants.js"></script>
@@ -1003,6 +1014,7 @@
         <script src="script-from-root3.js"></script>
         <script src="script.js?v=123"></script>
         <script src="mobile-menu.js"></script>
+        <script src="customize-homepage.js"></script>
         <script>
           // Get watch later data from cookies
           var existingData = document.cookie.match(/watchLater=([^;]*)/);
