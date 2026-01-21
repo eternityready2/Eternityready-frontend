@@ -146,7 +146,6 @@ fetch(`./${channel}/schedule.json`)
       // Add channel logo overlay
       player.ready(function() {
         const link = document.createElement('a');
-        link.href = '/';
         link.className = 'video-logo';
         const logo = document.createElement('img');
         logo.src = `${channel}/logo.png`;
