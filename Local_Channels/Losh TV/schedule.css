@@ -13,7 +13,7 @@ body {
 video{
     pointer-events: none;
 }
-.video-logo {
+.losh-logo {
     position: absolute;
     right: 0px;
     top: 0px;
@@ -21,7 +21,4 @@ video{
     padding-right: 5px;
     z-index: 10000;
     
-}
-.video-logo img{
-    width: 120px;
 }

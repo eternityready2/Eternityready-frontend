@@ -1213,7 +1213,7 @@
       "name": "Losh TV",
       "logo": "https://eternityready.com/tv/img/loshtv.png",
       "link": "",
-      "embed": "https://eternityready.com/Local_Channels/Losh TV/index.html",
+      "embed": "http://127.0.0.1:8000/Local_Channels/Losh TV/index.html",
       "keywords": [],
       "rating": 5,
       "categories": [

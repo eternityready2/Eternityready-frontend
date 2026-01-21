@@ -143,15 +143,22 @@ fetch(`./${channel}/schedule.json`)
         sources: [{ src: validUrl, type: videoType }]
       });
 
-      // Add channel logo overlay
       player.ready(function() {
         const link = document.createElement('a');
-        link.className = 'video-logo';
+        link.className = 'losh-logo';
         const logo = document.createElement('img');
         logo.src = `${channel}/logo.png`;
-        logo.className = 'video-logo';
+        
+        function setLogoWidth() {
+          logo.style.width = window.innerWidth <= 768 ? '60px' : '120px';
+        }
+        
+        setLogoWidth();
+        logo.className = 'responsive-logo';
         link.appendChild(logo);
         this.el().appendChild(link);
+        
+        window.addEventListener('resize', setLogoWidth);
       });
 
       // On end or error, load a new video (re-randomizes if needed)
