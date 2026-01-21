@@ -282,3 +282,24 @@ body {
     font-size: 0.98rem;
   }
 }
+
+#androidTvBanner {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#androidTvBanner > img {
+  width: 100%;
+  height: 400px;
+  object-fit: fill;
+}
+
+
+@media (max-width: 480px) {
+
+  #androidTvBanner > img {
+    height: 320px;
+  }
+}
