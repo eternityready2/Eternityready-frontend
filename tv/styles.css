@@ -297,9 +297,10 @@ body {
 }
 
 
-@media (max-width: 480px) {
+@media (max-width: 950px) {
 
   #androidTvBanner > img {
     height: 320px;
+    object-fit: cover;
   }
 }
