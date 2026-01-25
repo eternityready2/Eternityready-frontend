@@ -1,4 +1,6 @@
-// script.js
+let eternityLocalDataLoaded = false;
+let eternityLocalData = [];
+
 function setActiveMidiaButton(typeTo) {
   const midiaButton = document.querySelector('.midia-button');
   const typesMap = {
@@ -396,7 +398,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentlyDisplayedCount = 0; // Contador de quantos itens estão visíveis
     let loadMoreGridBtn;
 
-    const allLocalData = [
+    eternityLocalData = [
       ...normalizedData.channels,
       ...normalizedData.movies,
       ...normalizedData.music,
@@ -404,9 +406,11 @@ document.addEventListener("DOMContentLoaded", () => {
       ...normalizedData.radio,
     ];
 
+    eternityLocalDataLoaded = true;
+
 
     function populateCategoryFilter() {
-      const allCategories = allLocalData.flatMap((item) =>
+      const allCategories = eternityLocalData.flatMap((item) =>
         item.categories.map((cat) => cat.name)
       );
       const uniqueCategories = [...new Set(allCategories)].sort();
@@ -504,7 +508,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const categoryQuery = categoryFilter.value;
 
       // Filtra todos os dados, mas não renderiza ainda
-      fullFilteredData = allLocalData
+      fullFilteredData = eternityLocalData
         .filter((item) => {
           const nameMatch = item.title.toLowerCase().includes(nameQuery);
           // Show only items with matching sourceType
