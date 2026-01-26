@@ -73,13 +73,13 @@ function createMediaCard(video, onClick) {
       <div class="media-thumb">
         <img
           src="${imageUrl || "/images/placeholder.jpg"}"
-          alt="${video.title}"
+          alt="${video.title || video.name}"
           loading="lazy"
           class="media-thumbnail"
         />
       </div>
       <div class="media-info-col">
-        <p class="media-title">${video.title}</p>
+        <p class="media-title">${video.title || video.name}</p>
         <div class="media-subinfo">
           <p class="media-genre">
             ${
@@ -139,6 +139,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
     const filtersContainer = customizeModal.querySelector('.filters-container');
 
+    let contentAdded = {};
     const openCustomizeModal = () => {
         const reorderSections = customizeModal.querySelector(
             '#reorder-sections-customize-modal'
@@ -190,6 +191,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
         }
         customizeModal.style.display = 'block';
         body.style.overflow = 'hidden';
+        waitForEternityData()
     }
 
     const closeCustomizeModal = () => {
@@ -211,6 +213,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
         customizeModal.style.display = 'none';
         body.style.overflow = 'scroll';
+        
+        for (const section of customizeModal.querySelectorAll('#create-section .media-section')) {
+          section.remove();
+        }
+        contentAdded = {}
     }
 
     customizeHomepage.querySelector('button').addEventListener(
@@ -221,9 +228,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
         'click', closeCustomizeModal
     );
 
-    openCustomizeModal()
-
-    let contentAdded = {};
     function renderContent(content) {
       renderSlider(
         content.slice(0, 30),
@@ -299,7 +303,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
       }
     }
 
-    waitForEternityData()
     
   document.querySelector('#create-section > button').addEventListener('click',
     () => {
@@ -319,9 +322,15 @@ document.addEventListener("DOMContentLoaded", function(event) {
       }
 
       const mediaSection = customizeModal.querySelector('#create-section #new-user-section .media-section');
+      mediaSection.querySelector('.section-title').textContent = sectionName
+      mediaSection.querySelector('.section-header div').remove()
       document.querySelector('#user-created-sections').appendChild(mediaSection)
       
       for (const mediaCardLink of mediaSection.querySelectorAll('.media-card-link')) {
+        const id = encodeURIComponent(mediaCardLink.querySelector('.media-title').textContent.trim());
+        const videoUrl = `${ETERNITY_BASE_URL}/player/?q=${id}`;
+        mediaCardLink.href = videoUrl
+
         const freshClone = mediaCardLink.cloneNode(true);
         mediaCardLink.parentNode.replaceChild(freshClone, mediaCardLink);
       }
