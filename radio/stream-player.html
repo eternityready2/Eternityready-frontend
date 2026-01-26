@@ -146,99 +146,110 @@
 
     <script src="https://eshaz.github.io/icecast-metadata-js/icecast-metadata-player-1.17.13.main.min.js"></script>
     
-    <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const streamUrl = urlParams.get('stream')
-        const stationName = urlParams.get('station')
-        
-        document.getElementById('station-name').textContent = stationName;
-        
-        let player;
-        let startTime = 0;
-        let totalDuration = 300;
-        let updateInterval;
-        
-        const updateStatus = (msg) => {
-            document.getElementById('status').textContent = msg;
-        };
-        
-        const formatTime = (seconds) => {
-            const mins = Math.floor(seconds / 60);
-            const secs = Math.floor(seconds % 60);
-            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        };
-        
-        const updateProgress = () => {
-            if (!startTime) return;
-            
-            const elapsed = (Date.now() - startTime) / 1000;
-            const progress = Math.min((elapsed / totalDuration) * 100, 100);
-            
-            document.getElementById('progress-bar').style.width = progress + '%';
-            document.getElementById('current-time').textContent = formatTime(elapsed);
-            
-            /*
-            if (progress >= 100) {
-                startTime = Date.now() - (totalDuration * 1000 * 0.9);
-            }
-            */
-        };
-        
-        const onMetadata = (metadata) => {
-            const title = metadata.StreamTitle || 'Live Stream';
-            document.getElementById('metadata').innerHTML = title;
-            updateStatus('Playing...');
-        };
-        
-        const initPlayer = () => {
-            player = new IcecastMetadataPlayer(streamUrl, {
-                onMetadata: onMetadata
-            });
-        };
-        
-        document.getElementById('playBtn').addEventListener('click', () => {
-            try {
-                if (!player) initPlayer();
-                player.play();
-                
-                document.getElementById('playBtn').disabled = true;
-                document.getElementById('stopBtn').disabled = false;
-                document.getElementById('metadata').innerHTML = ' Loading stream...';
-                updateStatus('Connecting to stream...');
-                
-                startTime = Date.now();
-                updateInterval = setInterval(updateProgress, 1000);
-                
-            } catch (error) {
-                updateStatus('Error: ' + error.message);
-            }
-        });
 
-        function stopPlayer() {
-          try {
-            if (player) player.stop();
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const streamUrl = urlParams.get('stream')
+    const stationName = urlParams.get('station')
+    
+    document.getElementById('station-name').textContent = stationName;
+    
+    let player;
+    let startTime = 0;
+    let totalDuration = 300;
+    let updateInterval;
+    
+    const updateStatus = (msg) => {
+        document.getElementById('status').textContent = msg;
+    };
+    
+    const formatTime = (seconds) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    };
+    
+    const updateProgress = () => {
+        if (!startTime) return;
+        
+        const elapsed = (Date.now() - startTime) / 1000;
+        const progress = Math.min((elapsed / totalDuration) * 100, 100);
+        
+        document.getElementById('progress-bar').style.width = progress + '%';
+        document.getElementById('current-time').textContent = formatTime(elapsed);
+    };
+    
+    const onMetadata = (metadata) => {
+        const title = metadata.StreamTitle || 'Live Stream';
+        document.getElementById('metadata').innerHTML = title;
+        updateStatus('Playing...');
+    };
+    
+    const initPlayer = () => {
+        // Destroy existing player if it exists
+        if (player) {
+            player.stop();
+            player = null;
+        }
+        
+        player = new IcecastMetadataPlayer(streamUrl, {
+            onMetadata: onMetadata
+        });
+    };
+
+    const startPlayer = () => {
+        try {
+            initPlayer();
+            player.play();
+            
+            document.getElementById('playBtn').disabled = true;
+            document.getElementById('stopBtn').disabled = false;
+            document.getElementById('metadata').innerHTML = 'Loading stream...';
+            updateStatus('Connecting to stream...');
+            
+            startTime = Date.now();
+            updateInterval = setInterval(updateProgress, 1000);
+            
+        } catch (error) {
+            updateStatus('Error: ' + error.message);
+        }
+    };
+
+    // Autoplay on page load
+    window.addEventListener('load', startPlayer);
+
+    function stopPlayer() {
+        try {
+            if (player) {
+                player.stop();
+            }
 
             document.getElementById('playBtn').disabled = false;
             document.getElementById('stopBtn').disabled = true;
             document.getElementById('metadata').innerHTML = '⏹️ Stopped';
             updateStatus('⏹️ Stopped');
 
-            clearInterval(updateInterval);
+            if (updateInterval) {
+                clearInterval(updateInterval);
+                updateInterval = null;
+            }
             document.getElementById('progress-bar').style.width = '0%';
             document.getElementById('current-time').textContent = '00:00';
             startTime = 0;
-          } catch (error) {
+        } catch (error) {
             updateStatus('❌ Error stopping: ' + error.message);
-          }
         }
-        
-        document.getElementById('stopBtn').addEventListener('click', stopPlayer);
+    }
+    
+    // Re-enable play button functionality
+    document.getElementById('playBtn').addEventListener('click', startPlayer);
+    document.getElementById('stopBtn').addEventListener('click', stopPlayer);
 
-        document.addEventListener('visibilitychange', () => {
-          if (document.hidden) {
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
             stopPlayer();
-          }
-        });
-    </script>
+        }
+    });
+</script>
 </body>
 </html>
