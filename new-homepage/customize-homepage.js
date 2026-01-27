@@ -1,3 +1,186 @@
+function setCookie(name, value, days = 365) {
+  const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  document.cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+}
+
+function getCookie(name) {
+  const cookies = document.cookie ? document.cookie.split('; ') : [];
+  for (let c of cookies) {
+    const [k, v] = c.split('=');
+    if (decodeURIComponent(k) === name) return decodeURIComponent(v || '');
+  }
+  return null;
+}
+
+function deleteCookie(name) {
+  document.cookie = `${encodeURIComponent(name)}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+}
+
+function generateIdFromTitle(title) {
+  const base = title
+    .trim()
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .slice(0, 50);
+  // ensure it starts with a letter
+  return base || `section-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function saveHomepageOrder() {
+  const homepage = document.querySelector('#homepage-sections');
+  if (!homepage) return;
+  const order = Array.from(homepage.children)
+    .map((node) => node.id)
+    .filter(Boolean);
+  try {
+    setCookie('homepage_order', JSON.stringify(order), 365);
+  } catch (e) {
+    console.warn('Could not save homepage order to cookies:', e);
+  }
+}
+
+function saveUserSections() {
+  // user-created sections should be under #user-created-sections or #homepage-sections
+  const container = document.querySelector('#user-created-sections') || document.querySelector('#homepage-sections');
+  if (!container) return;
+
+  const userSections = Array.from(container.children)
+    .filter((el) => el.classList && el.classList.contains('media-section') && el.dataset.userCreated === 'true')
+    .map((sec) => {
+      const title = sec.querySelector('.section-title')?.textContent?.trim() || '';
+      const id = sec.id || generateIdFromTitle(title);
+      const items = Array.from(sec.querySelectorAll('.media-card-link')).map((link) => {
+        const titleEl = link.querySelector('.media-title');
+        const authorEl = link.querySelector('.media-author');
+        const img = link.querySelector('img.media-thumbnail');
+        const genreEl = link.querySelector('.media-genre');
+
+        // Try to capture the minimum properties needed to rebuild via createMediaCard
+        return {
+          title: titleEl ? titleEl.textContent.trim() : '',
+          author: authorEl ? authorEl.textContent.trim() : '',
+          thumbnail: {
+            url: img ? img.src : ''
+          },
+          categories: genreEl
+            ? genreEl.textContent
+                .split(',')
+                .map((s) => ({ name: s.trim() }))
+                .filter((c) => c.name)
+            : []
+        };
+      });
+
+      return { id, title, items };
+    });
+
+  try {
+    setCookie('user_sections', JSON.stringify(userSections), 365);
+  } catch (e) {
+    console.warn('Could not save user sections to cookies:', e);
+  }
+}
+
+function loadSavedState() {
+  // Load user sections first, so they exist in DOM for ordering
+  const rawUser = getCookie('user_sections');
+  if (rawUser) {
+    try {
+      const userSections = JSON.parse(rawUser);
+      if (Array.isArray(userSections)) {
+        for (const sec of userSections) {
+          // avoid duplicates: if there's already a section with same id, skip
+          if (document.getElementById(sec.id)) continue;
+          const mediaSection = buildUserSection(sec);
+          // append to #user-created-sections if exists, otherwise #homepage-sections
+          const target = document.querySelector('#user-created-sections') || document.querySelector('#homepage-sections');
+          if (target) target.appendChild(mediaSection);
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to parse user_sections cookie', e);
+    }
+  }
+
+  // Then apply the saved order
+  const rawOrder = getCookie('homepage_order');
+  if (rawOrder) {
+    try {
+      const order = JSON.parse(rawOrder);
+      if (Array.isArray(order) && order.length) {
+        const homepage = document.querySelector('#homepage-sections');
+        if (homepage) {
+          for (const id of order) {
+            const node = document.getElementById(id);
+            if (node) homepage.appendChild(node); // moves element to end in this order
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to parse homepage_order cookie', e);
+    }
+  }
+
+  // initialize slider controls for any newly built sections
+  document.querySelectorAll('.media-section').forEach((sec) => initEternitySliderControls(sec));
+}
+
+function buildUserSection(sectionData) {
+  // sectionData: { id, title, items: [{title, author, thumbnail:{url}, categories:[{name}]}] }
+  const mediaSection = document.createElement('div');
+  mediaSection.style.padding = '1rem 0';
+  mediaSection.className = 'media-section container';
+  const id = sectionData.id || generateIdFromTitle(sectionData.title);
+  // ensure id is unique
+  let uniqueId = id;
+  let i = 1;
+  while (document.getElementById(uniqueId)) {
+    uniqueId = `${id}-${i++}`;
+  }
+  mediaSection.id = uniqueId;
+  mediaSection.dataset.userCreated = 'true';
+
+  const headerHtml = `
+    <div class="section-header">
+      <h2 class="section-title"><a>${sectionData.title}</a></h2>
+      <a class="section-link"><i class="fa fa-chevron-right"></i></a>
+    </div>
+    <div class="slider-wrapper">
+      <button class="slider-arrow prev" aria-label="Anterior"><i class="fa fa-chevron-left"></i></button>
+      <div class="media-grid"></div>
+      <button class="slider-arrow next" aria-label="Próximo"><i class="fa fa-chevron-right"></i></button>
+    </div>
+  `;
+  mediaSection.innerHTML = headerHtml;
+
+  const mediaGrid = mediaSection.querySelector('.media-grid');
+
+  for (const vid of sectionData.items || []) {
+    // createMediaCard expects categories to be an array of {name}
+    const video = {
+      title: vid.title || vid.name || '',
+      name: vid.title || vid.name || '',
+      author: vid.author || vid.author || '',
+      thumbnail: { url: (vid.thumbnail && vid.thumbnail.url) || '' },
+      categories: vid.categories || []
+    };
+    const link = createMediaCard(video);
+    // set href to player url if ETERNITY_BASE_URL exists
+    try {
+      const encoded = encodeURIComponent(video.title || video.name);
+      link.href = `${typeof ETERNITY_BASE_URL !== 'undefined' ? ETERNITY_BASE_URL : ''}/player/?q=${encoded}`;
+    } catch (e) {}
+    mediaGrid.appendChild(link);
+  }
+
+  initEternitySliderControls(mediaSection);
+
+  return mediaSection;
+}
+
+/* ---------- existing code (mostly unchanged) ---------- */
+
 function initEternitySliderControls(context = document) {
   context.querySelectorAll(".slider-wrapper").forEach((wrapper) => {
 
@@ -33,13 +216,13 @@ function initEternitySliderControls(context = document) {
     const startDrag = (e) => {
       isDown = true;
       slider.classList.add("dragging");
-      startX = (e.pageX || e.touches[0].pageX) - slider.offsetLeft;
+      startX = (e.pageX || (e.touches && e.touches[0].pageX)) - slider.offsetLeft;
       scrollLeft = slider.scrollLeft;
     };
     const moveDrag = (e) => {
       if (!isDown) return;
       e.preventDefault();
-      const x = (e.pageX || e.touches[0].pageX) - slider.offsetLeft;
+      const x = (e.pageX || (e.touches && e.touches[0].pageX)) - slider.offsetLeft;
       const walk = (x - startX) * 1.5;
       slider.scrollLeft = scrollLeft - walk;
     };
@@ -59,17 +242,15 @@ function initEternitySliderControls(context = document) {
 
 function createMediaCard(video, onClick) {
   const id = encodeURIComponent(video.title || video.name);
-  const videoUrl = `${ETERNITY_BASE_URL}/player/?q=${id}`;
+  const videoUrl = `${typeof ETERNITY_BASE_URL !== 'undefined' ? ETERNITY_BASE_URL : ''}/player/?q=${id}`;
   const imageUrl = video.thumbnail?.url?.trim()?.startsWith("http")
       ? video.thumbnail.url.trim()
-      : `${API_BASE_URL}/${video.thumbnail.url.trim()?.replace(/^\//, "")}`;
+      : `${typeof API_BASE_URL !== 'undefined' ? API_BASE_URL + '/' : ''}${(video.thumbnail?.url || '').trim().replace(/^\//, "")}`;
 
   const mediaCardLink = document.createElement('a');
   mediaCardLink.className = "media-card-link";
   mediaCardLink.innerHTML += `
-    <div
-      class="media-card"
-    >
+    <div class="media-card">
       <div class="media-thumb">
         <img
           src="${imageUrl || "/images/placeholder.jpg"}"
@@ -94,9 +275,15 @@ function createMediaCard(video, onClick) {
         </div>
       </div>
     </div>
-  `
+  `;
+  // default link behavior: go to player url
+  mediaCardLink.href = videoUrl;
+
   if (onClick) {
-    mediaCardLink.addEventListener('click', () => onClick(video.title || video.name));
+    mediaCardLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      onClick(video.title || video.name);
+    });
   }
 
   return mediaCardLink;
@@ -105,17 +292,14 @@ function createMediaCard(video, onClick) {
 async function renderSlider(content, place, onClick, title, subtitle) {
     const mediaSection = document.createElement('div');
     mediaSection.className = 'media-section';
-    mediaSection.style.padding = '0';
     mediaSection.innerHTML += `
-    <div
-      class="section-header"
-    >
+    <div class="section-header">
       <h2 class="section-title"><a>${title}</a></h2><a class="section-link"><i class="fa fa-chevron-right"></i></a>
       <div>
-        <h3 class="section-title"><a >${subtitle}</a></h3>
+        <h3 class="section-title"><a>${subtitle}</a></h3>
         </div>
     </div>
-  <div class="slider-wrapper">
+    <div class="slider-wrapper">
       <button class="slider-arrow prev" aria-label="Anterior"><i class="fa fa-chevron-left"></i></button>
       <div class="media-grid">
       </div>
@@ -124,15 +308,18 @@ async function renderSlider(content, place, onClick, title, subtitle) {
     `;
     const mediaGrid = mediaSection.querySelector('.media-grid');
     for (const video of content) {
-      const mediaCardLink = createMediaCard(video, onClick);
+      const mediaCardLink = createMediaCard(video, onClick ? (id) => onClick(id) : null);
       mediaGrid.appendChild(mediaCardLink);
     }
-    
+
     place.appendChild(mediaSection);
     initEternitySliderControls(mediaSection);
 }
 
 document.addEventListener("DOMContentLoaded", function(event) {
+    // load saved state from cookies BEFORE constructing modal UI (so reorder applies)
+    loadSavedState();
+
     const body = document.querySelector('body');
     const customizeHomepage = document.getElementById("customize-homepage");
     const customizeModal = customizeHomepage.querySelector('#customize-modal');
@@ -146,6 +333,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
         )
         reorderSections.innerHTML = "";
         for (const section of body.querySelector('#homepage-sections').children) {
+            // only consider elements that have an id (so built-in sections are reorderable too)
+            if (!section.id) continue;
+
             sectionTitle = section.id
                 .split('-')
                 .map(word => word.charAt(0).toUpperCase() + word.slice(1))
@@ -155,40 +345,43 @@ document.addEventListener("DOMContentLoaded", function(event) {
                 'beforeend',
                 `<span
                     class="draggable"
-                    draggable="true">
+                    draggable="true" data-section-id="${section.id}">
                     ${sectionTitle}
                 </span>`
             )
-            let dragged = null;
-
-            reorderSections.addEventListener('dragstart', e => {
-              const span = e.target.closest('.draggable');
-              if (!span) return;
-
-              dragged = span;
-              dragged.classList.add('dragging');
-              e.dataTransfer.effectAllowed = 'move';
-            });
-
-            reorderSections.addEventListener('dragover', e => {
-              e.preventDefault();
-
-              const span = e.target.closest('.draggable');
-              if (!span || span === dragged) return;
-
-              const rect = span.getBoundingClientRect();
-              const before = (e.clientY - rect.top) < rect.height / 2;
-
-              reorderSections.insertBefore(dragged, before ? span : span.nextSibling);
-            });
-
-            reorderSections.addEventListener('dragend', () => {
-              if (dragged) {
-                  dragged.classList.remove('dragging');
-                  dragged = null;
-              }
-            });
         }
+
+        // set up drag behaviour for reorderSections
+        let dragged = null;
+
+        reorderSections.addEventListener('dragstart', e => {
+          const span = e.target.closest('.draggable');
+          if (!span) return;
+
+          dragged = span;
+          dragged.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+        });
+
+        reorderSections.addEventListener('dragover', e => {
+          e.preventDefault();
+
+          const span = e.target.closest('.draggable');
+          if (!span || span === dragged) return;
+
+          const rect = span.getBoundingClientRect();
+          const before = (e.clientY - rect.top) < rect.height / 2;
+
+          reorderSections.insertBefore(dragged, before ? span : span.nextSibling);
+        });
+
+        reorderSections.addEventListener('dragend', () => {
+          if (dragged) {
+              dragged.classList.remove('dragging');
+              dragged = null;
+          }
+        });
+
         customizeModal.style.display = 'block';
         body.style.overflow = 'hidden';
         waitForEternityData()
@@ -202,22 +395,26 @@ document.addEventListener("DOMContentLoaded", function(event) {
         const homepageSections = body.querySelector('#homepage-sections')
 
         for (const section of reorderSections.children) {
-            const sectionId = section.textContent.trim()
+            const sectionId = section.getAttribute('data-section-id') || section.textContent.trim()
                 .split(' ')
                 .map(word => word.toLowerCase())
                 .join('-');
-            
+
             const node = document.getElementById(sectionId);
-            homepageSections.insertAdjacentElement('beforeend', node)
+            if (node) homepageSections.insertAdjacentElement('beforeend', node)
         }
 
         customizeModal.style.display = 'none';
         body.style.overflow = 'scroll';
-        
+
+        // Remove temporary create-section previews
         for (const section of customizeModal.querySelectorAll('#create-section .media-section')) {
           section.remove();
         }
         contentAdded = {}
+
+        // Save reorder to cookies
+        saveHomepageOrder();
     }
 
     customizeHomepage.querySelector('button').addEventListener(
@@ -282,8 +479,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     }
 
     function waitForEternityData() {
-      if ( eternityLocalDataLoaded == true) {
-          
+      if ( typeof eternityLocalDataLoaded !== 'undefined' && eternityLocalDataLoaded == true) {
           renderContent(eternityLocalData)
           const categoryFilter = filtersContainer.querySelector('#modal-sliders-category-filter');
           const allCategories = eternityLocalData.flatMap((content) =>
@@ -314,7 +510,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
         return;
       }
 
-      if (customizeModal.querySelector('#create-section #new-user-section').children.length == 0) {
+      const newUserSectionContainer = customizeModal.querySelector('#create-section #new-user-section');
+      if (!newUserSectionContainer || newUserSectionContainer.children.length == 0) {
         addToastAndRemoveLast(
           "Error", "You don't have content added, please do it.", "error"
         );
@@ -322,18 +519,42 @@ document.addEventListener("DOMContentLoaded", function(event) {
       }
 
       const mediaSection = customizeModal.querySelector('#create-section #new-user-section .media-section');
+      mediaSection.classList.add('container')
       mediaSection.querySelector('.section-title').textContent = sectionName
-      mediaSection.querySelector('.section-header div').remove()
-      document.querySelector('#user-created-sections').appendChild(mediaSection)
-      
+      // remove subtitle wrapper used in modal
+      const headerDiv = mediaSection.querySelector('.section-header div');
+      if (headerDiv) headerDiv.remove();
+
+      // ensure the section has an id and a userCreated marker
+      let sectionId = generateIdFromTitle(sectionName);
+      let uniqueId = sectionId;
+      let i = 1;
+      while (document.getElementById(uniqueId)) {
+        uniqueId = `${sectionId}-${i++}`;
+      }
+      mediaSection.id = uniqueId;
+      mediaSection.dataset.userCreated = 'true';
+
+      // Set hrefs and clone to remove modal event listeners
       for (const mediaCardLink of mediaSection.querySelectorAll('.media-card-link')) {
-        const id = encodeURIComponent(mediaCardLink.querySelector('.media-title').textContent.trim());
-        const videoUrl = `${ETERNITY_BASE_URL}/player/?q=${id}`;
+        const titleText = mediaCardLink.querySelector('.media-title')?.textContent.trim();
+        const id = encodeURIComponent(titleText);
+        const videoUrl = `${typeof ETERNITY_BASE_URL !== 'undefined' ? ETERNITY_BASE_URL : ''}/player/?q=${id}`;
         mediaCardLink.href = videoUrl
 
         const freshClone = mediaCardLink.cloneNode(true);
         mediaCardLink.parentNode.replaceChild(freshClone, mediaCardLink);
       }
+
+      // Append to '#user-created-sections' if exists, else to '#homepage-sections'
+      const appendTarget = document.querySelector('#user-created-sections') || document.querySelector('#homepage-sections');
+      appendTarget.appendChild(mediaSection);
+
+      // Save user sections to cookie
+      saveUserSections();
+
+      // Also save homepage order (so newly created section stays in order)
+      saveHomepageOrder();
   })
   
   function applyFilters() {
@@ -395,4 +616,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
   document.querySelector('#modal-sliders-content-filter').addEventListener(
     'input', applyFilters
   )
+
+  setInterval(() => {
+    try {
+      saveHomepageOrder();
+      saveUserSections();
+    } catch (e) {}
+  }, 5000);
 });
