@@ -16,6 +16,11 @@ function deleteCookie(name) {
   document.cookie = `${encodeURIComponent(name)}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
 }
 
+function isCustomizeModalOpen() {
+  const modal = document.getElementById('customize-modal');
+  return modal && modal.style.display === 'block';
+}
+
 function generateIdFromTitle(title) {
   const base = title
     .trim()
@@ -276,12 +281,11 @@ function createMediaCard(video, onClick) {
       </div>
     </div>
   `;
-  // default link behavior: go to player url
-  mediaCardLink.href = videoUrl;
-
   if (onClick) {
+
     mediaCardLink.addEventListener('click', (e) => {
       e.preventDefault();
+      e.stopPropagation();
       onClick(video.title || video.name);
     });
   }
@@ -425,7 +429,31 @@ document.addEventListener("DOMContentLoaded", function(event) {
         'click', closeCustomizeModal
     );
 
+    function resetCreateSectionUI() {
+      // Clear added content
+      contentAdded = {};
+
+      // Clear New Section preview
+      const newUserSection = customizeModal.querySelector('#create-section #new-user-section');
+      if (newUserSection) {
+        newUserSection.innerHTML = '';
+      }
+
+      // Clear section name input
+      const input = customizeModal.querySelector('#create-section > input');
+      if (input) input.value = '';
+
+      // 🔴 Re-render Filtered Content so clicks work again
+      const existingFiltered = customizeModal.querySelector('#create-section > .media-section');
+      if (existingFiltered) existingFiltered.remove();
+
+      renderContent(eternityLocalData);
+    }
+
     function renderContent(content) {
+      const existing = customizeModal.querySelector('#create-section > .media-section');
+      if (existing) existing.remove();
+
       renderSlider(
         content.slice(0, 30),
         document.querySelector('#create-section'),
@@ -555,6 +583,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
       // Also save homepage order (so newly created section stays in order)
       saveHomepageOrder();
+      resetCreateSectionUI();
   })
   
   function applyFilters() {
