@@ -2951,8 +2951,13 @@ header .cta-button a {
 
 /**/
 
+
+/* -------------------------
+   Customize Homepage Button
+-------------------------- */
+
 #customize-homepage {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -2960,62 +2965,196 @@ header .cta-button a {
 
 #customize-homepage > button {
   margin: 0;
-  padding: 0.75rem;
+  padding: 0.85rem 1.5rem;
   border: none;
-  border-radius: 0.5rem;
-  background-color: #d32f2f;
+  border-radius: 0.75rem;
+  background: linear-gradient(135deg, #e53935, #b71c1c);
   color: #ffffff;
   font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
+
+#customize-homepage > button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(211, 47, 47, 0.35);
+}
+
+/* -------------------------
+   Customize Modal
+-------------------------- */
 
 #customize-modal {
   display: none;
   position: fixed;
-  top: 50%;
-  left: 50%;
+  inset: 0;
   z-index: 1234;
   background-color: var(--bg-dark);
-  width: 100vw;
-  height: 100vh;
-  transform: translate(-50%, -50%);
-  padding: 2.5rem;
-  overflow-y: scroll;
+  padding: 2.5rem 2rem;
+  overflow-y: auto;
 }
 
+#customize-modal h1 {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  color: #f5f5f5;
+}
+
+/* Close button */
 #customize-modal > button {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background-color: #4a5568;
+  position: fixed;
+  top: 1.25rem;
+  right: 1.25rem;
+  background-color: #d32f2f;
   color: white;
   padding: 0.5rem;
-  border-radius: 50%;
+  border-radius: 999px;
   border: none;
   cursor: pointer;
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 1.25rem;
+  transition: background-color 0.2s ease, transform 0.2s ease;
   z-index: 20;
 }
 
-#customize-modal button:hover {
-  background-color: #2d3748;
+#customize-modal > button:hover {
+  background-color: #b71c1c;
+  transform: rotate(90deg);
 }
 
-#customize-modal > #reorder-sections-customize-modal {
+/* -------------------------
+   Reorder Sections
+-------------------------- */
+
+#reorder-sections-customize-modal {
   display: flex;
   flex-direction: column;
-  row-gap: 1rem;
+  row-gap: 0.75rem;
+  margin-bottom: 3rem;
 }
 
-#customize-modal > #reorder-sections-customize-modal span {
-  background-color: #161d25;
-  padding: 1rem;
+#reorder-sections-customize-modal span {
+  background: linear-gradient(135deg, #1a1f26, #24191b);
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  cursor: grab;
+  font-weight: 600;
+  color: #f5f5f5;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+  transition: background 0.2s ease, transform 0.15s ease;
+  border-left: 4px solid #d32f2f;
+}
+
+#reorder-sections-customize-modal span:hover {
+  background: #2a1d20;
+}
+
+#reorder-sections-customize-modal span.draggable.dragging {
+  background: #3a1f22;
+  transform: scale(1.03);
+  cursor: grabbing;
+  opacity: 0.9;
+  border-left-color: #b71c1c;
+}
+
+/* -------------------------
+   Create Section Area
+-------------------------- */
+
+#create-section {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(211, 47, 47, 0.25);
+}
+
+#create-section input {
+  width: 100%;
+  max-width: 420px;
+  padding: 0.75rem 1rem;
   border-radius: 0.5rem;
+  border: 1px solid #3a1f22;
+  background-color: #161214;
+  color: #ffffff;
+  margin-bottom: 0.75rem;
 }
 
-#customize-modal > #reorder-sections-customize-modal span.draggable.dragging {
-  background-color: #4a5568;
+#create-section input::placeholder {
+  color: #cbd5e0;
+}
+
+#create-section input:focus {
+  outline: none;
+  border-color: #d32f2f;
+  box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.25);
+}
+
+/* Create button */
+#create-section > button {
+  padding: 0.7rem 1.25rem;
+  border-radius: 0.5rem;
+  border: none;
+  background-color: #d32f2f;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#create-section > button:hover {
+  background-color: #b71c1c;
+}
+
+/* -------------------------
+   Filters
+-------------------------- */
+
+#customize-modal .filters-container input,
+#customize-modal .filters-container select {
+  padding: 0.65rem 0.85rem;
+  border-radius: 0.5rem;
+  border: 1px solid #3a1f22;
+  background-color: #161214;
+  color: #f5f5f5;
+}
+
+#customize-modal .filters-container input::placeholder {
+  color: #cbd5e0;
+}
+
+#customize-modal .filters-container input:focus,
+#customize-modal .filters-container select:focus {
+  outline: none;
+  border-color: #d32f2f;
+  box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.25);
+}
+
+/* -------------------------
+   Media Section in Modal
+-------------------------- */
+
+#create-section .media-section {
+  margin-top: 1.5rem;
+  border-radius: 1rem;
+  padding: 1rem;
+  background-color: rgba(30, 18, 20, 0.7);
+  border: 1px solid rgba(211, 47, 47, 0.25);
+}
+
+/* -------------------------
+   Responsive tweaks
+-------------------------- */
+
+@media (max-width: 768px) {
+  #customize-modal {
+    padding: 1.5rem 1rem;
+  }
+
+  #customize-modal h1 {
+    font-size: 1.2rem;
+  }
 }
