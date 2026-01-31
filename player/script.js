@@ -38,6 +38,7 @@ function debounce(func, delay) {
    * @returns {object} A standardized object.
    */
   function normalizeDataForPlayer(item, type) {
+    console.log('normalizing', item, type);
     const normalized = {
       id: item.id,
       title: item.title || item.name || "Title Unavailable",
@@ -47,7 +48,7 @@ function debounce(func, delay) {
       sourceType: "unknown",
       videoId: null,
       thumbnailUrl: item.logo || item.thumbnail || null,
-      origin: item.origin,
+      origin: item.origin ?? type,
       rating: item.rating,
       categories: item.categories
     };
@@ -324,6 +325,32 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       console.log('mediaData:', mediaTitle, mediaData);
+
+      const trackingSession = (
+        globalUserTracking?.['sessions']?.[mediaTitle]
+        ?? {
+            "origin": mediaData.origin,
+            "categories": mediaData.categories,
+            "total_consumption_seconds": 0,
+            "timestamps": []
+        }
+      )
+
+      trackingSession['timestamps'].push({'start': Date.now()})
+      console.log('trackingSession', trackingSession);
+
+      window.addEventListener('beforeunload', () => {
+        const timestamps = trackingSession['timestamps']
+        const last = timestamps[timestamps.length - 1]
+        last.end = Date.now()
+
+        trackingSession['total_consumption_seconds'] = 
+          (last.end - last.start) / 1000.0
+
+        globalUserTracking['sessions'][mediaTitle] = trackingSession
+
+        setTracking(globalUserTracking)
+      });
 
       let stored = localStorage.getItem("categoriesConsumed");
       let categoriesConsumed = stored ? JSON.parse(stored) : {};
