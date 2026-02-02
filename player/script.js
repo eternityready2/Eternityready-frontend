@@ -326,31 +326,48 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       console.log('mediaData:', mediaTitle, mediaData);
 
-      const trackingSession = (
-        globalUserTracking?.['sessions']?.[mediaTitle]
-        ?? {
-            "origin": mediaData.origin,
-            "categories": mediaData.categories,
-            "total_consumption_seconds": 0,
-            "timestamps": []
-        }
-      )
+      try {
+        const deviceType = /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop';
 
-      trackingSession['timestamps'].push({'start': Date.now()})
-      console.log('trackingSession', trackingSession);
+        const trackingSession = (
+          globalUserTracking?.['sessions']?.[mediaTitle]
+          ?? {
+              "origin": mediaData.origin,
+              "categories": mediaData.categories,
+              "total_consumption_seconds": 0,
+              "timestamps": [],
+              "metadata": {
+                "device": [],
+                "average_watch_seconds": 0
+              }
+            }
+        );
 
-      window.addEventListener('beforeunload', () => {
-        const timestamps = trackingSession['timestamps']
-        const last = timestamps[timestamps.length - 1]
-        last.end = Date.now()
+        trackingSession['metadata']['device'].push(deviceType);
+        trackingSession['timestamps'].push({ start: Date.now() });
+        console.log('trackingSession', trackingSession);
 
-        trackingSession['total_consumption_seconds'] = 
-          (last.end - last.start) / 1000.0
+        window.addEventListener('beforeunload', () => {
+          const timestamps = trackingSession['timestamps'];
+          const last = timestamps[timestamps.length - 1];
+          last.end = Date.now();
 
-        globalUserTracking['sessions'][mediaTitle] = trackingSession
+          // Calculate new watch segment duration
+          const sessionSeconds = (last.end - last.start) / 1000.0;
+          trackingSession['total_consumption_seconds'] += sessionSeconds;
 
-        setTracking(globalUserTracking)
-      });
+          // Update average watch time per session segment
+          const totalSegments = timestamps.length;
+          trackingSession['metadata']['average_watch_seconds'] = 
+            trackingSession['total_consumption_seconds'] / totalSegments;
+
+          // Save updated object
+          globalUserTracking['sessions'][mediaTitle] = trackingSession;
+          setTracking(globalUserTracking);
+        });
+      } catch (error) {
+        console.error("userTrackingError", error);
+      }
 
       let stored = localStorage.getItem("categoriesConsumed");
       let categoriesConsumed = stored ? JSON.parse(stored) : {};
