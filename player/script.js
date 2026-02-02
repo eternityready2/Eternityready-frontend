@@ -328,7 +328,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       try {
         const deviceType = /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop';
-
+        const previousTitle = sessionStorage.getItem("lastTitle");
         const trackingSession = (
           globalUserTracking?.['sessions']?.[mediaTitle]
           ?? {
@@ -338,10 +338,18 @@ document.addEventListener("DOMContentLoaded", async () => {
               "timestamps": [],
               "metadata": {
                 "device": [],
-                "average_watch_seconds": 0
+                "average_watch_seconds": 0,
+                "referrers": {},
               }
             }
         );
+
+        if (previousTitle && previousTitle !== mediaTitle) {
+          const referrers = trackingSession.metadata.referrers;
+          referrers[previousTitle] = (referrers[previousTitle] ?? 0) + 1;
+        }
+
+        sessionStorage.setItem("lastTitle", mediaTitle);
 
         trackingSession['metadata']['device'].push(deviceType);
         trackingSession['timestamps'].push({ start: Date.now() });
