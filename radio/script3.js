@@ -617,7 +617,61 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const eternityRadioRef = getEternityRadioPlayerRef();
         if (eternityRadioRef && eternityRadioRef.current) {
+          console.log('channelClicked', channel);
           eternityRadioRef.current.changeExternalStation(channel);
+          try {
+            const deviceType = /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop';
+            const previousRadio = sessionStorage.getItem("previousRadio");
+            globalUserTracking['sessions'][channel.name] = (
+              globalUserTracking?.['sessions']?.[channel.name]
+              ?? {
+                  "origin": "radio",
+                  "categories": channel.categories,
+                  "total_consumption_seconds": 0,
+                  "timestamps": [],
+                  "metadata": {
+                    "device": [],
+                    "average_watch_seconds": 0,
+                    "referrers": {},
+                  }
+                }
+            );
+
+            const trackingSession = globalUserTracking['sessions'][channel.name]
+            console.log('prev', previousRadio, channel.name, trackingSession, globalUserTracking['sessions'][channel.name]);
+            try {
+              if (previousRadio && previousRadio !== channel.name) {
+                const referrers = trackingSession.metadata.referrers;
+                referrers[previousRadio] = (referrers[previousRadio] ?? 0) + 1;
+
+                const radio = globalUserTracking?.['sessions']?.[previousRadio]
+                const timestamps = radio['timestamps'];
+                const last = timestamps[timestamps.length - 1];
+                last.end = Date.now();
+
+                // Calculate new watch segment duration
+                const sessionSeconds = (last.end - last.start) / 1000.0;
+                radio['total_consumption_seconds'] += sessionSeconds;
+
+                // Update average watch time per session segment
+                const totalSegments = timestamps.length;
+                radio['metadata']['average_watch_seconds'] = 
+                  radio['total_consumption_seconds'] / totalSegments;
+
+                setTracking(globalUserTracking);
+              }
+            } catch (error) {
+              console.error("previousRadioError", error);
+            }
+
+            trackingSession['metadata']['device'].push(deviceType);
+            trackingSession['timestamps'].push({ start: Date.now() });
+            sessionStorage.setItem("previousRadio", channel.name); 
+
+          } catch (error) {
+            console.error("userTrackingError", error);
+          }
+
         }
       });
 
