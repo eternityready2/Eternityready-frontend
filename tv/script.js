@@ -91,69 +91,76 @@ function initializeSliderControls(context = document) {
   });
 }
 
-async function runAfterAllMedia(allMedia, position) {
-    const recommendations = await fetchRecommendation(allMedia);
-    if (!recommendations || recommendations.length == 0) {
-      return;
-    }
-
-    const mediaSection = document.createElement('div');
-    mediaSection.className = 'media-section';
-    mediaSection.innerHTML += `
-    <div
-      class="section-header"
-    >
-      <h2 class="section-title"><a href="/categories/?category=recommend">Recommended Content</a></h2><a href="/categories/?category=recommend" class="section-link"><i class="fa fa-chevron-right"></i></a></div>
-  <div class="slider-wrapper">
-      <button class="slider-arrow prev" aria-label="Anterior"><i class="fa fa-chevron-left"></i></button>
-      <div class="media-grid">
-      </div>
-      <button class="slider-arrow next" aria-label="Próximo"><i class="fa fa-chevron-right"></i></button>
+function constructMediaSection(content, title) {
+  const mediaSection = document.createElement('div');
+  mediaSection.className = 'media-section';
+  mediaSection.innerHTML += `
+  <div
+    class="section-header"
+  >
+    <h2 class="section-title"><a href="/categories/?category=recommend">${title}</a></h2><a href="/categories/?category=recommend" class="section-link"><i class="fa fa-chevron-right"></i></a></div>
+<div class="slider-wrapper">
+    <button class="slider-arrow prev" aria-label="Anterior"><i class="fa fa-chevron-left"></i></button>
+    <div class="media-grid">
     </div>
-    `;
-    const mediaGrid = mediaSection.querySelector('.media-grid');
-    for (const video of recommendations) {
-      const id = encodeURIComponent(video.title || video.name);
-      const videoUrl = `${ETERNITY_BASE_URL}/player/?q=${id}`;
-      const imageUrl = video.thumbnail?.url?.startsWith("http")
-          ? video.thumbnail.url
-          : `${API_BASE_URL}/${video.thumbnail.url.replace(/^\//, "")}`;
+    <button class="slider-arrow next" aria-label="Próximo"><i class="fa fa-chevron-right"></i></button>
+  </div>
+  `;
+  const mediaGrid = mediaSection.querySelector('.media-grid');
+  for (const video of content) {
+    const id = encodeURIComponent(video.title || video.name);
+    const videoUrl = `${ETERNITY_BASE_URL}/player/?q=${id}`;
+    const imageUrl = video.thumbnail?.url?.startsWith("http")
+        ? video.thumbnail.url
+        : `${API_BASE_URL}/${video.thumbnail.url.replace(/^\//, "")}`;
 
-      const mediaCardLink = document.createElement('a');
-      mediaCardLink.className = "media-card-link";
-      mediaCardLink.href = videoUrl;
-      mediaCardLink.innerHTML += `
-        <div
-          class="media-card"
-        >
-          <div class="media-thumb">
-            <img
-              src="${imageUrl || "/images/placeholder.jpg"}"
-              alt="${video.title}"
-              loading="lazy"
-              class="media-thumbnail"
-            />
-          </div>
-          <div class="media-info-col">
-            <p class="media-title">${video.title}</p>
-            <div class="media-subinfo">
-              <p class="media-genre">
-                ${
-                  (video.categories || [])
-                    .map((c) => c.name)
-                    .join(", ")
-                }
-              </p>
-              <p class="media-by">
-                by <span class="media-author">${video.author || "EternityReady"}</span>
-              </p>
-            </div>
+    const mediaCardLink = document.createElement('a');
+    mediaCardLink.className = "media-card-link";
+    mediaCardLink.href = videoUrl;
+    mediaCardLink.innerHTML += `
+      <div
+        class="media-card"
+      >
+        <div class="media-thumb">
+          <img
+            src="${imageUrl || "/images/placeholder.jpg"}"
+            alt="${video.title}"
+            loading="lazy"
+            class="media-thumbnail"
+          />
+        </div>
+        <div class="media-info-col">
+          <p class="media-title">${video.title}</p>
+          <div class="media-subinfo">
+            <p class="media-genre">
+              ${
+                (video.categories || [])
+                  .map((c) => c.name)
+                  .join(", ")
+              }
+            </p>
+            <p class="media-by">
+              by <span class="media-author">${video.author || "EternityReady"}</span>
+            </p>
           </div>
         </div>
-      `
-        mediaGrid.appendChild(mediaCardLink);
-    }
-    
+      </div>
+    `
+      mediaGrid.appendChild(mediaCardLink);
+  }
+  return mediaSection
+}
+
+async function runAfterAllMedia(allMedia, position) {
+  const recommendations = await fetchRecommendation(allMedia);
+
+  const topTvItems = getTopTvItems().map(x => allMedia.find(y => (y.title || y.name) === x.title));
+  const recentlyWatchedTv = getRecentlyWatchedTv().map(x => allMedia.find(y => (y.title || y.name) === x.title));
+  
+  console.log('topTvItems', topTvItems, 'recentlyWatchedTv', recentlyWatchedTv, 'recommendations', recommendations);
+
+  if (recommendations && recommendations.length > 0) {
+    const mediaSection = constructMediaSection(recommendations, "Recommended Content")
     if (position === "channels") {
       document.querySelector('.search-section').insertAdjacentElement('afterend', mediaSection);
     }
@@ -162,6 +169,31 @@ async function runAfterAllMedia(allMedia, position) {
       document.querySelector('#main-container').insertAdjacentElement('afterbegin', mediaSection);
     }
     initializeSliderControls(mediaSection);
+  }
+
+  if (topTvItems && topTvItems.length > 0) {
+    const mediaSection = constructMediaSection(topTvItems, "Most Consumed")
+    if (position === "channels") {
+      document.querySelector('.search-section').insertAdjacentElement('afterend', mediaSection);
+    }
+    
+    else {
+      document.querySelector('#main-container').insertAdjacentElement('afterbegin', mediaSection);
+    }
+    initializeSliderControls(mediaSection);
+  }
+
+  if (recentlyWatchedTv && recentlyWatchedTv.length > 0) {
+    const mediaSection = constructMediaSection(recentlyWatchedTv, "Recently Watched")
+    if (position === "channels") {
+      document.querySelector('.search-section').insertAdjacentElement('afterend', mediaSection);
+    }
+    
+    else {
+      document.querySelector('#main-container').insertAdjacentElement('afterbegin', mediaSection);
+    }
+    initializeSliderControls(mediaSection);
+  }
 }
 
 function waitForAllMedia(position) {
