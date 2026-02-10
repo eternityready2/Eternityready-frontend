@@ -152,13 +152,20 @@ function constructMediaSection(content, title) {
 }
 
 async function runAfterAllMedia(allMedia, position) {
-  const recommendations = await fetchRecommendation(allMedia);
+  // const recommendations = await fetchRecommendation(allMedia);
 
-  const topTvItems = getTopTvItems().map(x => allMedia.find(y => (y.title || y.name) === x.title));
-  const recentlyWatchedTv = getRecentlyWatchedTv().map(x => allMedia.find(y => (y.title || y.name) === x.title));
-  
-  console.log('topTvItems', topTvItems, 'recentlyWatchedTv', recentlyWatchedTv, 'recommendations', recommendations);
+  const topItems = getTopItems({origins: ['channel', 'movie']})
+    .map(x => allMedia.find(y => (y.title || y.name) === x.title));
 
+  const recentlyWatched = getRecentlyWatched({origins: ['channel', 'movie']})
+    .map(x => allMedia.find(y => (y.title || y.name) === x.title));
+
+  console.log(
+    'topItems', topItems,
+    'recentlyWatched', recentlyWatched,
+  );
+
+  /*
   if (recommendations && recommendations.length > 0) {
     const mediaSection = constructMediaSection(recommendations, "Recommended Content")
     if (position === "channels") {
@@ -170,9 +177,10 @@ async function runAfterAllMedia(allMedia, position) {
     }
     initializeSliderControls(mediaSection);
   }
+  */
 
-  if (topTvItems && topTvItems.length > 0) {
-    const mediaSection = constructMediaSection(topTvItems, "Most Consumed")
+  if (topItems && topItems.length > 0) {
+    const mediaSection = constructMediaSection(topItems, "Most Consumed")
     if (position === "channels") {
       document.querySelector('.search-section').insertAdjacentElement('afterend', mediaSection);
     }
@@ -183,8 +191,8 @@ async function runAfterAllMedia(allMedia, position) {
     initializeSliderControls(mediaSection);
   }
 
-  if (recentlyWatchedTv && recentlyWatchedTv.length > 0) {
-    const mediaSection = constructMediaSection(recentlyWatchedTv, "Recently Watched")
+  if (recentlyWatched && recentlyWatched.length > 0) {
+    const mediaSection = constructMediaSection(recentlyWatched, "Recently Watched")
     if (position === "channels") {
       document.querySelector('.search-section').insertAdjacentElement('afterend', mediaSection);
     }
