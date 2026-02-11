@@ -1,6 +1,101 @@
 let eternityLocalDataLoaded = false;
 let eternityLocalData = [];
 
+function waitForAllMedia() {
+  if ( eternityLocalDataLoaded == true) {
+    runAfterAllMedia(eternityLocalData);
+  } else {
+    setTimeout(() => waitForAllMedia(position), 50);
+  }
+}
+
+function constructMediaSection(content, title) {
+  const mediaSection = document.createElement('div');
+  mediaSection.style.paddingTop = '0';
+  mediaSection.style.paddingBottom = '0';
+  mediaSection.className = 'media-section';
+  mediaSection.innerHTML += `
+  <div
+    class="section-header"
+  >
+    <h2 class="section-title"><a href="/categories/?category=recommend">${title}</a></h2><a href="/categories/?category=recommend" class="section-link"><i class="fa fa-chevron-right"></i></a></div>
+<div class="slider-wrapper">
+    <button class="slider-arrow prev" aria-label="Anterior"><i class="fa fa-chevron-left"></i></button>
+    <div class="media-grid">
+    </div>
+    <button class="slider-arrow next" aria-label="Próximo"><i class="fa fa-chevron-right"></i></button>
+  </div>
+  `;
+  const mediaGrid = mediaSection.querySelector('.media-grid');
+  for (const video of content) {
+    const id = encodeURIComponent(video.title || video.name);
+    const videoUrl = `${ETERNITY_BASE_URL}/player/?q=${id}`;
+    const imageUrl = video.thumbnail?.url?.startsWith("http")
+        ? video.thumbnail.url
+        : `${API_BASE_URL}/${video.thumbnail.url.replace(/^\//, "")}`;
+
+    const mediaCardLink = document.createElement('a');
+    mediaCardLink.className = "media-card-link";
+    mediaCardLink.href = videoUrl;
+    mediaCardLink.innerHTML += `
+      <div
+        class="media-card"
+      >
+        <div class="media-thumb">
+          <img
+            src="${imageUrl || "/images/placeholder.jpg"}"
+            alt="${video.title}"
+            loading="lazy"
+            class="media-thumbnail"
+          />
+        </div>
+        <div class="media-info-col">
+          <p class="media-title">${video.title}</p>
+          <div class="media-subinfo">
+            <p class="media-genre">
+              ${
+                (video.categories || [])
+                  .map((c) => c.name)
+                  .join(", ")
+              }
+            </p>
+            <p class="media-by">
+              by <span class="media-author">${video.author || "EternityReady"}</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    `
+      mediaGrid.appendChild(mediaCardLink);
+  }
+  return mediaSection
+}
+
+async function runAfterAllMedia(allMedia) {
+  const topItems = getTopItems({origins: ['radio', 'music', 'channel', 'movie']})
+    .map(x => allMedia.find(y => (y.title || y.name) === x.title));
+
+  const recentlyWatched = getRecentlyWatched({origins: ['radio', 'music', 'channel', 'movie']})
+    .map(x => allMedia.find(y => (y.title || y.name) === x.title));
+
+  console.log(
+    'topItems', topItems,
+    'recentlyWatched', recentlyWatched,
+  );
+
+  if (topItems && topItems.length > 0) {
+    const mediaSection = constructMediaSection(topItems, "Most Consumed")
+    document.querySelector('#recommended-content-slider').insertAdjacentElement('afterbegin', mediaSection);
+    initializeSliderControls(mediaSection);
+  }
+
+  if (recentlyWatched && recentlyWatched.length > 0) {
+    const mediaSection = constructMediaSection(recentlyWatched, "Recently Watched")
+    document.querySelector('#recommended-content-slider').insertAdjacentElement('afterbegin', mediaSection);
+    initializeSliderControls(mediaSection);
+  }
+}
+
 function setActiveMidiaButton(typeTo) {
   const midiaButton = document.querySelector('.midia-button');
   const typesMap = {
@@ -2024,6 +2119,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initializePlayerPreviews();
     initializeSliderControls(document.getElementById("browse-by-service"));
     initializeSliderControls(document.getElementById("browse-by-people"));
+    waitForAllMedia();
   }
 
   main();
