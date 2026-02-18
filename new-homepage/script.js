@@ -72,10 +72,10 @@ function constructMediaSection(content, title) {
 }
 
 async function runAfterAllMedia(allMedia) {
-  const topItems = getTopItems({origins: ['radio', 'music', 'channel', 'movie']})
+  const topItems = getTopItems({origins: ['radio', 'music', 'channel', 'movie', 'podcast']})
     .map(x => allMedia.find(y => (y.title || y.name) === x.title));
 
-  const recentlyWatched = getRecentlyWatched({origins: ['radio', 'music', 'channel', 'movie']})
+  const recentlyWatched = getRecentlyWatched({origins: ['radio', 'music', 'channel', 'movie', 'podcast']})
     .map(x => allMedia.find(y => (y.title || y.name) === x.title));
 
   const mostConsumedCategories = getMostConsumedCategories({
