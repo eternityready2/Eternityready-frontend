@@ -79,7 +79,7 @@ async function runAfterAllMedia(allMedia) {
     .map(x => allMedia.find(y => (y.title || y.name) === x.title));
 
   const mostConsumedCategories = getMostConsumedCategories({
-    origins: ['radio', 'music', 'channel', 'movie']
+    origins: ['radio', 'music', 'channel', 'movie', 'podcast']
   })
 
   console.log(
