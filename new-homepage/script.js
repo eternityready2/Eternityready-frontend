@@ -10,6 +10,7 @@ function waitForAllMedia() {
 }
 
 function constructMediaSection(content, title) {
+  console.log('CONT', content);
   const mediaSection = document.createElement('div');
   mediaSection.style.paddingTop = '0';
   mediaSection.style.paddingBottom = '0';
@@ -32,7 +33,7 @@ function constructMediaSection(content, title) {
     const videoUrl = `${ETERNITY_BASE_URL}/player/?q=${id}`;
     const imageUrl = video.thumbnail?.url?.startsWith("http")
         ? video.thumbnail.url
-        : `${API_BASE_URL}/${video.thumbnail.url.replace(/^\//, "")}`;
+        : `${content.sourceType === "podcasts" ? "https://keystone.eternityready.com" : API_BASE_URL}/${video.thumbnail.url.replace(/^\//, "")}`;
 
     const mediaCardLink = document.createElement('a');
     mediaCardLink.className = "media-card-link";
