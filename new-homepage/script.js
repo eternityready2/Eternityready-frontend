@@ -31,7 +31,7 @@ function constructMediaSection(content, title) {
   for (const video of content) {
     const id = encodeURIComponent(video.title || video.name);
     const videoUrl = video?.sourceType === "podcasts" 
-      ? `https://podcasts.eternityready.com/episodes/${id}`
+      ? `https://podcasts.eternityready.com/episodes/${video.id}`
       : `${ETERNITY_BASE_URL}/player/?q=${id}`;
 
     const imageUrl = video.thumbnail?.url?.startsWith("http")
