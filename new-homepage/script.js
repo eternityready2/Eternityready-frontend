@@ -33,7 +33,7 @@ function constructMediaSection(content, title) {
     const videoUrl = `${ETERNITY_BASE_URL}/player/?q=${id}`;
     const imageUrl = video.thumbnail?.url?.startsWith("http")
         ? video.thumbnail.url
-        : `${content.sourceType === "podcasts" ? "https://keystone.eternityready.com" : API_BASE_URL}/${video.thumbnail.url.replace(/^\//, "")}`;
+        : `${video?.sourceType === "podcasts" ? "https://keystone.eternityready.com" : API_BASE_URL}/${video.thumbnail.url.replace(/^\//, "")}`;
 
     const mediaCardLink = document.createElement('a');
     mediaCardLink.className = "media-card-link";
