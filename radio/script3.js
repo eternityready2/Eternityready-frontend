@@ -125,6 +125,10 @@ async function runAfterAllMedia(allMedia, position) {
   const recentlyWatched = getRecentlyWatched({origins: ['radio', 'music']})
     .map(x => allMedia.find(y => (y.title || y.name) === x.title));
 
+  const mostConsumedCategories = getMostConsumedCategories({
+    origins: ['radio', 'music']
+  })
+
   console.log(
     'topItems', topItems,
     'recentlyWatched', recentlyWatched,
@@ -148,6 +152,27 @@ async function runAfterAllMedia(allMedia, position) {
     const mediaSection = constructMediaSection(recentlyWatched, "Recently Watched")
     document.querySelector('#main-container').insertAdjacentElement('afterbegin', mediaSection);
     initializeSliderControls(mediaSection);
+  }
+
+  if (mostConsumedCategories && mostConsumedCategories.length > 0) {
+    const mostConsumedCategory = mostConsumedCategories[0].category
+
+    const content = allMedia
+      .filter(item => 
+        {
+          return (item.categories || item.genres || [])
+                  .some(x => x === mostConsumedCategory || x?.name === mostConsumedCategory)
+        }
+      )
+      .sort(() => 0.5 - Math.random())
+      .slice(0, 10)
+
+    console.log('mostConsumed', allMedia, mostConsumedCategories, content);
+    if (content && content.length > 0) {
+      const mediaSection = constructMediaSection(content, `Based on your most consumed category - ${mostConsumedCategory}`)
+      document.querySelector('#main-container').insertAdjacentElement('afterbegin', mediaSection);
+      initializeSliderControls(mediaSection);
+    }
   }
 }
 
