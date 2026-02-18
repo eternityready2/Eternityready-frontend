@@ -30,7 +30,10 @@ function constructMediaSection(content, title) {
   const mediaGrid = mediaSection.querySelector('.media-grid');
   for (const video of content) {
     const id = encodeURIComponent(video.title || video.name);
-    const videoUrl = `${ETERNITY_BASE_URL}/player/?q=${id}`;
+    const videoUrl = video?.sourceType === "podcasts" 
+      ? `https://podcasts.eternityready.com/episodes/${id}`
+      : `${ETERNITY_BASE_URL}/player/?q=${id}`;
+
     const imageUrl = video.thumbnail?.url?.startsWith("http")
         ? video.thumbnail.url
         : `${video?.sourceType === "podcasts" ? "https://keystone.eternityready.com" : API_BASE_URL}/${video.thumbnail.url.replace(/^\//, "")}`;
