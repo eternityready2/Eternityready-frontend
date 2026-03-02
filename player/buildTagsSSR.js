@@ -19,6 +19,8 @@ function isFacebookBot(req) {
 }
 
 function buildShareHtml({ shareUrl, original, title, image, description }) {
+  const encodedImage = image ? encodeURI(image) : '';
+
   return `<!doctype html>
 <html>
 <head>
@@ -28,7 +30,7 @@ function buildShareHtml({ shareUrl, original, title, image, description }) {
   <meta property="og:type" content="website" />
   <meta property="og:title" content="${escapeHtml(title)}" />
   <meta property="og:description" content="${escapeHtml(description)}" />
-  <meta property="og:image" content="${escapeHtml(image)}" />
+  <meta property="og:image" content="${escapeHtml(encodedImage)}" />
   <meta property="og:url" content="${escapeHtml(shareUrl)}" />
   <link rel="canonical" href="${escapeHtml(shareUrl)}" />
 </head>
