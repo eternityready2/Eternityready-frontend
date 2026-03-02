@@ -2,10 +2,9 @@ const http = require('http');
 const { URL } = require('url');
 
 const PORT = process.env.PORT || 3456;
-const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 
 function escapeHtml(str) {
-  if (str === undefined || str === null) return '';
+  if (!str) return '';
   return String(str)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -14,28 +13,29 @@ function escapeHtml(str) {
     .replace(/'/g, '&#39;');
 }
 
-function buildShareHtml({ original = '', title = '', image = '', description = '' }) {
-  const safeOriginal = escapeHtml(original)
-  const safeTitle = escapeHtml(title)
-  const safeImage = escapeHtml(image)
-  const safeDescription = escapeHtml(description)
+function isFacebookBot(req) {
+  const ua = (req.headers['user-agent'] || '').toLowerCase();
+  return ua.includes('facebookexternalhit') || ua.includes('facebot');
+}
 
+function buildShareHtml({ shareUrl, original, title, image, description }) {
   return `<!doctype html>
-<html lang="en">
+<html>
 <head>
   <meta charset="utf-8" />
-  <title>${safeTitle || 'Shared page'}</title>
+  <title>${escapeHtml(title)}</title>
 
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="${safeTitle}" />
-  <meta property="og:description" content="${safeDescription}" />
-  <meta property="og:image" content="${safeImage}" />
-  <meta property="og:url" content="${safeOriginal || BASE_URL}" />
-  <link rel="canonical" href="${safeOriginal || BASE_URL}" />
-
+  <meta property="og:title" content="${escapeHtml(title)}" />
+  <meta property="og:description" content="${escapeHtml(description)}" />
+  <meta property="og:image" content="${escapeHtml(image)}" />
+  <meta property="og:url" content="${escapeHtml(original)}" />
+  <link rel="canonical" href="${escapeHtml(original)}" />
 </head>
 <body>
-  <p>Preparing shared page... <a href="${safeOriginal || '#'}">Continue</a></p>
+  <h1>${escapeHtml(title)}</h1>
+  <p>${escapeHtml(description)}</p>
+  <a href="${escapeHtml(original)}">Continue</a>
 </body>
 </html>`;
 }
@@ -43,32 +43,39 @@ function buildShareHtml({ original = '', title = '', image = '', description = '
 const server = http.createServer((req, res) => {
   try {
     const reqUrl = new URL(req.url, `http://${req.headers.host}`);
+
     if (reqUrl.pathname !== '/share') {
-      res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
-      res.end('Not found');
-      return;
+      res.writeHead(404);
+      return res.end('Not found');
     }
 
-    const q = reqUrl.searchParams;
-    const original = q.get('url') ? decodeURIComponent(q.get('url')) : '';
-    const title = q.get('title') ? decodeURIComponent(q.get('title')) : '';
-    const image = q.get('image') ? decodeURIComponent(q.get('image')) : '';
-    const description = q.get('description') ? decodeURIComponent(q.get('description')) : '';
+    const original = decodeURIComponent(reqUrl.searchParams.get('url') || '');
+    const title = decodeURIComponent(reqUrl.searchParams.get('title') || '');
+    const image = decodeURIComponent(reqUrl.searchParams.get('image') || '');
+    const description = decodeURIComponent(reqUrl.searchParams.get('description') || '');
 
-    const html = buildShareHtml({ original, title, image, description });
+    const shareUrl = `https://${req.headers.host}${req.url}`;
+
+    if (!isFacebookBot(req)) {
+      res.writeHead(302, { Location: original });
+      return res.end();
+    }
+
+    const html = buildShareHtml({ shareUrl, original, title, image, description });
 
     res.writeHead(200, {
       'Content-Type': 'text/html; charset=utf-8',
       'Cache-Control': 'public, max-age=600'
     });
+
     res.end(html);
+
   } catch (err) {
-    res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
+    res.writeHead(500);
     res.end('Server error');
-    console.error(err);
   }
 });
 
 server.listen(PORT, () => {
-  console.log(`OG share server listening on ${BASE_URL}`);
+  console.log(`Share server running on port ${PORT}`);
 });
