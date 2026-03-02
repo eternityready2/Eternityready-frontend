@@ -382,13 +382,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       shareModal.querySelector('.platforms .platform.facebook').addEventListener('click', () => {
         console.log('Share Facebook', mediaData);
+
         const encodedUrl = encodeURIComponent(browserUrl);
-        const customTitle = encodeURIComponent(mediaData.title);
-        const customImage = encodeURIComponent(mediaData.thumbnailUrl);
-        const customDescription = encodeURIComponent(mediaData.description);
-        
-        const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${customDescription}&picture=${customImage}&title=${customTitle}`;
-        
+        const customTitle = encodeURIComponent(mediaData.title || '');
+        const customImage = encodeURIComponent(mediaData.thumbnailUrl || '');
+        const customDescription = encodeURIComponent(mediaData.description || '');
+
+        const ogPage = `https://ssr.eternityready.com/share?url=${encodedUrl}&title=${customTitle}&image=${customImage}&description=${customDescription}`;
+        console.log('ogPage: ', ogPage);
+        const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(ogPage)}&quote=${customDescription}`;
+
         window.open(shareUrl, '_blank');
       });
 
