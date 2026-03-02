@@ -381,11 +381,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
 
       shareModal.querySelector('.platforms .platform.facebook').addEventListener('click', () => {
-        const encodedUrl = encodeURIComponent(browserUrl);
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`, '_blank');
-      });
-
-      shareModal.querySelector('.platforms .platform.facebook').addEventListener('click', () => {
         console.log('Share Facebook', mediaData);
         const encodedUrl = encodeURIComponent(browserUrl);
         const customTitle = encodeURIComponent(mediaData.title);
