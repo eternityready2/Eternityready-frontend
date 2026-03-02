@@ -385,6 +385,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`, '_blank');
       });
 
+      shareModal.querySelector('.platforms .platform.facebook').addEventListener('click', () => {
+        console.log('Share Facebook', mediaData);
+        const encodedUrl = encodeURIComponent(browserUrl);
+        const customTitle = encodeURIComponent(mediaData.title);
+        const customImage = encodeURIComponent(mediaData.thumbnailUrl);
+        const customDescription = encodeURIComponent(mediaData.description);
+        
+        const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${customDescription}&picture=${customImage}&title=${customTitle}`;
+        
+        window.open(shareUrl, '_blank');
+      });
+
       shareModal.querySelector('.platforms .platform.twitter').addEventListener('click', () => {
         const encodedUrl = encodeURIComponent(browserUrl);
         const encodedText = encodeURIComponent("Check out this Eternity Ready Video!");
