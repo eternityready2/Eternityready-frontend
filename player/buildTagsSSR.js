@@ -33,7 +33,6 @@ function buildShareHtml({ original = '', title = '', image = '', description = '
   <meta property="og:url" content="${safeOriginal || BASE_URL}" />
   <link rel="canonical" href="${safeOriginal || BASE_URL}" />
 
-  ${safeOriginal ? `<meta http-equiv="refresh" content="1;url=${safeOriginal}">` : ''}
 </head>
 <body>
   <p>Preparing shared page... <a href="${safeOriginal || '#'}">Continue</a></p>
