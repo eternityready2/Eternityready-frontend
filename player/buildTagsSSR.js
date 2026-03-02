@@ -29,8 +29,8 @@ function buildShareHtml({ shareUrl, original, title, image, description }) {
   <meta property="og:title" content="${escapeHtml(title)}" />
   <meta property="og:description" content="${escapeHtml(description)}" />
   <meta property="og:image" content="${escapeHtml(image)}" />
-  <meta property="og:url" content="${escapeHtml(original)}" />
-  <link rel="canonical" href="${escapeHtml(original)}" />
+  <meta property="og:url" content="${escapeHtml(shareUrl)}" />
+  <link rel="canonical" href="${escapeHtml(shareUrl)}" />
 </head>
 <body>
   <h1>${escapeHtml(title)}</h1>
