@@ -51,7 +51,7 @@ const server = http.createServer((req, res) => {
       return res.end('Not found');
     }
 
-    const original = decodeURIComponent(reqUrl.searchParams.get('url') || '');
+    const original = reqUrl.searchParams.get('url') || '';
     const title = decodeURIComponent(reqUrl.searchParams.get('title') || '');
     const image = decodeURIComponent(reqUrl.searchParams.get('image') || '');
     const description = decodeURIComponent(reqUrl.searchParams.get('description') || '');
