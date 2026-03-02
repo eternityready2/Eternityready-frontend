@@ -44,7 +44,7 @@ const server = http.createServer((req, res) => {
   try {
     const reqUrl = new URL(req.url, `http://${req.headers.host}`);
 
-    if (reqUrl.pathname !== '/share') {
+    if (reqUrl.pathname !== '/ssr') {
       res.writeHead(404);
       return res.end('Not found');
     }
