@@ -388,7 +388,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const customImage = encodeURIComponent(mediaData.thumbnailUrl || '');
         const customDescription = encodeURIComponent(mediaData.description || '');
 
-        const ogPage = `https://ssr.eternityready.com/share?url=${encodedUrl}&title=${customTitle}&image=${customImage}&description=${customDescription}`;
+        const ogPage = `https://eternityready.com/ssr?url=${encodedUrl}&title=${customTitle}&image=${customImage}&description=${customDescription}`;
         console.log('ogPage: ', ogPage);
         const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(ogPage)}&quote=${customDescription}`;
 
