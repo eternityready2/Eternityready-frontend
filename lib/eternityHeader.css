@@ -1365,6 +1365,11 @@ ul {
   display: flex;
 }
 
+#donateHeader {
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
+}
+
 @media (max-width: 950px) {
   #links-and-icons-container > .centered_menu {
     display: none;
@@ -1372,11 +1377,10 @@ ul {
 }
 
 @media (max-width: 525px) {
-  #links-and-icons-container > .right .centered_menu button {
-    display: none;
-  }
-
   #links-and-icons-container > .right .centered_menu ul li:nth-child(1) {
     display: none;
+  }
+  #donateHeader {
+    margin-right: 0rem;
   }
 }
