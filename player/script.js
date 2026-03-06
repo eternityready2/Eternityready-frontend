@@ -43,14 +43,21 @@ function debounce(func, delay) {
       id: item.id,
       title: item.title || item.name || "Title Unavailable",
       description: item.description || "No description provided for the given media.",
-      author: item.author || "Eternity Ready",
-      embedCode: item.embed,
-      sourceType: "unknown",
-      videoId: null,
-      thumbnailUrl: item.logo || item.thumbnail || null,
-      origin: item.origin ?? type,
-      rating: item.rating,
-      categories: item.categories
+      /*author: item.author || "Eternity Ready",*/
+      author: "Eternity Ready",
+      embedCode: item.embed || item.embedCode,
+      sourceType: item.sourceType || "unknown",
+      videoId: item.videoId || null,
+      thumbnailUrl: item.logo 
+      || (
+        typeof item.thumbnail === "string"
+        ? item.thumbnail
+        : item?.thumbnail?.url
+      )
+      || null,
+      origin: item.origin ?? type ?? "api",
+      rating: item.rating ?? 5,
+      categories: (item.categories || []).map(el => el?.name || el)
     };
 
     if (
@@ -96,7 +103,8 @@ async function fetchVideoFromAPI(videoTitle) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
-    return data.video || null;
+    console.log('videoFromApi', data?.video || null);
+    return data?.video || null;
   } catch (e) {
     console.error(`Failed to fetch video from API: ${e}`);
     return null;
@@ -176,7 +184,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 2. If not found locally, fetch from the API as a fallback
     console.log("Media not found locally, trying API...");
     const apiData = await fetchVideoFromAPI(mediaTitle);
-    return apiData ? apiData : null;
+    return apiData ? normalizeDataForPlayer(apiData) : null;
   }
 
   /**
