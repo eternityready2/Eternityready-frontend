@@ -120,10 +120,10 @@ function initializeSliderControls(context = document) {
   });
 }
 
-async function fetchVideosBySourceType(sourceType) {
+async function fetchVideosByOrigin(origin) {
   const query = `
-    query VideosBySourceType($sourceType: String!) {
-      videos(where: { sourceType: { equals: $sourceType } }) {
+    query VideosBySourceType($origin: String!) {
+      videos(where: { origin: { equals: $origin } }) {
         id
         title
         author
@@ -139,6 +139,9 @@ async function fetchVideosBySourceType(sourceType) {
         isNew
         featured
         highlight
+        origin
+        categories { name }
+        onDemandBucket { name }
       }
     }
   `;
@@ -150,7 +153,7 @@ async function fetchVideosBySourceType(sourceType) {
     },
     body: JSON.stringify({
       query,
-      variables: { sourceType }
+      variables: { origin }
     }),
   });
 
@@ -164,13 +167,38 @@ async function fetchVideosBySourceType(sourceType) {
 }
 
 async function onDemand() {
-  const youtubeVideos = await fetchVideosBySourceType('youtube');
-  console.log('youtubeVideos', youtubeVideos);
+  const originVideos = await fetchVideosByOrigin('on-demand');
+  console.log('originVideos', originVideos);
 
-  const mediaSection = constructMediaSection(youtubeVideos, "KJV Audio Bible")
-  document.querySelector('#recommended-content-slider').insertAdjacentElement('afterbegin', mediaSection);
+  const groupedByBucket = originVideos.reduce((acc, video) => {
+    if (video.onDemandBucket && Array.isArray(video.onDemandBucket)) {
+      video.onDemandBucket.forEach(bucket => {
+        const bucketName = bucket?.name || 'Uncategorized';
+        if (!acc[bucketName]) {
+          acc[bucketName] = [];
+        }
+        acc[bucketName].push(video);
+      });
+    } else {
+      // Fallback for videos without buckets
+      const bucketName = 'Uncategorized';
+      if (!acc[bucketName]) {
+        acc[bucketName] = [];
+      }
+      acc[bucketName].push(video);
+    }
+    return acc;
+  }, {});
 
-  initializeSliderControls(mediaSection);
+  console.log('groupedByBucket', groupedByBucket);
+
+  for (let [bucket, items] of Object.entries(groupedByBucket)) {
+    const mediaSection = constructMediaSection(items, bucket)
+    document.querySelector('#recommended-content-slider').insertAdjacentElement('afterbegin', mediaSection);
+
+    initializeSliderControls(mediaSection);
+  }
+
 }
 
 onDemand()
