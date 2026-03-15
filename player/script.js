@@ -359,8 +359,6 @@ document.addEventListener("DOMContentLoaded", async () => {
           const url = encodeURIComponent(shareBtn?.dataset?.shareTitle ?? mediaTitle);
           shareModal.querySelector('.videoLink input').value = `${ETERNITY_BASE_URL}/player?q=${url}`;
           shareModal.style.display = "flex";
-          shareBtn.parentElement.style.display = 'none';
-
         });
       }
 
