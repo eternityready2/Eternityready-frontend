@@ -1535,6 +1535,21 @@ header .cta-button a {
   color: rgba(255, 255, 255, 0.8);
 }
 
+.media-card-link {
+  cursor: pointer;
+}
+
+.category-tag {
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.67rem;
+}
+
+.category-tag:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
 .media-section .media-grid .media-by {
   margin: 0;
   font-size: 0.67rem;

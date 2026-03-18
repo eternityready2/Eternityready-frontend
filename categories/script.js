@@ -62,8 +62,9 @@ function debounce(func, delay) {
         break;
     }
   
+    const openCmd = targetAttribute.includes('_blank') ? `window.open('${playerUrl}','_blank')` : `window.location.href='${playerUrl}'`;
     return `
-      <a href="${playerUrl}" class="media-card-link" ${targetAttribute}>
+      <div class="media-card-link" onclick="if(!event.target.closest('.category-tag'))${openCmd}">
         <div class="media-card">
           <div class="media-thumb">
             <img src="${imageUrl}" alt="${video.title}" loading="lazy" />
@@ -76,16 +77,14 @@ function debounce(func, delay) {
           <div class="media-info-col">
             <p class="media-title">${video.title}</p>
             <div class="media-subinfo">
-              <p class="media-genre">${(video.categories || [])
-                .map((c) => c.name)
-                .join(", ")}</p>
+              <p class="media-genre">${renderCategoryTags(video.categories)}</p>
               <p class="media-by">by <span class="media-author">${
                 video.author || "EternityReady"
               }</span></p>
             </div>
           </div>
         </div>
-      </a>`;
+      </div>`;
   }
   
   // Explicitly attach to window for global access

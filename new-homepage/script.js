@@ -38,9 +38,9 @@ function constructMediaSection(content, title) {
         ? video.thumbnail.url
         : `${video?.sourceType === "podcasts" ? "https://keystone.eternityready.com" : API_BASE_URL}/${video.thumbnail.url.replace(/^\//, "")}`;
 
-    const mediaCardLink = document.createElement('a');
+    const mediaCardLink = document.createElement('div');
     mediaCardLink.className = "media-card-link";
-    mediaCardLink.href = videoUrl;
+    mediaCardLink.onclick = (e) => { if (!e.target.closest('.category-tag')) window.location.href = videoUrl; };
     mediaCardLink.innerHTML += `
       <div
         class="media-card"
@@ -56,13 +56,7 @@ function constructMediaSection(content, title) {
         <div class="media-info-col">
           <p class="media-title">${video.title}</p>
           <div class="media-subinfo">
-            <p class="media-genre">
-              ${
-                (video.categories || [])
-                  .map((c) => c.name)
-                  .join(", ")
-              }
-            </p>
+            <p class="media-genre">${renderCategoryTags(video.categories)}</p>
             <p class="media-by">
               by <span class="media-author">${video.author || "EternityReady"}</span>
             </p>
@@ -599,16 +593,16 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="media-info-col">
             <p class="media-title">${item.title}</p>
             <div class="media-subinfo">
-                <p class="media-genre">${item.categories
-                  .map((c) => c.name)
-                  .join(", ")}</p>
+                <p class="media-genre">${renderCategoryTags(item.categories)}</p>
                 <p class="media-by">by <span class="media-author">${
                   item.author || "EternityReady"
                 }</span></p>
             </div>
         </div>`;
-        card.addEventListener("click", () => {
-          window.location.assign(`${ETERNITY_BASE_URL}/player?q=${encodeURIComponent(item.title || item.name)}`)
+        card.addEventListener("click", (e) => {
+          if (!e.target.closest('.category-tag')) {
+            window.location.assign(`${ETERNITY_BASE_URL}/player?q=${encodeURIComponent(item.title || item.name)}`);
+          }
         });
         if (youtubeVideoId) {
           // ... (seus event listeners de mouseover/mouseout para o player)
@@ -1045,7 +1039,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const uniquePlayerId = `yt-player-instance-${playerInstanceCounter}`;
           playerContainer = `<div class="youtube-player-embed" id="${uniquePlayerId}"></div>`;
         }
-        return `<a href="${playerUrl}" class="media-card-link"><div class="media-card" ${videoHoverData}><div class="media-thumb">${playerContainer} <img src="${imageUrl}" alt="${
+        return `<div class="media-card-link" onclick="if(!event.target.closest('.category-tag'))window.location.href='${playerUrl}'"><div class="media-card" ${videoHoverData}><div class="media-thumb">${playerContainer} <img src="${imageUrl}" alt="${
           video.title
         }" loading="lazy" class="media-thumbnail" />${
           video.duration
@@ -1053,11 +1047,9 @@ document.addEventListener("DOMContentLoaded", () => {
             : ""
         }</div><div class="media-info-col"><p class="media-title">${
           video.title
-        }</p><div class="media-subinfo"><p class="media-genre">${video.categories
-          .map((c) => c.name)
-          .join(", ")}</p><p class="media-by">by <span class="media-author">${
+        }</p><div class="media-subinfo"><p class="media-genre">${renderCategoryTags(video.categories)}</p><p class="media-by">by <span class="media-author">${
           video.author || "EternityReady"
-        }</span></p></div></div></div></a>`;
+        }</span></p></div></div></div></div>`;
       })
       .join("");
 
@@ -1192,7 +1184,8 @@ document.addEventListener("DOMContentLoaded", () => {
             playerContainer = `<div class="youtube-player-embed" id="${uniquePlayerId}"></div>`;
           }
 
-          return `<a href="${videoUrl}" class="media-card-link" ${targetAttribute}><div class="media-card" ${videoHoverData}><div class="media-thumb">${playerContainer} <img src="${
+          const openCmd = targetAttribute.includes('_blank') ? `window.open('${videoUrl}','_blank')` : `window.location.href='${videoUrl}'`;
+          return `<div class="media-card-link" onclick="if(!event.target.closest('.category-tag'))${openCmd}"><div class="media-card" ${videoHoverData}><div class="media-thumb">${playerContainer} <img src="${
             imageUrl || "/images/placeholder.jpg"
           }" alt="${video.title}" loading="lazy" class="media-thumbnail" />${
             video.duration
@@ -1200,13 +1193,9 @@ document.addEventListener("DOMContentLoaded", () => {
               : ""
           }</div><div class="media-info-col"><p class="media-title">${
             video.title
-          }</p><div class="media-subinfo"><p class="media-genre">${(
-            video.categories || []
-          )
-            .map((c) => c.name)
-            .join(", ")}</p><p class="media-by">by <span class="media-author">${
+          }</p><div class="media-subinfo"><p class="media-genre">${renderCategoryTags(video.categories)}</p><p class="media-by">by <span class="media-author">${
             video.author || "EternityReady"
-          }</span></p></div></div></div></a>`;
+          }</span></p></div></div></div></div>`;
         })
         .join("");
     };

@@ -79,9 +79,9 @@ function constructMediaSection(content, title) {
         ? video.thumbnail.url
         : `${API_BASE_URL}/${video.thumbnail.url.replace(/^\//, "")}`;
 
-    const mediaCardLink = document.createElement('a');
+    const mediaCardLink = document.createElement('div');
     mediaCardLink.className = "media-card-link";
-    mediaCardLink.href = videoUrl;
+    mediaCardLink.onclick = (e) => { if (!e.target.closest('.category-tag')) window.location.href = videoUrl; };
     mediaCardLink.innerHTML += `
       <div
         class="media-card"
@@ -97,12 +97,7 @@ function constructMediaSection(content, title) {
         <div class="media-info-col">
           <p class="media-title">${video.title}</p>
           <div class="media-subinfo">
-            <p class="media-genre">
-              ${
-                (video.categories || [])
-                  .map((c) => c.name)
-                  .join(", ")
-              }
+            <p class="media-genre">${renderCategoryTags(video.categories)}
             </p>
             <p class="media-by">
               by <span class="media-author">${video.author || "EternityReady"}</span>
