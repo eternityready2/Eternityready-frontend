@@ -28,30 +28,37 @@ function debounce(func, delay) {
     let imageUrl,
       playerUrl,
       targetAttribute = "";
+    const encodedTitle = encodeURIComponent(video.title || video.id);
     const id = encodeURIComponent(video.id);
-  
+    const thumbUrl = (video.thumbnail?.url || "").trim();
+
     switch (video.sourceType) {
-      case "music":
-        imageUrl = video.thumbnail?.url;
-        playerUrl = `/radio/?id=${id}`;
+      case "radio":
+        imageUrl = thumbUrl.startsWith("http")
+          ? thumbUrl
+          : `${API_BASE_URL}${thumbUrl.replace(/^\//, "")}`;
+        playerUrl = `/radio/?item=${id}`;
         break;
+      case "music":
       case "channels":
       case "movies":
-        imageUrl = video.thumbnail?.url;
-        playerUrl = `/tv/?id=${id}`;
+        imageUrl = thumbUrl.startsWith("http")
+          ? thumbUrl
+          : `${API_BASE_URL}${thumbUrl.replace(/^\//, "")}`;
+        playerUrl = `/player/?q=${encodedTitle}`;
         break;
       case "podcasts":
-        imageUrl = video.thumbnail?.url?.startsWith("http")
-          ? video.thumbnail.url
-          : `https://keystone.eternityready.com${video.thumbnail.url}`;
+        imageUrl = thumbUrl.startsWith("http")
+          ? thumbUrl
+          : `https://keystone.eternityready.com${thumbUrl}`;
         playerUrl = `https://podcasts.eternityready.com/episodes/${video.slug}`;
         targetAttribute = 'target="_blank" rel="noopener noreferrer"';
         break;
-      default: // Vídeos da API
-        imageUrl = video.thumbnail?.url
-          ? `${API_BASE_URL}${video.thumbnail.url.replace(/^\//, "")}`
+      default:
+        imageUrl = thumbUrl
+          ? (thumbUrl.startsWith("http") ? thumbUrl : `${API_BASE_URL}${thumbUrl.replace(/^\//, "")}`)
           : "../images/placeholder.jpg";
-        playerUrl = `/player/?q=${id}`;
+        playerUrl = `/player/?q=${encodedTitle}`;
         break;
     }
   
@@ -89,7 +96,7 @@ function debounce(func, delay) {
     // ─── CONFIGURAÇÕES GLOBAIS E FUNÇÕES DA API ───────────────────────────────────────
     //
     const API_BASE_URL = "https://api.eternityready.com/";
-    const PODCAST_API_URL = "https://keystone.eternityready.com/api/podcasts";
+    const PODCAST_API_URL = "https://keystone.eternityready.com/api/podcasts?limit=9999";
     let normalizedLocalDataCache = null;
   
     /**
@@ -108,48 +115,29 @@ function debounce(func, delay) {
       }
     }
   
-    /**
-     * Busca vídeos de uma categoria específica pelo nome.
-     * @param {string} categoryName O nome da categoria.
-     * @returns {Promise<Array>} Uma promessa que resolve para um array de vídeos.
-     */
-    async function fetchVideosByCategory(categoryName) {
-      try {
-        const url = `${API_BASE_URL}api/search?category=${encodeURIComponent(
-          categoryName
-        )}`;
-        const response = await fetch(url);
-        if (!response.ok)
-          throw new Error(`HTTP error! status: ${response.status}`);
-        const data = await response.json();
-        return data.videos || [];
-      } catch (error) {
-        console.error(
-          `Falha ao buscar vídeos para a categoria ${categoryName}:`,
-          error
-        );
-        return [];
-      }
-    }
-  
     async function loadLocalDataSources() {
       const promises = [
-        fetch("../data/channels.json"),
-        fetch("../data/movies.json"),
-        fetch("../data/music.json"),
+        fetch("/data/channels.json"),
+        fetch("/data/movies.json"),
+        fetch("/data/music.json"),
+        fetch("/data/radio.json"),
         fetch(PODCAST_API_URL).catch(() => ({ ok: false })),
       ];
       const results = await Promise.allSettled(promises);
-      const localData = { channels: [], movies: [], music: [], podcasts: [] };
-  
-      const fileKeys = ["channels", "movies", "music"];
-      for (let index = 0; index < 3; index++) {
+      const localData = { channels: [], movies: [], music: [], radio: [], podcasts: [] };
+
+      const fileKeys = ["channels", "movies", "music", "radio"];
+      for (let index = 0; index < 4; index++) {
         const result = results[index];
         const key = fileKeys[index];
         if (result.status === "fulfilled" && result.value.ok) {
           try {
             const data = await result.value.json();
-            localData[key] = data[key] || [];
+            if (key === "radio") {
+              localData.radio = data.channels || [];
+            } else {
+              localData[key] = data[key] || [];
+            }
           } catch (e) {
             console.error(`Falha ao processar /data/${key}.json`);
           }
@@ -157,10 +145,10 @@ function debounce(func, delay) {
           console.error(`Falha ao carregar /data/${key}.json`);
         }
       }
-  
-      if (results[3].status === "fulfilled" && results[3].value.ok) {
+
+      if (results[4].status === "fulfilled" && results[4].value.ok) {
         try {
-          const podcastJson = await results[3].value.json();
+          const podcastJson = await results[4].value.json();
           localData.podcasts = podcastJson.data || [];
         } catch (e) {
           console.error("Falha ao processar dados de podcasts.");
@@ -172,18 +160,44 @@ function debounce(func, delay) {
     }
   
     /**
+     * Normaliza um item de rádio para um formato consistente.
+     */
+    function normalizeRadioItem(item) {
+      const categories = Array.isArray(item.categories)
+        ? item.categories.map((name) => ({ name }))
+        : [];
+      return {
+        id: item.name,
+        title: item.name,
+        description: item.description || "",
+        thumbnail: { url: item.logo },
+        categories: categories,
+        author: "EternityReady",
+        duration: null,
+        sourceType: "radio",
+        videoId: null,
+        src: item.src,
+      };
+    }
+
+    /**
      * Normaliza um item de podcast para um formato consistente.
      */
     function normalizePodcastItem(item) {
+      const id = item.slug || item.id;
+      let categories = [];
+      if (Array.isArray(item.podcastCategories)) {
+        categories = item.podcastCategories.map((cat) => ({ name: cat.name || cat }));
+      } else if (typeof item.categories === "string") {
+        categories = [{ name: item.categories }];
+      }
       return {
-        id: item.slug || item.id,
+        id: id,
         slug: item.slug,
         title: item.title,
         description: item.description || "",
         thumbnail: { url: item.imageUrl },
-        categories: (item.podcastCategories || []).map((cat) => ({
-          name: cat.name || cat,
-        })),
+        categories: categories,
         author: item.author || "EternityReady",
         duration: item.duration || null,
         sourceType: "podcasts",
@@ -231,6 +245,9 @@ function debounce(func, delay) {
       );
       (localData.music || []).forEach((item) =>
         allItems.push({ ...normalizeLocalItem(item), sourceType: "music" })
+      );
+      (localData.radio || []).forEach((item) =>
+        allItems.push(normalizeRadioItem(item))
       );
       (localData.podcasts || []).forEach((item) =>
         allItems.push(normalizePodcastItem(item))
@@ -461,24 +478,27 @@ function debounce(func, delay) {
       let allMedia = [];
       let currentFilters = { name: "", genre: "all", sort: "title-asc" };
   
-      // Lista de categorias que devem ser buscadas nos dados locais
-      const localCategories = ["Channels", "Movies", "Music", "Podcasts"];
-  
-      if (localCategories.includes(categoryQuery)) {
-        console.log("teste local");
-        // Busca em dados locais
-        const allLocalData = await getAllNormalizedLocalData();
-        allMedia = allLocalData.filter((item) =>
-          item.categories.some((cat) => cat.name === categoryQuery)
-        );
+      const categoryToSourceType = {
+        Channels: "channels",
+        Movies: "movies",
+        Music: "music",
+        Podcasts: "podcasts",
+        Radio: "radio",
+      };
+
+      const allLocalData = await getAllNormalizedLocalData();
+      const sourceType = categoryToSourceType[categoryQuery];
+
+      if (sourceType) {
+        // Source-type page: show all items of that type
+        allMedia = allLocalData.filter((item) => item.sourceType === sourceType);
       } else {
-        console.log("teste api");
-        const apiVideos = await fetchVideosByCategory(categoryQuery);
-        // Adicionamos sourceType para consistência, embora não seja estritamente necessário aqui
-        allMedia = apiVideos.map((video) => ({
-          ...video,
-          sourceType: "youtube",
-        }));
+        // Category page: filter by matching category name (case-insensitive)
+        allMedia = allLocalData.filter((item) =>
+          item.categories.some(
+            (cat) => cat.name.toLowerCase() === categoryQuery.toLowerCase()
+          )
+        );
       }
   
       if (allMedia.length === 0) {
