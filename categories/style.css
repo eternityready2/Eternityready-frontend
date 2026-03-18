@@ -14,6 +14,10 @@
      font-family: "Poppins", sans-serif;
      line-height: 1.5;
    }
+
+   #dynamic-content-area {
+     margin-top: 24px;
+   }
    
    a {
      color: inherit;
