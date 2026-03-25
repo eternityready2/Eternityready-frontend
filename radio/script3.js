@@ -169,6 +169,21 @@ async function runAfterAllMedia(allMedia, position) {
       initializeSliderControls(mediaSection);
     }
   }
+
+  // Community Picks — blended personal + community rankings
+  var communityTop = await fetchCommunityTopItems(['radio', 'music'], 30);
+  if (communityTop && communityTop.length > 0) {
+    var blended = blendRankings(
+      topItems.filter(Boolean),
+      communityTop,
+      allMedia
+    );
+    if (blended.length > 0) {
+      var communitySection = constructMediaSection(blended, "Community Picks");
+      document.querySelector('#main-container').appendChild(communitySection);
+      initializeSliderControls(communitySection);
+    }
+  }
 }
 
 function waitForAllMedia(position) {
@@ -725,6 +740,8 @@ document.addEventListener("DOMContentLoaded", () => {
               categoriesConsumed[cat] = (categoriesConsumed[cat] ?? 0) + 1;
             }
             localStorage.setItem("categoriesConsumed", JSON.stringify(categoriesConsumed));
+
+            reportCommunityEngagement(channel.name, "radio", "play");
 
           } catch (error) {
             console.error("userTrackingError", error);

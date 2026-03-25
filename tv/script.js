@@ -113,7 +113,7 @@ async function runAfterAllMedia(allMedia, position) {
     const mostConsumedCategory = mostConsumedCategories[0].category
 
     const content = allMedia
-      .filter(item => 
+      .filter(item =>
         {
           return (item.categories || item.genres || [])
                   .some(x => x === mostConsumedCategory || x?.name === mostConsumedCategory)
@@ -128,11 +128,26 @@ async function runAfterAllMedia(allMedia, position) {
       if (position === "channels") {
         document.querySelector('.search-section').insertAdjacentElement('afterend', mediaSection);
       }
-      
+
       else {
         document.querySelector('#main-container').insertAdjacentElement('afterbegin', mediaSection);
       }
       initializeSliderControls(mediaSection);
+    }
+  }
+
+  // Community Picks — blended personal + community rankings
+  var communityTop = await fetchCommunityTopItems(['channels', 'movies'], 30);
+  if (communityTop && communityTop.length > 0) {
+    var blended = blendRankings(
+      topItems.filter(Boolean),
+      communityTop,
+      allMedia
+    );
+    if (blended.length > 0) {
+      var communitySection = constructMediaSection(blended, "Community Picks");
+      document.querySelector('#main-container').appendChild(communitySection);
+      initializeSliderControls(communitySection);
     }
   }
 }

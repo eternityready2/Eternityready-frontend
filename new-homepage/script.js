@@ -97,6 +97,22 @@ async function runAfterAllMedia(allMedia) {
     initializeSliderControls(mediaSection);
   }
 
+  // Community Picks — blended personal + community rankings
+  var communityOrigins = ['radio', 'music', 'channels', 'movies', 'podcast', 'on-demand'];
+  var communityTop = await fetchCommunityTopItems(communityOrigins, 30);
+  if (communityTop && communityTop.length > 0) {
+    var blended = blendRankings(
+      topItems.filter(Boolean),
+      communityTop,
+      allMedia
+    );
+    if (blended.length > 0) {
+      var communitySection = constructMediaSection(blended, "Community Picks");
+      document.querySelector('#recommended-content-slider').appendChild(communitySection);
+      initializeSliderControls(communitySection);
+    }
+  }
+
   if (mostConsumedCategories && mostConsumedCategories.length > 0) {
     const mostConsumedCategory = mostConsumedCategories[0].category
 
