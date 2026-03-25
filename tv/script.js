@@ -149,14 +149,14 @@ function constructMediaSection(content, title) {
 async function runAfterAllMedia(allMedia, position) {
   // const recommendations = await fetchRecommendation(allMedia);
 
-  const topItems = getTopItems({origins: ['channel', 'movie']})
+  const topItems = getTopItems({origins: ['channels', 'movies']})
     .map(x => allMedia.find(y => (y.title || y.name) === x.title));
 
-  const recentlyWatched = getRecentlyWatched({origins: ['channel', 'movie']})
+  const recentlyWatched = getRecentlyWatched({origins: ['channels', 'movies']})
     .map(x => allMedia.find(y => (y.title || y.name) === x.title));
 
   const mostConsumedCategories = getMostConsumedCategories({
-    origins: ['channel', 'movie']
+    origins: ['channels', 'movies']
   })
 
   console.log(

@@ -715,8 +715,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
             trackingSession['metadata']['device'].push(deviceType);
             trackingSession['timestamps'].push({ start: Date.now() });
-            sessionStorage.setItem("previousRadio", channel.name); 
+            sessionStorage.setItem("previousRadio", channel.name);
             setTracking(globalUserTracking);
+
+            // Sync categoriesConsumed in localStorage for the recommendation engine
+            const stored = localStorage.getItem("categoriesConsumed");
+            const categoriesConsumed = stored ? JSON.parse(stored) : {};
+            for (const cat of (channel.categories || [])) {
+              categoriesConsumed[cat] = (categoriesConsumed[cat] ?? 0) + 1;
+            }
+            localStorage.setItem("categoriesConsumed", JSON.stringify(categoriesConsumed));
 
           } catch (error) {
             console.error("userTrackingError", error);
