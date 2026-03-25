@@ -741,7 +741,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             localStorage.setItem("categoriesConsumed", JSON.stringify(categoriesConsumed));
 
-            reportCommunityEngagement(channel.name, "radio", "play");
+            if (typeof reportCommunityEngagement === "function") reportCommunityEngagement(channel.name, "radio", "play");
 
           } catch (error) {
             console.error("userTrackingError", error);

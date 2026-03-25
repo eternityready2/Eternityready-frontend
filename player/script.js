@@ -319,7 +319,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       console.log('mediaData:', mediaTitle, mediaData);
 
       trackMediaPlayback(mediaTitle, mediaData);
-      reportCommunityEngagement(mediaTitle, mediaData.origin, "play");
+      if (typeof reportCommunityEngagement === "function") reportCommunityEngagement(mediaTitle, mediaData.origin, "play");
       window._currentMediaOrigin = mediaData.origin;
 
       let stored = localStorage.getItem("categoriesConsumed");
@@ -1471,7 +1471,7 @@ function addReaction(
       console.log('/api/react-content', res);
       if (reaction === "like" && videoTitle) {
         var origin = window._currentMediaOrigin || "on-demand";
-        reportCommunityEngagement(videoTitle, origin, "like");
+        if (typeof reportCommunityEngagement === "function") reportCommunityEngagement(videoTitle, origin, "like");
       }
     });
 }
