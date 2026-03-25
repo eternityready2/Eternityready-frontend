@@ -137,6 +137,21 @@ async function runAfterAllMedia(allMedia, position) {
   }
   */
 
+  // Community Picks — rendered first so it appears at the top
+  var communityTop = await fetchCommunityTopItems(['radio', 'music'], 30);
+  if (communityTop && communityTop.length > 0) {
+    var blended = blendRankings(
+      topItems.filter(Boolean),
+      communityTop,
+      allMedia
+    );
+    if (blended.length > 0) {
+      var communitySection = constructMediaSection(blended, "Community Picks");
+      document.querySelector('#main-container').insertAdjacentElement('afterbegin', communitySection);
+      initializeSliderControls(communitySection);
+    }
+  }
+
   if (topItems && topItems.length > 0) {
     const mediaSection = constructMediaSection(topItems, "Most Consumed")
     document.querySelector('#main-container').insertAdjacentElement('afterbegin', mediaSection);
@@ -153,7 +168,7 @@ async function runAfterAllMedia(allMedia, position) {
     const mostConsumedCategory = mostConsumedCategories[0].category
 
     const content = allMedia
-      .filter(item => 
+      .filter(item =>
         {
           return (item.categories || item.genres || [])
                   .some(x => x === mostConsumedCategory || x?.name === mostConsumedCategory)
@@ -167,21 +182,6 @@ async function runAfterAllMedia(allMedia, position) {
       const mediaSection = constructMediaSection(content, `Based on your most consumed category - ${mostConsumedCategory}`)
       document.querySelector('#main-container').insertAdjacentElement('afterbegin', mediaSection);
       initializeSliderControls(mediaSection);
-    }
-  }
-
-  // Community Picks — blended personal + community rankings
-  var communityTop = await fetchCommunityTopItems(['radio', 'music'], 30);
-  if (communityTop && communityTop.length > 0) {
-    var blended = blendRankings(
-      topItems.filter(Boolean),
-      communityTop,
-      allMedia
-    );
-    if (blended.length > 0) {
-      var communitySection = constructMediaSection(blended, "Community Picks");
-      document.querySelector('#main-container').appendChild(communitySection);
-      initializeSliderControls(communitySection);
     }
   }
 }

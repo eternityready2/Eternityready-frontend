@@ -85,19 +85,7 @@ async function runAfterAllMedia(allMedia) {
     'recentlyWatched', recentlyWatched,
   );
 
-  if (topItems && topItems.length > 0) {
-    const mediaSection = constructMediaSection(topItems, "Most Consumed")
-    document.querySelector('#recommended-content-slider').insertAdjacentElement('afterbegin', mediaSection);
-    initializeSliderControls(mediaSection);
-  }
-
-  if (recentlyWatched && recentlyWatched.length > 0) {
-    const mediaSection = constructMediaSection(recentlyWatched, "Recently Watched")
-    document.querySelector('#recommended-content-slider').insertAdjacentElement('afterbegin', mediaSection);
-    initializeSliderControls(mediaSection);
-  }
-
-  // Community Picks — blended personal + community rankings
+  // Community Picks — rendered first so it appears at the top
   var communityOrigins = ['radio', 'music', 'channels', 'movies', 'podcast', 'on-demand'];
   var communityTop = await fetchCommunityTopItems(communityOrigins, 30);
   if (communityTop && communityTop.length > 0) {
@@ -108,9 +96,21 @@ async function runAfterAllMedia(allMedia) {
     );
     if (blended.length > 0) {
       var communitySection = constructMediaSection(blended, "Community Picks");
-      document.querySelector('#recommended-content-slider').appendChild(communitySection);
+      document.querySelector('#recommended-content-slider').insertAdjacentElement('afterbegin', communitySection);
       initializeSliderControls(communitySection);
     }
+  }
+
+  if (topItems && topItems.length > 0) {
+    const mediaSection = constructMediaSection(topItems, "Most Consumed")
+    document.querySelector('#recommended-content-slider').insertAdjacentElement('afterbegin', mediaSection);
+    initializeSliderControls(mediaSection);
+  }
+
+  if (recentlyWatched && recentlyWatched.length > 0) {
+    const mediaSection = constructMediaSection(recentlyWatched, "Recently Watched")
+    document.querySelector('#recommended-content-slider').insertAdjacentElement('afterbegin', mediaSection);
+    initializeSliderControls(mediaSection);
   }
 
   if (mostConsumedCategories && mostConsumedCategories.length > 0) {

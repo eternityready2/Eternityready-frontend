@@ -85,6 +85,25 @@ async function runAfterAllMedia(allMedia, position) {
   }
   */
 
+  // Community Picks — blended personal + community rankings (rendered first = top)
+  var communityTop = await fetchCommunityTopItems(['channels', 'movies'], 30);
+  if (communityTop && communityTop.length > 0) {
+    var blended = blendRankings(
+      topItems.filter(Boolean),
+      communityTop,
+      allMedia
+    );
+    if (blended.length > 0) {
+      var communitySection = constructMediaSection(blended, "Community Picks");
+      if (position === "channels") {
+        document.querySelector('.search-section').insertAdjacentElement('afterend', communitySection);
+      } else {
+        document.querySelector('#main-container').insertAdjacentElement('afterbegin', communitySection);
+      }
+      initializeSliderControls(communitySection);
+    }
+  }
+
   if (topItems && topItems.length > 0) {
     const mediaSection = constructMediaSection(topItems, "Most Consumed")
     if (position === "channels") {
@@ -136,20 +155,6 @@ async function runAfterAllMedia(allMedia, position) {
     }
   }
 
-  // Community Picks — blended personal + community rankings
-  var communityTop = await fetchCommunityTopItems(['channels', 'movies'], 30);
-  if (communityTop && communityTop.length > 0) {
-    var blended = blendRankings(
-      topItems.filter(Boolean),
-      communityTop,
-      allMedia
-    );
-    if (blended.length > 0) {
-      var communitySection = constructMediaSection(blended, "Community Picks");
-      document.querySelector('#main-container').appendChild(communitySection);
-      initializeSliderControls(communitySection);
-    }
-  }
 }
 
 function waitForAllMedia(position) {
