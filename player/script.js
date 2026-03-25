@@ -1,4 +1,5 @@
 let lastMobile = null;
+let currentResizeHandler = null;
 function setPlayerForBreakpoint(mobile, desktop, playerSrc) {
   const isMobile = window.innerWidth < 768;
   if (lastMobile == isMobile) { return; }
@@ -239,10 +240,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     
     else {
       setPlayerForBreakpoint(mobile.querySelector('.video-player'), desktop.querySelector('.video-player'), playerSrc);
-      window.addEventListener(
-        'resize',
-        () => setPlayerForBreakpoint(mobile.querySelector('.video-player'), desktop.querySelector('.video-player'), playerSrc)
-      );
+      if (currentResizeHandler) {
+        window.removeEventListener('resize', currentResizeHandler);
+      }
+      currentResizeHandler = () => setPlayerForBreakpoint(mobile.querySelector('.video-player'), desktop.querySelector('.video-player'), playerSrc);
+      window.addEventListener('resize', currentResizeHandler);
     }
 
     

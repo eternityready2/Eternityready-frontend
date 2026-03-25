@@ -5,7 +5,7 @@ function waitForAllMedia() {
   if ( eternityLocalDataLoaded == true) {
     runAfterAllMedia(eternityLocalData);
   } else {
-    setTimeout(() => waitForAllMedia(position), 50);
+    setTimeout(() => waitForAllMedia(), 50);
   }
 }
 
