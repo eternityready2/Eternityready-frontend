@@ -1,21 +1,3 @@
-/**
- * Returns a function that, as long as it continues to be invoked, will not
- * be triggered. The function will be called after it stops being called for
- * N milliseconds.
- * @param {Function} func The function to debounce.
- * @param {number} delay The number of milliseconds to delay.
- * @returns {Function} The new debounced function.
- */
-function debounce(func, delay) {
-  let timeoutId;
-  return function (...args) {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => {
-      func.apply(this, args);
-    }, delay);
-  };
-}
-
 document.addEventListener("DOMContentLoaded", async () => {
   const API_BASE_URL = "https://api.eternityready.com";
   const dynamicContentArea = document.getElementById("dynamic-content-area");

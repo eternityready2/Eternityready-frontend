@@ -14,24 +14,6 @@ function setPlayerForBreakpoint(mobile, desktop, playerSrc) {
 }
 
 /**
- * Returns a function that, as long as it continues to be invoked, will not
- * be triggered. The function will be called after it stops being called for
- * N milliseconds.
- * @param {Function} func The function to debounce.
- * @param {number} delay The number of milliseconds to delay.
- * @returns {Function} The new debounced function.
- */
-function debounce(func, delay) {
-  let timeoutId;
-  return function (...args) {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => {
-      func.apply(this, args);
-    }, delay);
-  };
-}
-
-/**
    * Normalizes data from different sources (JSON, API) into a consistent format for the player.
    * @param {object} item The found media item.
    * @param {string} type The type of media ('channel', 'music', 'movie').

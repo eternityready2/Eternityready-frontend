@@ -63,63 +63,6 @@ function constructMediaSection(content, title) {
   return mediaSection
 }
 
-function initializeSliderControls(context = document) {
-  context.querySelectorAll(".slider-wrapper").forEach((wrapper) => {
-
-    let slider = wrapper.querySelector(".media-grid");
-
-    const prevBtn = wrapper.querySelector(".slider-arrow.prev");
-    const nextBtn = wrapper.querySelector(".slider-arrow.next");
-
-    if (!slider || !prevBtn || !nextBtn) return;
-
-    let itemCount = slider.querySelectorAll(".media-card-link").length;
-
-    if (itemCount > 5) {
-      const scrollAmount = slider.clientWidth * 0.8;
-      prevBtn.addEventListener("click", () =>
-        slider.scrollBy({ left: -scrollAmount, behavior: "smooth" })
-      );
-      nextBtn.addEventListener("click", () =>
-        slider.scrollBy({ left: scrollAmount, behavior: "smooth" })
-      );
-    } else {
-      prevBtn.style.display = "none";
-      nextBtn.style.display = "none";
-    }
-  });
-
-  context.querySelectorAll(".media-grid").forEach((slider) => {
-    let isDown = false,
-      startX,
-      scrollLeft;
-    const startDrag = (e) => {
-      isDown = true;
-      slider.classList.add("dragging");
-      startX = (e.pageX || e.touches[0].pageX) - slider.offsetLeft;
-      scrollLeft = slider.scrollLeft;
-    };
-    const moveDrag = (e) => {
-      if (!isDown) return;
-      e.preventDefault();
-      const x = (e.pageX || e.touches[0].pageX) - slider.offsetLeft;
-      const walk = (x - startX) * 1.5;
-      slider.scrollLeft = scrollLeft - walk;
-    };
-    const endDrag = () => {
-      isDown = false;
-      slider.classList.remove("dragging");
-    };
-    slider.addEventListener("mousedown", startDrag);
-    slider.addEventListener("mousemove", moveDrag);
-    slider.addEventListener("mouseup", endDrag);
-    slider.addEventListener("mouseleave", endDrag);
-    slider.addEventListener("touchstart", startDrag, { passive: true });
-    slider.addEventListener("touchmove", moveDrag, { passive: false });
-    slider.addEventListener("touchend", endDrag);
-  });
-}
-
 async function fetchVideosByOrigin(origin) {
   const query = `
     query VideosBySourceType($origin: String!) {

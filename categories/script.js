@@ -1,21 +1,5 @@
 // script.js
 
-/**
- * Atraso na execução de uma função para otimizar eventos como digitação em buscas.
- * @param {Function} func A função a ser executada após o delay.
- * @param {number} delay O tempo de espera em milissegundos.
- * @returns {Function} A nova função com o comportamento de "debounce".
- */
-function debounce(func, delay) {
-    let timeoutId;
-    return function (...args) {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => {
-        func.apply(this, args);
-      }, delay);
-    };
-  }
-  
   /**
    * Cria o HTML para um único card de vídeo.
    * @param {object} video O objeto de vídeo da API.
@@ -156,72 +140,6 @@ function debounce(func, delay) {
         console.error("Falha ao carregar dados de podcasts.");
       }
       return localData;
-    }
-  
-    /**
-     * Normaliza um item de rádio para um formato consistente.
-     */
-    function normalizeRadioItem(item) {
-      const categories = Array.isArray(item.categories)
-        ? item.categories.map((name) => ({ name }))
-        : [];
-      return {
-        id: item.name,
-        title: item.name,
-        description: item.description || "",
-        thumbnail: { url: item.logo },
-        categories: categories,
-        author: "EternityReady",
-        duration: null,
-        sourceType: "radio",
-        videoId: null,
-        src: item.src,
-      };
-    }
-
-    /**
-     * Normaliza um item de podcast para um formato consistente.
-     */
-    function normalizePodcastItem(item) {
-      const id = item.slug || item.id;
-      let categories = [];
-      if (Array.isArray(item.podcastCategories)) {
-        categories = item.podcastCategories.map((cat) => ({ name: cat.name || cat }));
-      } else if (typeof item.categories === "string") {
-        categories = [{ name: item.categories }];
-      }
-      return {
-        id: id,
-        slug: item.slug,
-        title: item.title,
-        description: item.description || "",
-        thumbnail: { url: item.imageUrl },
-        categories: categories,
-        author: item.author || "EternityReady",
-        duration: item.duration || null,
-        sourceType: "podcasts",
-        videoId: null,
-      };
-    }
-  
-    /**
-     * Normaliza um item de dados locais (channel, movie, music) para um formato consistente.
-     */
-    function normalizeLocalItem(item) {
-      let thumbnail = item.logo || item.thumbnail;
-      if (thumbnail && !thumbnail.startsWith("http")) {
-        thumbnail = new URL(thumbnail, API_BASE_URL).href;
-      }
-      return {
-        id: item.id || item.title || item.name,
-        title: item.title || item.name,
-        description: item.description || "",
-        thumbnail: { url: thumbnail },
-        categories: (item.categories || []).map((name) => ({ name })),
-        author: item.author || "EternityReady",
-        duration: item.duration || null,
-        videoId: item.embed, // Simplificado, pode precisar de mais lógica se o embed variar
-      };
     }
   
     /**

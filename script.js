@@ -1,41 +1,3 @@
-// script.js
-
-/**
- * @param {Function} func
- * @param {number} delay
- * @returns {Function}
- */
-function debounce(func, delay) {
-  let timeoutId;
-  return function (...args) {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => {
-      func.apply(this, args);
-    }, delay);
-  };
-}
-
-function setCookie(name, value, days) {
-  let expires = "";
-  if (days) {
-    const date = new Date();
-    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-    expires = "; expires=" + date.toUTCString();
-  }
-  document.cookie = name + "=" + (value || "") + expires + "; path=/";
-}
-
-function getCookie(name) {
-  const nameEQ = name + "=";
-  const ca = document.cookie.split(";");
-  for (let i = 0; i < ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) === " ") c = c.substring(1, c.length);
-    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-  }
-  return null;
-}
-
 fetch("https://beta.ourmanna.com/api/v1/get/?format=json&order=daily")
   .then((response) => response.json())
   .then((data) => {
@@ -131,26 +93,6 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   }
 
-  function normalizePodcastItem(item) {
-    const id = item.slug || item.id;
-    const categories = Array.isArray(item.podcastCategories)
-      ? item.podcastCategories.map((cat) => ({ name: cat.name || cat }))
-      : [];
-
-    return {
-      id: id,
-      slug: item.slug,
-      title: item.title,
-      description: item.description || "",
-      thumbnail: { url: item.imageUrl },
-      categories: categories,
-      author: item.author || "EternityReady",
-      duration: item.duration || null,
-      sourceType: "podcasts",
-      videoId: null,
-    };
-  }
-
   async function fetchRecentVideos(limit = 20) {
     try {
       const response = await fetch(`${API_BASE_URL}api/search?limit=${limit}`);
@@ -207,50 +149,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     localData = { channels: [], movies: [], music: [], podcasts: [] };
-  }
-
-  function normalizeLocalItem(item) {
-    let thumbnail = item.logo || item.thumbnail;
-    if (thumbnail && !thumbnail.startsWith("http")) {
-      thumbnail = new URL(thumbnail, API_BASE_URL).href;
-    }
-
-    const categories = Array.isArray(item.categories)
-      ? item.categories.map((name) =>
-          typeof name === "string" ? { name } : name
-        )
-      : [];
-
-    let videoId = null;
-    if (item.embed) {
-      let urlString = item.embed;
-
-      if (urlString.trim().startsWith("<iframe")) {
-        const match = urlString.match(/src=['"]([^'"]+)['"]/);
-        urlString = match ? match[1] : null;
-      }
-
-      if (urlString) {
-        const youtubeRegex =
-          /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-        const match = urlString.match(youtubeRegex);
-
-        if (match && match[1]) {
-          videoId = match[1];
-        }
-      }
-    }
-
-    return {
-      id: item.id || item.title || item.name,
-      title: item.title || item.name,
-      description: item.description || "",
-      thumbnail: { url: thumbnail },
-      categories: categories,
-      author: item.author || "EternityReady",
-      duration: item.duration || null,
-      videoId: videoId,
-    };
   }
 
   async function fetchCategories() {
