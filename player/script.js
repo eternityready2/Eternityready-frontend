@@ -141,24 +141,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       let foundItem = null;
       let itemType = "";
 
-      foundItem = moviesData.movies.find((item) => (item.title || item.name) === mediaTitle);
-      if (foundItem) itemType = "movie";
-
-      if (!foundItem) {
-        foundItem = musicData.music.find((item) => (item.title || item.name) === mediaTitle);
-        if (foundItem) itemType = "music";
-      }
-
-      if (!foundItem) {
-        // NOTE: Your channels.json needs an "id" field on each channel for this to work.
-        foundItem = channelsData.channels.find((item) => (item.title || item.name) === mediaTitle);
-        if (foundItem) itemType = "channel";
-      }
+      foundItem = allMedia.find((item) => (item.title || item.name) === mediaTitle);
 
       if (foundItem) {
-        console.log(`Media found locally in ${itemType}s.json`);
-        console.log('foundItem', foundItem);
-        return normalizeDataForPlayer(foundItem, itemType);
+        console.log('Media found locally:', foundItem);
+        return normalizeDataForPlayer(foundItem);
       }
     } catch (e) {
       console.error("Error loading or processing local JSON files:", e);
