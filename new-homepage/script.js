@@ -70,69 +70,11 @@ function constructMediaSection(content, title) {
 }
 
 async function runAfterAllMedia(allMedia) {
-  const topItems = getTopItems({origins: ['radio', 'music', 'channels', 'movies', 'podcast', 'on-demand']})
-    .map(x => allMedia.find(y => (y.title || y.name) === x.title));
-
-  const recentlyWatched = getRecentlyWatched({origins: ['radio', 'music', 'channels', 'movies', 'podcast', 'on-demand']})
-    .map(x => allMedia.find(y => (y.title || y.name) === x.title));
-
-  const mostConsumedCategories = getMostConsumedCategories({
-    origins: ['radio', 'music', 'channels', 'movies', 'podcast', 'on-demand']
-  })
-
-  console.log(
-    'topItems', topItems,
-    'recentlyWatched', recentlyWatched,
+  await renderAllRecommendationSliders(
+    allMedia,
+    '#recommended-content-slider',
+    ['radio', 'music', 'channels', 'movies', 'podcast', 'on-demand']
   );
-
-  // Community Picks — rendered first so it appears at the top
-  var communityOrigins = ['radio', 'music', 'channels', 'movies', 'podcast', 'on-demand'];
-  var communityTop = await fetchCommunityTopItems(communityOrigins, 30);
-  if (communityTop && communityTop.length > 0) {
-    var blended = blendRankings(
-      topItems.filter(Boolean),
-      communityTop,
-      allMedia
-    );
-    if (blended.length > 0) {
-      var communitySection = constructMediaSection(blended, "Community Picks");
-      document.querySelector('#recommended-content-slider').insertAdjacentElement('afterbegin', communitySection);
-      initializeSliderControls(communitySection);
-    }
-  }
-
-  if (topItems && topItems.length > 0) {
-    const mediaSection = constructMediaSection(topItems, "Most Consumed")
-    document.querySelector('#recommended-content-slider').insertAdjacentElement('afterbegin', mediaSection);
-    initializeSliderControls(mediaSection);
-  }
-
-  if (recentlyWatched && recentlyWatched.length > 0) {
-    const mediaSection = constructMediaSection(recentlyWatched, "Recently Watched")
-    document.querySelector('#recommended-content-slider').insertAdjacentElement('afterbegin', mediaSection);
-    initializeSliderControls(mediaSection);
-  }
-
-  if (mostConsumedCategories && mostConsumedCategories.length > 0) {
-    const mostConsumedCategory = mostConsumedCategories[0].category
-
-    const content = allMedia
-      .filter(item => 
-        {
-          return (item.categories || item.genres || [])
-                  .some(x => x === mostConsumedCategory || x?.name === mostConsumedCategory)
-        }
-      )
-      .sort(() => 0.5 - Math.random())
-      .slice(0, 10)
-
-    console.log('mostConsumed', allMedia, mostConsumedCategories, content);
-    if (content && content.length > 0) {
-      const mediaSection = constructMediaSection(content, `Based on your most consumed category - ${mostConsumedCategory}`)
-      document.querySelector('#recommended-content-slider').appendChild(mediaSection);
-      initializeSliderControls(mediaSection);
-    }
-  }
 }
 
 function setActiveMidiaButton(typeTo) {

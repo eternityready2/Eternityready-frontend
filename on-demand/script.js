@@ -145,3 +145,32 @@ async function onDemand() {
 }
 
 onDemand()
+
+// Add recommendation sliders for on-demand content
+async function loadOnDemandRecommendations() {
+  function waitForMedia(cb) {
+    if (typeof eternityLocalData !== 'undefined' && eternityLocalData.length > 0) {
+      cb(eternityLocalData);
+    } else if (typeof isNormalized !== 'undefined' && isNormalized && typeof normalizedData !== 'undefined') {
+      var all = [].concat(
+        normalizedData.channels || [],
+        normalizedData.movies || [],
+        normalizedData.music || [],
+        normalizedData.radio || []
+      );
+      cb(all);
+    } else {
+      setTimeout(function () { waitForMedia(cb); }, 100);
+    }
+  }
+
+  waitForMedia(async function (allMedia) {
+    await renderAllRecommendationSliders(
+      allMedia,
+      '#recommended-content-slider',
+      ['on-demand']
+    );
+  });
+}
+
+loadOnDemandRecommendations();

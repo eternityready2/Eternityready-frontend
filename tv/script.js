@@ -54,107 +54,25 @@ function constructMediaSection(content, title) {
 }
 
 async function runAfterAllMedia(allMedia, position) {
-  // const recommendations = await fetchRecommendation(allMedia);
+  var selector = position === "channels" ? '.search-section' : '#main-container';
+  // For channels, insert after search; for movies, prepend to main container
+  // We create a wrapper div after the target to hold all sliders
+  var target = document.querySelector(selector);
+  if (!target) return;
 
-  const topItems = getTopItems({origins: ['channels', 'movies']})
-    .map(x => allMedia.find(y => (y.title || y.name) === x.title));
+  var wrapper = document.createElement('div');
+  wrapper.id = 'tv-recommendation-sliders';
+  if (position === "channels") {
+    target.insertAdjacentElement('afterend', wrapper);
+  } else {
+    target.insertAdjacentElement('afterbegin', wrapper);
+  }
 
-  const recentlyWatched = getRecentlyWatched({origins: ['channels', 'movies']})
-    .map(x => allMedia.find(y => (y.title || y.name) === x.title));
-
-  const mostConsumedCategories = getMostConsumedCategories({
-    origins: ['channels', 'movies']
-  })
-
-  console.log(
-    'topItems', topItems,
-    'recentlyWatched', recentlyWatched,
+  await renderAllRecommendationSliders(
+    allMedia,
+    '#tv-recommendation-sliders',
+    ['channels', 'movies']
   );
-
-  /*
-  if (recommendations && recommendations.length > 0) {
-    const mediaSection = constructMediaSection(recommendations, "Recommended Content")
-    if (position === "channels") {
-      document.querySelector('.search-section').insertAdjacentElement('afterend', mediaSection);
-    }
-    
-    else {
-      document.querySelector('#main-container').insertAdjacentElement('afterbegin', mediaSection);
-    }
-    initializeSliderControls(mediaSection);
-  }
-  */
-
-  // Community Picks — blended personal + community rankings (rendered first = top)
-  var communityTop = await fetchCommunityTopItems(['channels', 'movies'], 30);
-  if (communityTop && communityTop.length > 0) {
-    var blended = blendRankings(
-      topItems.filter(Boolean),
-      communityTop,
-      allMedia
-    );
-    if (blended.length > 0) {
-      var communitySection = constructMediaSection(blended, "Community Picks");
-      if (position === "channels") {
-        document.querySelector('.search-section').insertAdjacentElement('afterend', communitySection);
-      } else {
-        document.querySelector('#main-container').insertAdjacentElement('afterbegin', communitySection);
-      }
-      initializeSliderControls(communitySection);
-    }
-  }
-
-  if (topItems && topItems.length > 0) {
-    const mediaSection = constructMediaSection(topItems, "Most Consumed")
-    if (position === "channels") {
-      document.querySelector('.search-section').insertAdjacentElement('afterend', mediaSection);
-    }
-    
-    else {
-      document.querySelector('#main-container').insertAdjacentElement('afterbegin', mediaSection);
-    }
-    initializeSliderControls(mediaSection);
-  }
-
-  if (recentlyWatched && recentlyWatched.length > 0) {
-    const mediaSection = constructMediaSection(recentlyWatched, "Recently Watched")
-    if (position === "channels") {
-      document.querySelector('.search-section').insertAdjacentElement('afterend', mediaSection);
-    }
-    
-    else {
-      document.querySelector('#main-container').insertAdjacentElement('afterbegin', mediaSection);
-    }
-    initializeSliderControls(mediaSection);
-  }
-
-  if (mostConsumedCategories && mostConsumedCategories.length > 0) {
-    const mostConsumedCategory = mostConsumedCategories[0].category
-
-    const content = allMedia
-      .filter(item =>
-        {
-          return (item.categories || item.genres || [])
-                  .some(x => x === mostConsumedCategory || x?.name === mostConsumedCategory)
-        }
-      )
-      .sort(() => 0.5 - Math.random())
-      .slice(0, 10)
-
-    console.log('mostConsumed', allMedia, mostConsumedCategories, content);
-    if (content && content.length > 0) {
-      const mediaSection = constructMediaSection(content, `Based on your most consumed category - ${mostConsumedCategory}`)
-      if (position === "channels") {
-        document.querySelector('.search-section').insertAdjacentElement('afterend', mediaSection);
-      }
-
-      else {
-        document.querySelector('#main-container').insertAdjacentElement('afterbegin', mediaSection);
-      }
-      initializeSliderControls(mediaSection);
-    }
-  }
-
 }
 
 function waitForAllMedia(position) {

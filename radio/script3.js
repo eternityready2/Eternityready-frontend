@@ -112,78 +112,11 @@ function constructMediaSection(content, title) {
 }
 
 async function runAfterAllMedia(allMedia, position) {
-  console.log('runAfterAllMedia');
-  // const recommendations = await fetchRecommendation(allMedia);
-  const topItems = getTopItems({origins: ['radio', 'music']})
-    .map(x => allMedia.find(y => (y.title || y.name) === x.title));
-
-  const recentlyWatched = getRecentlyWatched({origins: ['radio', 'music']})
-    .map(x => allMedia.find(y => (y.title || y.name) === x.title));
-
-  const mostConsumedCategories = getMostConsumedCategories({
-    origins: ['radio', 'music']
-  })
-
-  console.log(
-    'topItems', topItems,
-    'recentlyWatched', recentlyWatched,
+  await renderAllRecommendationSliders(
+    allMedia,
+    '#main-container',
+    ['radio', 'music']
   );
-
-  /*
-  if (recommendations && recommendations.length > 0) {
-    const mediaSection = constructMediaSection(recommendations, "Recommended Content")
-    document.querySelector('#main-container').insertAdjacentElement('afterbegin', mediaSection);
-    initializeSliderControls(mediaSection);
-  }
-  */
-
-  // Community Picks — rendered first so it appears at the top
-  var communityTop = await fetchCommunityTopItems(['radio', 'music'], 30);
-  if (communityTop && communityTop.length > 0) {
-    var blended = blendRankings(
-      topItems.filter(Boolean),
-      communityTop,
-      allMedia
-    );
-    if (blended.length > 0) {
-      var communitySection = constructMediaSection(blended, "Community Picks");
-      document.querySelector('#main-container').insertAdjacentElement('afterbegin', communitySection);
-      initializeSliderControls(communitySection);
-    }
-  }
-
-  if (topItems && topItems.length > 0) {
-    const mediaSection = constructMediaSection(topItems, "Most Consumed")
-    document.querySelector('#main-container').insertAdjacentElement('afterbegin', mediaSection);
-    initializeSliderControls(mediaSection);
-  }
-
-  if (recentlyWatched && recentlyWatched.length > 0) {
-    const mediaSection = constructMediaSection(recentlyWatched, "Recently Watched")
-    document.querySelector('#main-container').insertAdjacentElement('afterbegin', mediaSection);
-    initializeSliderControls(mediaSection);
-  }
-
-  if (mostConsumedCategories && mostConsumedCategories.length > 0) {
-    const mostConsumedCategory = mostConsumedCategories[0].category
-
-    const content = allMedia
-      .filter(item =>
-        {
-          return (item.categories || item.genres || [])
-                  .some(x => x === mostConsumedCategory || x?.name === mostConsumedCategory)
-        }
-      )
-      .sort(() => 0.5 - Math.random())
-      .slice(0, 10)
-
-    console.log('mostConsumed', allMedia, mostConsumedCategories, content);
-    if (content && content.length > 0) {
-      const mediaSection = constructMediaSection(content, `Based on your most consumed category - ${mostConsumedCategory}`)
-      document.querySelector('#main-container').insertAdjacentElement('afterbegin', mediaSection);
-      initializeSliderControls(mediaSection);
-    }
-  }
 }
 
 function waitForAllMedia(position) {
