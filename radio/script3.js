@@ -56,61 +56,6 @@ function initializeSliderControls(context = document) {
   });
 }
 
-function constructMediaSection(content, title) {
-  const mediaSection = document.createElement('div');
-  mediaSection.className = 'media-section';
-  mediaSection.innerHTML += `
-  <div
-    class="section-header"
-  >
-    <h2 class="section-title"><a href="/categories/?category=recommend">${title}</a></h2><a href="/categories/?category=recommend" class="section-link"><i class="fa fa-chevron-right"></i></a></div>
-<div class="slider-wrapper">
-    <button class="slider-arrow prev" aria-label="Anterior"><i class="fa fa-chevron-left"></i></button>
-    <div class="media-grid">
-    </div>
-    <button class="slider-arrow next" aria-label="Próximo"><i class="fa fa-chevron-right"></i></button>
-  </div>
-  `;
-  const mediaGrid = mediaSection.querySelector('.media-grid');
-  for (const video of content) {
-    const id = encodeURIComponent(video.title || video.name);
-    const videoUrl = `${ETERNITY_BASE_URL}/player/?q=${id}`;
-    const imageUrl = video.thumbnail?.url?.startsWith("http")
-        ? video.thumbnail.url
-        : `${API_BASE_URL}/${video.thumbnail.url.replace(/^\//, "")}`;
-
-    const mediaCardLink = document.createElement('div');
-    mediaCardLink.className = "media-card-link";
-    mediaCardLink.onclick = (e) => { if (!e.target.closest('.category-tag')) window.location.href = videoUrl; };
-    mediaCardLink.innerHTML += `
-      <div
-        class="media-card"
-      >
-        <div class="media-thumb">
-          <img
-            src="${imageUrl || "/images/placeholder.jpg"}"
-            alt="${video.title}"
-            loading="lazy"
-            class="media-thumbnail"
-          />
-        </div>
-        <div class="media-info-col">
-          <p class="media-title">${video.title}</p>
-          <div class="media-subinfo">
-            <p class="media-genre">${renderCategoryTags(video.categories)}
-            </p>
-            <p class="media-by">
-              by <span class="media-author">${video.author || "EternityReady"}</span>
-            </p>
-          </div>
-        </div>
-      </div>
-    `
-      mediaGrid.appendChild(mediaCardLink);
-  }
-  return mediaSection
-}
-
 async function runAfterAllMedia(allMedia, position) {
   await window.renderAllRecommendationSliders(
     allMedia,
