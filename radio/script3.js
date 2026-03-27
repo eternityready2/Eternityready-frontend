@@ -112,7 +112,7 @@ function constructMediaSection(content, title) {
 }
 
 async function runAfterAllMedia(allMedia, position) {
-  await renderAllRecommendationSliders(
+  await window.renderAllRecommendationSliders(
     allMedia,
     '#main-container',
     ['radio', 'music']
