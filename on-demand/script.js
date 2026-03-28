@@ -72,7 +72,9 @@ async function onDemand() {
 
   for (let [bucket, items] of Object.entries(groupedByBucket)) {
     const mediaSection = constructMediaSection(items, bucket)
-    document.querySelector('#recommended-content-slider').insertAdjacentElement('afterbegin', mediaSection);
+    var container = document.querySelector('#recommended-content-slider');
+    if (!container) continue;
+    container.insertAdjacentElement('afterbegin', mediaSection);
 
     initializeSliderControls(mediaSection);
   }

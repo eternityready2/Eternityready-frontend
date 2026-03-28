@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const [channelData, movieData, mostViewedData] = await Promise.all([
         fetch("/data/channels.json").then((res) => res.json()),
         fetch("/data/movies.json").then((res) => res.json()),
-        fetchMostViewedVideos(origin='channels', take=10)
+        fetchMostViewedVideos('channels', 10)
       ]);
 
       mostViewedChannels = mostViewedData;
@@ -651,7 +651,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const filteredChannels = allChannels.filter((channel) => {
       const matchesSearch =
-        channel.name.toLowerCase().includes(searchTerm) ||
+        (channel.name || '').toLowerCase().includes(searchTerm) ||
         (channel.keywords || []).some((k) =>
           k.toLowerCase().includes(searchTerm)
         );
@@ -664,7 +664,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     const filteredMovies = allMovies.filter((movie) => {
-      const matchesSearch = movie.title.toLowerCase().includes(searchTerm);
+      const matchesSearch = (movie.title || '').toLowerCase().includes(searchTerm);
       // Assumindo que a propriedade se chama 'genres' no seu JSON
       const matchesGenre =
         selectedCategory === "all" ||
@@ -738,6 +738,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const recommendationsContainer = document.getElementById(
       "modal-recommendations-grid"
     );
+    if (!recommendationsContainer) return;
     recommendationsContainer.innerHTML = ""; // Limpa recomendações anteriores
 
     const itemCategories = currentItem.categories || currentItem.genres || [];

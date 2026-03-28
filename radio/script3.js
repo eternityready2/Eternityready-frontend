@@ -32,13 +32,13 @@ function initializeSliderControls(context = document) {
     const startDrag = (e) => {
       isDown = true;
       slider.classList.add("dragging");
-      startX = (e.pageX || e.touches[0].pageX) - slider.offsetLeft;
+      startX = (e.pageX !== undefined ? e.pageX : e.touches[0].pageX) - slider.offsetLeft;
       scrollLeft = slider.scrollLeft;
     };
     const moveDrag = (e) => {
       if (!isDown) return;
       e.preventDefault();
-      const x = (e.pageX || e.touches[0].pageX) - slider.offsetLeft;
+      const x = (e.pageX !== undefined ? e.pageX : e.touches[0].pageX) - slider.offsetLeft;
       const walk = (x - startX) * 1.5;
       slider.scrollLeft = scrollLeft - walk;
     };
@@ -744,7 +744,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const filteredChannels = allChannels.filter((channel) => {
       const matchesSearch =
-        channel.name.toLowerCase().includes(searchTerm) ||
+        (channel.name || '').toLowerCase().includes(searchTerm) ||
         (channel.keywords || []).some((k) =>
           k.toLowerCase().includes(searchTerm)
         );
@@ -901,7 +901,7 @@ document.addEventListener("DOMContentLoaded", () => {
   init();
 });
 
-window.onload = function () {
+window.addEventListener("load", function () {
   // --- Variáveis de Controle ---
   let item_timeous = []; // Guarda os timers de animação para poder limpá-los
   let previousIndex = 0; // **IMPORTANTE**: Guarda o índice do slide anterior
@@ -1000,7 +1000,7 @@ window.onload = function () {
       }
     }
   });
-};
+});
 
 //
 // Music Player
