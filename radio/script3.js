@@ -105,8 +105,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       const [channelData, movieData] = await Promise.all([
-        fetch("/data/radio.json").then((res) => res.json()),
-        fetch("/data/music.json").then((res) => res.json()),
+        fetch("/data/radio.json").then((res) => { if (!res.ok) throw new Error(res.status); return res.json(); }),
+        fetch("/data/music.json").then((res) => { if (!res.ok) throw new Error(res.status); return res.json(); }),
       ]);
 
       allChannels = channelData.channels.sort((a, b) =>

@@ -80,8 +80,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       const [channelData, movieData, mostViewedData] = await Promise.all([
-        fetch("/data/channels.json").then((res) => res.json()),
-        fetch("/data/movies.json").then((res) => res.json()),
+        fetch("/data/channels.json").then((res) => { if (!res.ok) throw new Error(res.status); return res.json(); }),
+        fetch("/data/movies.json").then((res) => { if (!res.ok) throw new Error(res.status); return res.json(); }),
         fetchMostViewedVideos('channels', 10)
       ]);
 

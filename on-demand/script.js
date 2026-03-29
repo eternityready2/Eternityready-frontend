@@ -35,6 +35,7 @@ async function fetchVideosByOrigin(origin) {
     }),
   });
 
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
   const { data, errors } = await response.json();
 
   if (errors) {
