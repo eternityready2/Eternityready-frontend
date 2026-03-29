@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-TMFGS53Q');</script>
+  <!-- End Google Tag Manager -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eternity Ready - Media Page</title>
+  <style>
+    :root {
+      --primary: #0a0a0a;
+      --accent: #e63946;
+      --text-light: #ffffff;
+      --card-bg: #111111;
+      --shadow: 0 6px 22px rgba(0,0,0,0.55);
+      --radius: 18px;
+      --transition: 0.3s ease;
+    }
+
+    body {
+      margin: 0;
+      background: var(--primary);
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    /* HEADER */
+    header {
+      width: 100%;
+      background: rgba(0,0,0,0.8);
+      padding: 1rem 1.5rem;
+      backdrop-filter: blur(8px);
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 1500;
+    }
+
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.7rem;
+      font-weight: 900;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .hamburger {
+      cursor: pointer;
+      font-size: 2rem;
+      user-select: none;
+    }
+
+    .nav-links {
+      display: none;
+      flex-direction: column;
+      gap: 1.2rem;
+      margin-top: 1rem;
+      animation: fadeIn var(--transition);
+    }
+
+    .nav-links a {
+      color: var(--text-light);
+      text-decoration: none;
+      font-size: 1.2rem;
+      font-weight: 600;
+      transition: color var(--transition);
+    }
+
+    .nav-links a:hover {
+      color: var(--accent);
+    }
+
+    .open { display: flex; }
+
+    @media (min-width: 768px) {
+      .hamburger { display: none; }
+      .nav-links {
+        display: flex !important;
+        flex-direction: row;
+        gap: 2.2rem;
+        margin: 0;
+      }
+    }
+
+    /* GRID */
+    .grid {
+      padding: 2.5rem 1.5rem;
+      display: grid;
+      gap: 2.5rem;
+      grid-template-columns: 1fr;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    @media (min-width: 768px) {
+      .grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* CARD */
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.7);
+    }
+
+    .card-img {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      filter: brightness(0.85);
+      transition: filter var(--transition);
+    }
+
+    .card:hover .card-img {
+      filter: brightness(1);
+    }
+
+    .overlay {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: rgba(0,0,0,0.55);
+      padding: 0.55rem 1.1rem;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      backdrop-filter: blur(4px);
+    }
+
+    .card-content {
+      padding: 1.8rem;
+    }
+
+    .card h3 {
+      margin-top: 0;
+      font-size: 1.7rem;
+      font-weight: 800;
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 1.2rem;
+      padding: 0.85rem 1.7rem;
+      background: var(--accent);
+      color: white;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 700;
+      transition: background var(--transition), transform var(--transition);
+      box-shadow: var(--shadow);
+    }
+
+    .btn:hover {
+      background: #c62836;
+      transform: scale(1.05);
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 2.5rem;
+      background: #000;
+      margin-top: 3rem;
+      color: #888;
+      font-size: 1rem;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+  <style>
+    /* DARK MODE TOGGLE */
+    .dark-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--accent);
+      color: #fff;
+      padding: 0.9rem 1.2rem;
+      border-radius: 50px;
+      font-weight: bold;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      z-index: 2000;
+      transition: var(--transition);
+    }
+    .dark-toggle:hover {
+      transform: scale(1.07);
+    }
+  </style>
+</head>
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TMFGS53Q"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+<header>
+  <div class="nav-container">
+    <div class="logo">Eternity Ready</div>
+    <div class="hamburger" onclick="toggleMenu()">☰</div>
+  </div>
+  <nav class="nav-links" id="navMenu">
+    <a href="https://www.eternityready.com/tv">TV</a>
+    <a href="https://listen.eternityready.com/">Radio</a>
+    <a href="https://podcasts.eternityready.com/">Podcasts</a>
+    <a href="https://www.eternityready.com/tv">Movies</a>
+  </nav>
+</header>
+
+<!-- CARDS SECTION -->
+<center>
+<h2>Eternity Ready is getting a new web site. Until we finish our site, please explore sections of our site below:</h2></center>
+<br> <br>
+<section class="grid">
+
+
+  <div class="card" id="tv">
+    <img src="tv.png" class="card-img" />
+    <div class="overlay">📺 Christian TV</div>
+    <div class="card-content">
+      <h3>Eternity Ready TV</h3>
+      <p>Watch 81 Faith and Family TV Channels on your PC, Android TV or mobile device totally free.</p>
+<a href="https://www.eternityready.com/tv" class="btn">Watch TV 🎬</a>
+   
+    </div>
+  </div>
+
+  <div class="card" id="radio">
+    <img src="radio.png" class="card-img" />
+    <div class="overlay">📻 Christian Radio</div>
+    <div class="card-content">
+      <h3>Eternity Ready Radio</h3>
+      <p>Listen to our Radio station "Eternity Ready Radio" and 14 other partner stations.</p>
+  <a href="https://listen.eternityready.com/" class="btn">Listen Now 🎧</a>
+
+    </div>
+  </div>
+
+  <div class="card" id="podcast">
+    <img src="podcast.png" class="card-img" />
+    <div class="overlay">🎙️ Podcasts</div>
+    <div class="card-content">
+      <h3>Eternity Ready Podcasts</h3>
+      <p>Listen to 177 podcasts and 21,415 episodes anywhere. Grow your walk with Jesus!</p> 
+<a href="https://podcasts.eternityready.com/" class="btn">Browse Podcasts 🎙️</a>
+    </div>
+  </div>
+
+  <div class="card" id="movies">
+    <img src="https://eternityready.com/login/public/media.jpg" class="card-img" />
+    <div class="overlay">🎬 Christian Movies</div>
+    <div class="card-content">
+      <h3>Faith-Based Movies</h3>
+      <p>Watch over 500 Faith & Family friendly movies. Movies with purpose, inspiration and best of all Jesus.</p>
+<a href="https://www.eternityready.com/tv" class="btn">Watch Movies ▶️</a>
+
+    </div>
+  </div>
+
+</section>
+
+<footer>
+  <b>Eternity Ready © 2025 — All Rights Reserved</b>
+</footer>
+
+<script>
+function toggleMenu() {
+  document.getElementById("navMenu").classList.toggle("open");
+}
+</script>
+
+<div class="dark-toggle" onclick="toggleDarkMode()">🌙 Dark Mode</div>
+
+<script>
+function toggleMenu() {
+  document.getElementById("navMenu").classList.toggle("open");
+}
+
+function toggleDarkMode() {
+  document.body.classList.toggle('dark');
+}
+</script>
+
+</body>
+</html>

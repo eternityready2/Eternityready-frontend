@@ -81,7 +81,7 @@
         });
 
         const {session, item} = await response.json();
-        const redirectUrl = localStorage.getItem('userPosition') ?? `${ETERNITY_BASE_URL}/new-homepage`;
+        const redirectUrl = localStorage.getItem('userPosition') ?? `${ETERNITY_BASE_URL}/`;
         localStorage.removeItem('userPosition');
         setSession(session);
         addToastAndRemoveLast(

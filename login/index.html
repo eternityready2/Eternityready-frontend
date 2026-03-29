@@ -45,7 +45,7 @@
     <eternity-header></eternity-header>
     <main>
         <div id="left">
-          <a href="/new-homepage">
+          <a href="/">
             <img
                 src="./public/logo.png"
             />
@@ -209,7 +209,7 @@
                   return;
                 }
 
-                const redirectUrl = localStorage.getItem('userPosition') ?? `${ETERNITY_BASE_URL}/new-homepage`;
+                const redirectUrl = localStorage.getItem('userPosition') ?? `${ETERNITY_BASE_URL}/`;
                 localStorage.removeItem('userPosition');
 
                 addToastAndRemoveLast(
@@ -282,7 +282,7 @@
             return;
           }
 
-          const redirectUrl = localStorage.getItem('userPosition') ?? `${ETERNITY_BASE_URL}/new-homepage`;
+          const redirectUrl = localStorage.getItem('userPosition') ?? `${ETERNITY_BASE_URL}/`;
           localStorage.removeItem('userPosition');
 
           addToastAndRemoveLast(

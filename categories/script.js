@@ -483,7 +483,7 @@
         .map((genre) => `<option value="${genre}">${genre}</option>`)
         .join("");
       dynamicContentArea.innerHTML = `
-        <a class="backHome-Button" href="/new-homepage/">Back Home</a><br>
+        <a class="backHome-Button" href="/">Back Home</a><br>
         <h1 class="section-title">${categoryQuery} <span><span id="video-count">${allMedia.length}</span> Vídeos</span></h1>
         <div class="filters-container">
           <div class="filter-group">

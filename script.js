@@ -1,3 +1,58 @@
+let eternityLocalDataLoaded = false;
+let eternityLocalData = [];
+
+function waitForAllMedia() {
+  if ( eternityLocalDataLoaded == true) {
+    runAfterAllMedia(eternityLocalData);
+  } else {
+    setTimeout(() => waitForAllMedia(), 50);
+  }
+}
+
+async function runAfterAllMedia(allMedia) {
+  await renderAllRecommendationSliders(
+    allMedia,
+    '#recommended-content-slider',
+    ['radio', 'music', 'channels', 'movies', 'podcast', 'on-demand']
+  );
+}
+
+function setActiveMidiaButton(typeTo) {
+  const midiaButton = document.querySelector('.midia-button');
+  const typesMap = {
+    'all': "All",
+    'channels': "Channels",
+    'radio': "Radio",
+    'music': "Music",
+    'movies': "Movies",
+    'podcasts': "Podcasts",
+  };
+
+  for (const button of midiaButton.querySelectorAll('button')) {
+    if (button.classList.contains('ativo')) {
+      button.classList.toggle('ativo');
+    }
+
+    if (button.textContent == typesMap[typeTo]) {
+      button.classList.toggle('ativo');
+    }
+  }
+}
+
+function getActiveMidiaButton() {
+  const activeMidiaButton = document.querySelector('.midia-button .ativo');
+  const typesMap = {
+    'All': "all",
+    'Channels': "channels",
+    'Radio': "radio",
+    'Music': "music",
+    'Movies': "movies",
+    'Podcasts': "podcasts",
+  };
+
+  return typesMap[activeMidiaButton.textContent]
+}
+
 fetch("https://beta.ourmanna.com/api/v1/get/?format=json&order=daily")
   .then((response) => response.json())
   .then((data) => {
@@ -12,7 +67,6 @@ fetch("https://beta.ourmanna.com/api/v1/get/?format=json&order=daily")
   });
 
 document.addEventListener("DOMContentLoaded", () => {
-  const API_BASE_URL = "https://api.eternityready.com/";
   const PODCAST_API_URL =
     "https://keystone.eternityready.com/api/podcasts?limit=9999";
 
@@ -27,11 +81,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function loadAllDataSources() {
     const promises = [
-      fetch(`${API_BASE_URL}api/categories`), // API
+      fetch(`${API_BASE_URL}/api/categories`), // API
       fetch(PODCAST_API_URL), // Podcast
       fetch("/data/channels.json"), // Local
       fetch("/data/movies.json"), // Local
       fetch("/data/music.json"), // Local
+      fetch("/data/radio.json"), // Local
     ];
 
     const results = await Promise.allSettled(promises);
@@ -63,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
       );
     }
 
-    const localFiles = ["channels", "movies", "music"];
+    const localFiles = ["channels", "movies", "music", "radio"];
     for (let i = 0; i < localFiles.length; i++) {
       const result = results[i + 2];
       const fileName = localFiles[i];
@@ -71,7 +126,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const response = result.value;
         if (response.ok) {
           const data = await response.json();
-          localData[fileName] = data[fileName] || [];
+          if (fileName === "radio") {
+            localData.radio = data.channels || [];
+          } else {
+            localData[fileName] = data[fileName] || [];
+          }
         } else {
           console.error(
             `Failed loading /data/${fileName}.json:`,
@@ -92,10 +151,9 @@ document.addEventListener("DOMContentLoaded", () => {
       localData
     );
   }
-
   async function fetchRecentVideos(limit = 20) {
     try {
-      const response = await fetch(`${API_BASE_URL}api/search?limit=${limit}`);
+      const response = await fetch(`${API_BASE_URL}/api/search?limit=${limit}`);
 
       if (!response.ok) {
         console.error(`Failed fetchting recent API videos:`, response.status);
@@ -115,7 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function fetchFeaturedVideos() {
     try {
-      const response = await fetch(`${API_BASE_URL}api/search?featured=true`);
+      const response = await fetch(`${API_BASE_URL}/api/search?featured=true`);
 
       if (!response.ok) {
         console.error(`Failed fetching featured API videos:`, response.status);
@@ -139,6 +197,8 @@ document.addEventListener("DOMContentLoaded", () => {
     for (const key of Object.keys(localData)) {
       if (key === "podcasts") {
         normalizedData[key] = localData[key].map(normalizePodcastItem);
+      } else if (key === "radio") {
+        normalizedData[key] = localData[key].map(normalizeRadioItem);
       } else {
         normalizedData[key] = localData[key].map((item) => {
           const normalizedItem = normalizeLocalItem(item);
@@ -148,7 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    localData = { channels: [], movies: [], music: [], podcasts: [] };
+    localData = { channels: [], movies: [], music: [], podcasts: [], radio: [] };
   }
 
   async function fetchCategories() {
@@ -158,7 +218,7 @@ document.addEventListener("DOMContentLoaded", () => {
   async function fetchVideosByCategory(categoryName) {
     try {
       const response = await fetch(
-        `${API_BASE_URL}api/search?category=${encodeURIComponent(categoryName)}`
+        `${API_BASE_URL}/api/search?category=${encodeURIComponent(categoryName)}`
       );
       if (!response.ok) {
         console.error(
@@ -178,14 +238,14 @@ document.addEventListener("DOMContentLoaded", () => {
   // ─── LÓGICA DO GRID DE CONTEÚDO LOCAL E FILTROS ──────────────────────────────
   function initializeLocalContentGrid() {
     const nameFilter = document.getElementById("name-filter");
-    const mediaTypeFilter = document.getElementById("media-type-filter");
+    const midiaButton = document.querySelector(".midia-button");
     const categoryFilter = document.getElementById("category-filter");
     const contentGrid = document.getElementById("content-grid");
     const gridContainer = document.getElementById("local-content-section"); // O contêiner que envolve a grade
 
     if (
       !nameFilter ||
-      !mediaTypeFilter ||
+      !midiaButton ||
       !categoryFilter ||
       !contentGrid ||
       !gridContainer
@@ -201,9 +261,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function saveGridFiltersToCookie() {
       const filters = {
-        name: nameFilter.value,
-        mediaType: mediaTypeFilter.value,
-        category: categoryFilter.value,
+        name: "",
+        mediaType: "all",
+        category: "all",
       };
       // Usando a função global que movemos
       setCookie(GRID_FILTERS_COOKIE_NAME, JSON.stringify(filters), 7);
@@ -215,7 +275,7 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
           const filters = JSON.parse(savedFilters);
           nameFilter.value = filters.name || "";
-          mediaTypeFilter.value = filters.mediaType || "all";
+          setActiveMidiaButton(filters.mediaType || "all")
           return filters.category || "all";
         } catch (e) {
           console.error("Erro ao ler os filtros da grid do cookie:", e);
@@ -233,15 +293,19 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentlyDisplayedCount = 0; // Contador de quantos itens estão visíveis
     let loadMoreGridBtn;
 
-    const allLocalData = [
+    eternityLocalData = [
       ...normalizedData.channels,
       ...normalizedData.movies,
       ...normalizedData.music,
       ...normalizedData.podcasts,
+      ...normalizedData.radio,
     ];
 
+    eternityLocalDataLoaded = true;
+
+
     function populateCategoryFilter() {
-      const allCategories = allLocalData.flatMap((item) =>
+      const allCategories = eternityLocalData.flatMap((item) =>
         item.categories.map((cat) => cat.name)
       );
       const uniqueCategories = [...new Set(allCategories)].sort();
@@ -269,12 +333,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
       itemsToAppend.forEach((item, index) => {
         // ... (seu código de criação de 'card' continua aqui, sem alterações)
-        let imageUrl = item.thumbnail.url || "images/placeholder.jpg";
+        let imageUrl = item.thumbnail.url || "/images/placeholder.jpg";
         if (item.sourceType === "podcasts" && !imageUrl.startsWith("http")) {
           imageUrl = `https://keystone.eternityready.com${imageUrl}`;
         }
         const youtubeVideoId = item.videoId;
         let playerContainer = "";
+        // Show friendly label: when the user filters by 'radio', display 'Radio'
+        // for items whose sourceType is 'music'. Otherwise show the sourceType.
+        const displayType =
+          getActiveMidiaButton() === "radio" && item.sourceType === "radio"
+            ? "Radio"
+            : item.sourceType
+            ? item.sourceType.charAt(0).toUpperCase() + item.sourceType.slice(1)
+            : "";
         if (youtubeVideoId) {
           const uniquePlayerId = `yt-player-grid-${index}-${item.id}`;
           playerContainer = `<div class="youtube-player-embed" id="${uniquePlayerId}"></div>`;
@@ -293,19 +365,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 ? `<span class="media-duration">${item.duration}</span>`
                 : ""
             }
-            <div class="media-type-label">${item.sourceType}</div>
+            <div class="media-type-label">${displayType}</div>
         </div>
         <div class="media-info-col">
             <p class="media-title">${item.title}</p>
             <div class="media-subinfo">
-                <p class="media-genre">${item.categories
-                  .map((c) => c.name)
-                  .join(", ")}</p>
+                <p class="media-genre">${renderCategoryTags(item.categories)}</p>
                 <p class="media-by">by <span class="media-author">${
                   item.author || "EternityReady"
                 }</span></p>
             </div>
         </div>`;
+        card.addEventListener("click", (e) => {
+          if (!e.target.closest('.category-tag')) {
+            window.location.assign(`${ETERNITY_BASE_URL}/player?q=${encodeURIComponent(item.title || item.name)}`);
+          }
+        });
         if (youtubeVideoId) {
           // ... (seus event listeners de mouseover/mouseout para o player)
         }
@@ -324,15 +399,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function renderContentGrid() {
       const nameQuery = nameFilter.value.toLowerCase();
-      const mediaTypeQuery = mediaTypeFilter.value;
+      const mediaTypeQuery = document.querySelector('#media-type-filter').value;
       const categoryQuery = categoryFilter.value;
 
       // Filtra todos os dados, mas não renderiza ainda
-      fullFilteredData = allLocalData
+      fullFilteredData = eternityLocalData
         .filter((item) => {
           const nameMatch = item.title.toLowerCase().includes(nameQuery);
+          // Show only items with matching sourceType
           const mediaTypeMatch =
-            mediaTypeQuery === "all" || item.sourceType === mediaTypeQuery;
+            mediaTypeQuery === "all" ||
+            item.sourceType === mediaTypeQuery;
           const categoryMatch =
             categoryQuery === "all" ||
             item.categories.some((cat) => cat.name === categoryQuery);
@@ -357,11 +434,10 @@ document.addEventListener("DOMContentLoaded", () => {
     gridContainer.appendChild(loadMoreGridBtn);
 
     // --- ATUALIZAÇÃO DOS EVENT LISTENERS ---
-    const savedCategory = loadGridFiltersFromCookie();
 
     populateCategoryFilter();
 
-    categoryFilter.value = savedCategory;
+
 
     const debouncedRenderAndSave = debounce(() => {
       renderContentGrid();
@@ -374,7 +450,21 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     nameFilter.addEventListener("input", debouncedRenderAndSave);
-    mediaTypeFilter.addEventListener("change", renderAndSave);
+    const typesMap = {
+      'All': "all",
+      'Channels': "channels",
+      'Radio': "radio",
+      'Music': "music",
+      'Movies': "movies",
+      'Podcasts': "podcasts",
+    };
+
+    for (const mButton of document.querySelectorAll('.midia-button button')) {
+      mButton.addEventListener('click', () => {
+        setActiveMidiaButton(typesMap[mButton.textContent]);
+        renderAndSave()
+      });
+    }
     categoryFilter.addEventListener("change", renderAndSave);
 
     renderContentGrid();
@@ -382,7 +472,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ─── LÓGICA DA BARRA DE PESQUISA DINÂMICA ──────────────────────────────────────────
   async function initializeSearch() {
-    const input = document.getElementById("search-input");
+    const input = document.getElementById("search-input-new");
     const dropdown = document.getElementById("search-dropdown");
     if (!input || !dropdown) return;
 
@@ -412,7 +502,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const lowerCaseQuery = query.toLowerCase();
 
       const apiSearchPromise = fetch(
-        `${API_BASE_URL}api/search?search_query=${encodeURIComponent(query)}`
+        `${API_BASE_URL}/api/search?search_query=${encodeURIComponent(query)}`
       )
         .then((res) => (res.ok ? res.json() : Promise.resolve({ videos: [] })))
         .then((data) => data.videos || [])
@@ -427,7 +517,9 @@ document.addEventListener("DOMContentLoaded", () => {
           ...normalizedData.movies,
           ...normalizedData.music,
           ...normalizedData.podcasts,
+          ...normalizedData.radio,
         ];
+
         const results = allLocalItems.filter(
           (item) =>
             item.title.toLowerCase().includes(lowerCaseQuery) ||
@@ -493,17 +585,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
         let videoUrl;
         let targetAttribute = "";
-        const id = encodeURIComponent(video.id);
+        const id = encodeURIComponent(video.title || video.name);
 
         switch (video.sourceType) {
           case "music":
             imageUrl = video.thumbnail?.url;
-            videoUrl = `/radio/?id=${id}`;
+            videoUrl = `/player/?q=${id}`;
+            //videoUrl = `/radio/?id=${id}`;
             break;
           case "channels":
           case "movies":
             imageUrl = video.thumbnail?.url;
-            videoUrl = `/tv/?id=${id}`;
+            videoUrl = `/player/?q=${id}`;
+            //videoUrl = `/tv/?id=${id}`;
             break;
           case "podcasts":
             imageUrl = `https://keystone.eternityready.com${video.thumbnail.url}`;
@@ -512,7 +606,7 @@ document.addEventListener("DOMContentLoaded", () => {
             break;
           default:
             videoUrl = `/player/?q=${id}`;
-            imageUrl = `${API_BASE_URL}${video.thumbnail.url.replace(
+            imageUrl = `${API_BASE_URL}/${video.thumbnail.url.replace(
               /^\//,
               ""
             )}`;
@@ -566,6 +660,7 @@ document.addEventListener("DOMContentLoaded", () => {
       seeAllLink.href = "/search";
     }
     const performLiveSearch = async (event) => {
+      console.log(event, event.target, event.target.value)
       const query = event.target.value.trim();
       if (query) {
         seeAllLink.href = `/search/?query=${encodeURIComponent(query)}`;
@@ -707,10 +802,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const imageUrl = video.thumbnail?.url?.startsWith("http")
           ? video.thumbnail.url
           : video.thumbnail?.url
-          ? `${API_BASE_URL}${video.thumbnail.url.replace(/^\//, "")}`
-          : "images/placeholder.jpg";
+          ? `${API_BASE_URL}/${video.thumbnail.url.replace(/^\//, "")}`
+          : "/images/placeholder.jpg";
 
-        const playerUrl = `/player/?q=${video.id}`;
+        const playerUrl = `/player/?q=${encodeURIComponent(video.title || video.name)}`;
         const youtubeVideoId = video.videoId;
         const videoHoverData = youtubeVideoId
           ? `data-youtube-id="${youtubeVideoId}"`
@@ -721,7 +816,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const uniquePlayerId = `yt-player-instance-${playerInstanceCounter}`;
           playerContainer = `<div class="youtube-player-embed" id="${uniquePlayerId}"></div>`;
         }
-        return `<a href="${playerUrl}" class="media-card-link"><div class="media-card" ${videoHoverData}><div class="media-thumb">${playerContainer} <img src="${imageUrl}" alt="${
+        return `<div class="media-card-link" onclick="if(!event.target.closest('.category-tag'))window.location.href='${playerUrl}'"><div class="media-card" ${videoHoverData}><div class="media-thumb">${playerContainer} <img src="${imageUrl}" alt="${
           video.title
         }" loading="lazy" class="media-thumbnail" />${
           video.duration
@@ -729,11 +824,9 @@ document.addEventListener("DOMContentLoaded", () => {
             : ""
         }</div><div class="media-info-col"><p class="media-title">${
           video.title
-        }</p><div class="media-subinfo"><p class="media-genre">${video.categories
-          .map((c) => c.name)
-          .join(", ")}</p><p class="media-by">by <span class="media-author">${
+        }</p><div class="media-subinfo"><p class="media-genre">${renderCategoryTags(video.categories)}</p><p class="media-by">by <span class="media-author">${
           video.author || "EternityReady"
-        }</span></p></div></div></div></a>`;
+        }</span></p></div></div></div></div>`;
       })
       .join("");
 
@@ -750,6 +843,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .toLowerCase()
       .replace(/[\s+&]/g, "-")}-section`;
     sliderSection.innerHTML = sliderContent;
+    sliderSection.id = "top-shows-browser";
 
     placeholder.replaceWith(sliderSection);
     initializeSliderControls(sliderSection);
@@ -761,15 +855,11 @@ document.addEventListener("DOMContentLoaded", () => {
       "dynamic-sliders-container"
     );
     const nameFilter = document.getElementById("sliders-name-filter");
-    const mediaTypeFilter = document.getElementById(
-      "sliders-media-type-filter"
-    );
     const categoryFilter = document.getElementById("sliders-category-filter");
 
     if (
       !slidersContainer ||
       !nameFilter ||
-      !mediaTypeFilter ||
       !categoryFilter
     ) {
       console.error(
@@ -783,7 +873,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function saveFiltersToCookie() {
       const filters = {
         name: nameFilter.value,
-        mediaType: mediaTypeFilter.value,
+        mediaType: getActiveMidiaButton(),
         category: categoryFilter.value,
       };
       setCookie(FILTERS_COOKIE_NAME, JSON.stringify(filters), 7);
@@ -795,7 +885,7 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
           const filters = JSON.parse(savedFilters);
           nameFilter.value = filters.name || "";
-          mediaTypeFilter.value = filters.mediaType || "all";
+          setActiveMidiaButton(filters.mediaType || "all")
           return filters.category || "all";
         } catch (e) {
           console.error("Erro ao ler os filtros do cookie:", e);
@@ -814,6 +904,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let masterSliderData = [];
     let allSliderElements = [];
     let loadMoreSlidersBtn;
+    let redirectBtn;
 
     slidersContainer.innerHTML = "";
 
@@ -824,18 +915,25 @@ document.addEventListener("DOMContentLoaded", () => {
           let imageUrl,
             videoUrl,
             targetAttribute = "";
-          const id = encodeURIComponent(video.id);
+          const id = encodeURIComponent(video.title || video.name);
           const type = video.sourceType || "youtube";
 
           switch (type) {
             case "music":
               imageUrl = video.thumbnail?.url;
-              videoUrl = `/radio/?id=${id}`;
+              videoUrl = `/player/?q=${id}`;
+              //videoUrl = `/radio/?id=${id}`;
+              break;
+            case "radio":
+              imageUrl = video.thumbnail?.url;
+              videoUrl = `#`;
+              //videoUrl = `/radio/?id=${id}`;
               break;
             case "channels":
             case "movies":
               imageUrl = video.thumbnail?.url;
-              videoUrl = `/tv/?id=${id}`;
+              videoUrl = `/player/?q=${id}`;
+              //videoUrl = `/tv/?id=${id}`;
               break;
             case "podcasts":
               imageUrl = video.thumbnail?.url?.startsWith("http")
@@ -848,7 +946,7 @@ document.addEventListener("DOMContentLoaded", () => {
               videoUrl = `/player/?q=${id}`;
               imageUrl = video.thumbnail?.url?.startsWith("http")
                 ? video.thumbnail.url
-                : `${API_BASE_URL}${video.thumbnail.url.replace(/^\//, "")}`;
+                : `${API_BASE_URL}/${video.thumbnail.url.replace(/^\//, "")}`;
               break;
           }
 
@@ -863,21 +961,18 @@ document.addEventListener("DOMContentLoaded", () => {
             playerContainer = `<div class="youtube-player-embed" id="${uniquePlayerId}"></div>`;
           }
 
-          return `<a href="${videoUrl}" class="media-card-link" ${targetAttribute}><div class="media-card" ${videoHoverData}><div class="media-thumb">${playerContainer} <img src="${
-            imageUrl || "images/placeholder.jpg"
+          const openCmd = targetAttribute.includes('_blank') ? `window.open('${videoUrl}','_blank')` : `window.location.href='${videoUrl}'`;
+          return `<div class="media-card-link" onclick="if(!event.target.closest('.category-tag'))${openCmd}"><div class="media-card" ${videoHoverData}><div class="media-thumb">${playerContainer} <img src="${
+            imageUrl || "/images/placeholder.jpg"
           }" alt="${video.title}" loading="lazy" class="media-thumbnail" />${
             video.duration
               ? `<span class="media-duration">${video.duration}</span>`
               : ""
           }</div><div class="media-info-col"><p class="media-title">${
             video.title
-          }</p><div class="media-subinfo"><p class="media-genre">${(
-            video.categories || []
-          )
-            .map((c) => c.name)
-            .join(", ")}</p><p class="media-by">by <span class="media-author">${
+          }</p><div class="media-subinfo"><p class="media-genre">${renderCategoryTags(video.categories)}</p><p class="media-by">by <span class="media-author">${
             video.author || "EternityReady"
-          }</span></p></div></div></div></a>`;
+          }</span></p></div></div></div></div>`;
         })
         .join("");
     };
@@ -926,8 +1021,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function applyFiltersAndRenderSliders() {
       const nameQuery = nameFilter.value.toLowerCase().trim();
-      const mediaTypeQuery = mediaTypeFilter.value;
+      const mediaTypeQuery = getActiveMidiaButton();
       const categoryQuery = categoryFilter.value;
+
+      console.log("Filtering with mediaTypeQuery:", mediaTypeQuery);
 
       const filteredSlidersData = masterSliderData
         .map((slider) => {
@@ -936,8 +1033,10 @@ document.addEventListener("DOMContentLoaded", () => {
               nameQuery === "" || item.title.toLowerCase().includes(nameQuery);
 
             const itemType = item.sourceType || "youtube";
+            // Updated to match the logic in initializeLocalContentGrid
             const mediaTypeMatch =
-              mediaTypeQuery === "all" || itemType === mediaTypeQuery;
+              mediaTypeQuery === "all" ||
+              itemType === mediaTypeQuery;
 
             const categoryMatch =
               categoryQuery === "all" ||
@@ -945,6 +1044,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             return nameMatch && mediaTypeMatch && categoryMatch;
           });
+
+          console.log("Filtered items:", filteredItems);
 
           if (filteredItems.length >= MIN_ITEMS_PER_SLIDER) {
             return { ...slider, items: filteredItems };
@@ -971,7 +1072,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       loadMoreSliders();
     }
-
     function loadMoreSliders(isInitialLoad = false) {
       const batchSize = isInitialLoad
         ? INITIAL_SLIDER_LIMIT
@@ -983,35 +1083,87 @@ document.addEventListener("DOMContentLoaded", () => {
         initializeSliderControls(sliderEl);
       });
 
+      const activeMidiaButton = getActiveMidiaButton()
       if (loadMoreSlidersBtn) loadMoreSlidersBtn.remove();
+      if (redirectBtn) {
+        redirectBtn.remove();
+        if (activeMidiaButton == "all") {
+          redirectBtn = null;
+        }
+      }
+      
 
       if (allSliderElements.length > 0) {
+        container = document.createElement('div');
+        container.style.display = 'flex';
+        container.style.gap = '0.5rem';
+        container.style.justifyContent = 'center';
+        container.style.alignItems = 'center';
         loadMoreSlidersBtn = document.createElement("button");
         loadMoreSlidersBtn.textContent = "See More Category";
         loadMoreSlidersBtn.className = "btn-load-more";
         loadMoreSlidersBtn.addEventListener("click", () =>
           loadMoreSliders(false)
         );
-        slidersContainer.appendChild(loadMoreSlidersBtn);
+        container.appendChild(loadMoreSlidersBtn);
+
+        if (activeMidiaButton !== "all") {
+          const typesMap = {
+            'channels': [
+              "TV Page to see more Channels",
+              "https://eternityready.com/tv",
+            ],
+            'radio': [
+              "Radio Page to see more Radio",
+              "https://eternityready.com/radio"
+            ],
+            'music': [
+              "Radio Page to see more Music",
+              "https://eternityready.com/radio"
+            ],
+            'movies': [
+              "TV Page to see more Movies",
+              "https://eternityready.com/tv?view=movies"
+            ],
+            'podcasts': [
+              "Podcast Page to see more Podcasts",
+              "https://podcasts.eternityready.com"
+            ],
+          };
+          redirectBtn = document.createElement("button");
+          redirectBtn.textContent = typesMap[activeMidiaButton][0];
+          redirectBtn.className = "btn-load-more";
+          redirectBtn.addEventListener("click", () => {
+            window.location.assign(typesMap[activeMidiaButton][1]);
+          });
+          container.appendChild(redirectBtn);
+        }
+        slidersContainer.appendChild(container);
       }
     }
 
-    const [featuredVideos, recentVideos, apiCategories] = await Promise.all([
-      fetchFeaturedVideos(),
+    const [recentVideos, apiCategories, recommendedContent] = await Promise.all([
       fetchRecentVideos(20),
       fetchCategories(),
+      fetchRecommendation([
+        ...normalizedData.channels,
+        ...normalizedData.movies,
+        ...normalizedData.music,
+      ])
     ]);
+    
+    // 2. Recentes (Recent)
 
-    if (featuredVideos.length >= MIN_ITEMS_PER_SLIDER) {
+    console.log("RecommendedContent", recommendedContent);
+    if (recommendedContent.length >= MIN_ITEMS_PER_SLIDER) {
       masterSliderData.push({
-        title: "Featured Videos",
-        items: featuredVideos,
-        sectionClass: "featured-videos-section",
-        link: "/categories/?category=featured",
+        title: "Recommended Content",
+        items: recommendedContent,
+        sectionClass: "recommend-videos-section",
+        link: "/categories/?category=recommend",
       });
     }
 
-    // 2. Recentes (Recent)
     if (recentVideos.length >= MIN_ITEMS_PER_SLIDER) {
       masterSliderData.push({
         title: "Newest Stuff",
@@ -1021,7 +1173,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    // 3. Categorias da API ('youtube')
+    /*
     if (apiCategories && apiCategories.length > 0) {
       for (const category of apiCategories) {
         const videosDaCategoria = await fetchVideosByCategory(category.name);
@@ -1041,6 +1193,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
     }
+    */
 
     // 4. Categorias dos Dados Locais
     const allLocalItems = [
@@ -1048,7 +1201,9 @@ document.addEventListener("DOMContentLoaded", () => {
       ...normalizedData.movies,
       ...normalizedData.music,
       ...normalizedData.podcasts,
+      ...normalizedData.radio,
     ];
+
 
     // =======================================================================
     const localContentPageLinks = {
@@ -1106,7 +1261,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Configura os listeners dos filtros
     nameFilter.addEventListener("input", debouncedFilterAndSave);
-    mediaTypeFilter.addEventListener("change", filterAndSave);
+    const typesMap = {
+      'All': "all",
+      'Channels': "channels",
+      'Radio': "radio",
+      'Music': "music",
+      'Movies': "movies",
+      'Podcasts': "podcasts",
+    };
+
+    for (const mButton of document.querySelectorAll('.midia-button button')) {
+      mButton.addEventListener('click', () => {
+        setActiveMidiaButton(typesMap[mButton.textContent]);
+        filterAndSave()
+      });
+    }
     categoryFilter.addEventListener("change", filterAndSave);
 
     // Primeira renderização
@@ -1115,61 +1284,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ─── INICIALIZAÇÃO DOS COMPONENTES DE UI E FUNÇÃO PRINCIPAL ─────────
-  /**
-   * @param {HTMLElement} context
-   */
-  function initializeSliderControls(context = document) {
-    context.querySelectorAll(".slider-wrapper").forEach((wrapper) => {
-      const slider = wrapper.querySelector(".media-grid");
-      const prevBtn = wrapper.querySelector(".slider-arrow.prev");
-      const nextBtn = wrapper.querySelector(".slider-arrow.next");
-      if (!slider || !prevBtn || !nextBtn) return;
-
-      const itemCount = slider.querySelectorAll(".media-card-link").length;
-
-      if (itemCount > 5) {
-        const scrollAmount = slider.clientWidth * 0.8;
-        prevBtn.addEventListener("click", () =>
-          slider.scrollBy({ left: -scrollAmount, behavior: "smooth" })
-        );
-        nextBtn.addEventListener("click", () =>
-          slider.scrollBy({ left: scrollAmount, behavior: "smooth" })
-        );
-      } else {
-        prevBtn.style.display = "none";
-        nextBtn.style.display = "none";
-      }
-    });
-    context.querySelectorAll(".media-grid").forEach((slider) => {
-      let isDown = false,
-        startX,
-        scrollLeft;
-      const startDrag = (e) => {
-        isDown = true;
-        slider.classList.add("dragging");
-        startX = (e.pageX || e.touches[0].pageX) - slider.offsetLeft;
-        scrollLeft = slider.scrollLeft;
-      };
-      const moveDrag = (e) => {
-        if (!isDown) return;
-        e.preventDefault();
-        const x = (e.pageX || e.touches[0].pageX) - slider.offsetLeft;
-        const walk = (x - startX) * 1.5;
-        slider.scrollLeft = scrollLeft - walk;
-      };
-      const endDrag = () => {
-        isDown = false;
-        slider.classList.remove("dragging");
-      };
-      slider.addEventListener("mousedown", startDrag);
-      slider.addEventListener("mousemove", moveDrag);
-      slider.addEventListener("mouseup", endDrag);
-      slider.addEventListener("mouseleave", endDrag);
-      slider.addEventListener("touchstart", startDrag, { passive: true });
-      slider.addEventListener("touchmove", moveDrag, { passive: false });
-      slider.addEventListener("touchend", endDrag);
-    });
-  }
 
   function initializeGeneralUI() {
     const menuBtn = document.querySelector(".btn-menu"),
@@ -1205,7 +1319,7 @@ document.addEventListener("DOMContentLoaded", () => {
    * @returns {Promise<Array>}
    */
   async function fetchHeroVideos() {
-    const endpoint = `${API_BASE_URL}api/highlight`;
+    const endpoint = `${API_BASE_URL}/api/highlight`;
     try {
       const response = await fetch(endpoint);
       if (!response.ok) {
@@ -1275,7 +1389,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ${description}
               </p>
               <div class="hero-cta">
-                <button class="btn-play" aria-label="Watch Now" onClick="window.location.href = '/player/?q=${video.id}'">
+                <button class="btn-play" aria-label="Watch Now" onClick="window.location.href = '/player/?q=${encodeURIComponent(video.title || video.name)}'">
                   <svg
                     width="16"
                     height="16"
@@ -1324,7 +1438,7 @@ document.addEventListener("DOMContentLoaded", () => {
               <div class="video-info">
                 <div class="info-bubble">
                   <img
-                    src="images/toppng.com-donna-picarro-dummy-avatar-768x768.png"
+                    src="/images/toppng.com-donna-picarro-dummy-avatar-768x768.png"
                     alt=""
                     class="info-avatar"
                   />
@@ -1707,18 +1821,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  loadHeroSection();
+  //loadHeroSection();
 
   async function main() {
     await loadAllDataSources();
     normalizeAllLocalData();
 
-    initializeHeroPlayer();
+    //initializeHeroPlayer();
     initializeSearch();
     initializeLocalContentGrid();
     initializeDynamicSliders();
-    initializeGeneralUI();
+    //initializeGeneralUI();
     initializePlayerPreviews();
+    initializeSliderControls(document.getElementById("browse-by-service"));
+    initializeSliderControls(document.getElementById("browse-by-people"));
+    waitForAllMedia();
   }
 
   main();

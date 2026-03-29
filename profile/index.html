@@ -41,7 +41,7 @@
     <div id="mainAndNav">
         <nav id="profileSidebar">
             <div>
-              <a href="/new-homepage">
+              <a href="/">
                 <img
                     src="https://eternityready.com/images/logo1USE-THIS.png"
                 />
@@ -420,7 +420,7 @@
         document.getElementById("profileSignOut").addEventListener(
             'click', () => {
                 localStorage.removeItem('session');
-                window.location.assign(`${ETERNITY_BASE_URL}/new-homepage`);
+                window.location.assign(`${ETERNITY_BASE_URL}/`);
             }
         )
     </script>
