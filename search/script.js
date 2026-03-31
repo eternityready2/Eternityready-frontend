@@ -1,416 +1,135 @@
+// search/script.js
+// Uses shared functions from /lib/normalize.js: normalizeLocalItem, normalizeRadioItem,
+// normalizePodcastItem, renderCategoryTags, createVideoCard, debounce
+
 document.addEventListener("DOMContentLoaded", async () => {
-  const API_BASE_URL = "https://api.eternityready.com";
+  const PODCAST_API_URL = "https://keystone.eternityready.com/api/podcasts?limit=9999";
   const dynamicContentArea = document.getElementById("dynamic-content-area");
 
-  // =======================================================================
-  // --- CORE SEARCH AND DATA FETCHING LOGIC ---
-  // =======================================================================
+  // ── DATA LOADING ──────────────────────────────────────────────────────────
 
-  /**
-   * Normalizes a local JSON item to match the structure expected by the card renderer.
-   * @param {object} item - The item from a local JSON file.
-   * @param {string} type - The type ('movie', 'music', 'channel').
-   * @returns {object} - A standardized object for rendering.
-   */
-  function normalizeLocalItemForSearch(item, type) {
-    const categories = (item.categories || []).map((name) => ({
-      name,
-    }));
-    const imageUrl = type === "channel" ? item.logo : item.thumbnail;
+  async function loadAllNormalizedData() {
+    const promises = [
+      fetch("/data/channels.json"),
+      fetch("/data/movies.json"),
+      fetch("/data/music.json"),
+      fetch("/data/radio.json"),
+      fetch(PODCAST_API_URL).catch(() => ({ ok: false })),
+    ];
+    const results = await Promise.allSettled(promises);
+    const allItems = [];
 
-    return {
-      id: item.id,
-      title: item.title || item.name,
-      author: item.author || "Eternity Ready",
-      thumbnail: {
-        url: imageUrl,
-      },
-      categories: categories,
-      sourceType: type, // <-- ALTERAÇÃO IMPORTANTE: Adiciona o tipo ao objeto
-    };
+    const fileKeys = ["channels", "movies", "music", "radio"];
+    for (let i = 0; i < 4; i++) {
+      const result = results[i];
+      const key = fileKeys[i];
+      if (result.status !== "fulfilled" || !result.value.ok) {
+        console.error(`Failed to load /data/${key}.json`);
+        continue;
+      }
+      try {
+        const data = await result.value.json();
+        const items = (key === "radio" ? data.channels : data[key]) || [];
+        if (key === "radio") {
+          items.forEach((item) => allItems.push(normalizeRadioItem(item)));
+        } else {
+          items.forEach((item) =>
+            allItems.push({ ...normalizeLocalItem(item), sourceType: key })
+          );
+        }
+      } catch (e) {
+        console.error(`Failed to parse /data/${key}.json`, e);
+      }
+    }
+
+    if (results[4].status === "fulfilled" && results[4].value.ok) {
+      try {
+        const podcastJson = await results[4].value.json();
+        (podcastJson.data || []).forEach((item) =>
+          allItems.push(normalizePodcastItem(item))
+        );
+      } catch (e) {
+        console.error("Failed to parse podcast data", e);
+      }
+    }
+
+    return allItems;
   }
 
-  /**
-   * Searches for media in both local JSON files and the remote API.
-   * @param {string} query The search query.
-   * @returns {Promise<Array>} A combined and deduplicated list of search results.
-   */
+  // ── SEARCH ────────────────────────────────────────────────────────────────
+
   async function searchMedia(query) {
     if (!query) return [];
-    const lowerCaseQuery = query.toLowerCase();
+    const lowerQuery = query.toLowerCase();
 
-    // --- Start both searches in parallel ---
-    const localSearchPromise = (async () => {
-      try {
-        const responses = await Promise.all([
-          fetch("../data/channels.json"),
-          fetch("../data/music.json"),
-          fetch("../data/movies.json"),
-        ]);
-        const [channelsData, musicData, moviesData] = await Promise.all(
-          responses.map((res) => res.json())
-        );
-
-        const allItems = [
-          ...moviesData.movies.map((item) =>
-            normalizeLocalItemForSearch(item, "movie")
-          ),
-          ...musicData.music.map((item) =>
-            normalizeLocalItemForSearch(item, "music")
-          ),
-          ...channelsData.channels.map((item) =>
-            normalizeLocalItemForSearch(item, "channel")
-          ),
-        ];
-
-        return allItems.filter((item) => {
-          const title = (item.title || "").toLowerCase();
-          const categories = (item.categories || [])
-            .map((c) => c.name.toLowerCase())
-            .join(" ");
-          return (
-            title.includes(lowerCaseQuery) ||
-            categories.includes(lowerCaseQuery)
-          );
-        });
-      } catch (error) {
-        console.error("Failed to fetch or process local search data:", error);
-        return [];
-      }
-    })();
-
-    const apiSearchPromise = (async () => {
-      try {
-        const url = `${API_BASE_URL}/api/search?search_query=${encodeURIComponent(
-          query
-        )}`;
-        const response = await fetch(url);
-        if (!response.ok)
-          throw new Error(`HTTP error! status: ${response.status}`);
-        const data = await response.json();
-        // Assume API items don't have a specific type, will use default URL
-        return data.videos || [];
-      } catch (error) {
-        console.error(`Failed to fetch API search results: ${error}`);
-        return [];
-      }
-    })();
-
-    // --- Wait for both searches to complete and combine results ---
-    const [localResults, apiResults] = await Promise.all([
-      localSearchPromise,
-      apiSearchPromise,
+    const [allLocalItems, apiResults] = await Promise.all([
+      loadAllNormalizedData(),
+      fetch(
+        `${API_BASE_URL}/api/search?search_query=${encodeURIComponent(query)}`
+      )
+        .then((res) => (res.ok ? res.json() : { videos: [] }))
+        .then((data) => data.videos || [])
+        .catch(() => []),
     ]);
-    const combinedResults = [...localResults, ...apiResults];
 
-    // Deduplicate results based on item ID
-    const uniqueResults = Array.from(
-      new Map(combinedResults.map((item) => [item.id, item])).values()
+    const localResults = allLocalItems.filter(
+      (item) =>
+        (item.title || "").toLowerCase().includes(lowerQuery) ||
+        (item.description || "").toLowerCase().includes(lowerQuery) ||
+        (item.categories || []).some((cat) =>
+          (cat.name || "").toLowerCase().includes(lowerQuery)
+        )
     );
-    return uniqueResults;
+
+    const apiIds = new Set(apiResults.map((v) => v.id));
+    const uniqueLocal = localResults.filter((v) => !apiIds.has(v.id));
+    return [...apiResults, ...uniqueLocal];
   }
 
-  // =======================================================================
-  // --- PAGE CONTENT RENDERING LOGIC ---
-  // =======================================================================
+  // ── RENDER ────────────────────────────────────────────────────────────────
 
-  /**
-   * NOVA FUNÇÃO: Determina a URL correta para um item de mídia com base em seu tipo.
-   * @param {object} video - O objeto de mídia, deve ter 'id' e 'sourceType'.
-   * @returns {string} A URL correta para o item.
-   */
-  function getVideoUrl(video) {
-    const id = encodeURIComponent(video.id);
-    switch (video.sourceType) {
-      case "music":
-        return `/radio/?id=${id}`;
-      case "channel":
-      case "movie":
-        return `/tv/?id=${id}`;
-      default:
-        // Fallback para resultados da API ou tipos desconhecidos
-        return `/player/?q=${id}`;
-    }
-  }
-
-  /**
-   * Creates the HTML for a single video card.
-   * @param {object} video - The unified video object (from API or local).
-   * @returns {string} - The HTML of the media-card.
-   */
-  function createVideoCardHTML(video) {
-    let imageUrl = "images/placeholder.jpg";
-    if (video.thumbnail && video.thumbnail.url) {
-      if (video.thumbnail.url.startsWith("http")) {
-        imageUrl = video.thumbnail.url;
-      } else {
-        imageUrl = `${API_BASE_URL}${video.thumbnail.url}`;
-      }
-    }
-
-    const videoUrl = getVideoUrl(video);
-    const title = video.title;
-    const author = video.author || "Eternity Ready";
-    const categoriesText = (video.categories || [])
-      .map((cat) => cat.name)
-      .join(", ");
-
-    // Converte a primeira letra do tipo de mídia para maiúscula para o rótulo
-    const mediaTypeLabel = video.sourceType
-      ? video.sourceType.charAt(0).toUpperCase() + video.sourceType.slice(1)
-      : "";
-
-    return `
-      <div class="media-card" onclick="window.location.href='${videoUrl}'">
-        <div class="media-thumb">
-          <img src="${imageUrl}" alt="${title}" />
-          ${
-            mediaTypeLabel
-              ? `<div class="media-type-label">${mediaTypeLabel}</div>`
-              : ""
-          }
-        </div>
-        <div class="media-info-col">
-          <p class="media-title">${title}</p>
-          <div class="media-subinfo">
-            <p class="media-genre">${categoriesText}</p>
-            <p class="media-by">by <span class="media-author">${author}</span></p>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  /**
-   * Creates the HTML for the main grid of search results.
-   * @param {string} title - The title for the section.
-   * @param {Array} videos - The array of video objects.
-   * @returns {string} - The HTML for the entire grid section.
-   */
-  function createAllVideosGridHTML(title, videos) {
-    const cardsHTML = videos.map(createVideoCardHTML).join("");
-    return `
-      <section class="media-section">
-        <div class="all-videos-section">
-          <div class="section-header">
-            <h2 class="section-title">${title}</h2>
-          </div>
-          <div class="media-grid all-videos-grid">
-            ${cardsHTML}
-          </div>
-        </div>
-      </section>
-    `;
-  }
-
-  /**
-   * Fetches search results based on URL query and renders them on the page.
-   */
   async function fetchAndRenderSearchResults() {
     if (!dynamicContentArea) return;
 
     const params = new URLSearchParams(window.location.search);
-    const queryValue = params.get("query") || "";
-    const backHomeButtonHTML =
-      '<a class="backHome-Button" href="/">Back Home</a>';
+    const query = params.get("query") || "";
+    const backBtn = '<a class="backHome-Button" href="/">Back Home</a>';
 
-    if (!queryValue) {
+    if (!query) {
       dynamicContentArea.innerHTML =
-        backHomeButtonHTML +
-        '<p class="container" style="text-align: center;">Please enter a search term.</p>';
+        backBtn +
+        '<p style="text-align:center;">Please enter a search term.</p>';
       return;
     }
 
+    dynamicContentArea.innerHTML =
+      backBtn + '<p style="text-align:center;">Searching...</p>';
+
     try {
-      const allVideos = await searchMedia(queryValue);
-      let finalHTML = "";
-
-      if (allVideos.length > 0) {
-        finalHTML += createAllVideosGridHTML(
-          `Search results for "${queryValue}"`,
-          allVideos
-        );
-      }
-
-      if (finalHTML) {
-        dynamicContentArea.innerHTML = backHomeButtonHTML + finalHTML;
+      const results = await searchMedia(query);
+      if (results.length > 0) {
+        const cardsHTML = results.map((v) => window.createVideoCard(v)).join("");
+        dynamicContentArea.innerHTML = `${backBtn}
+          <section class="media-section">
+            <div class="all-videos-section">
+              <div class="section-header">
+                <h2 class="section-title">Search results for "${query}"</h2>
+              </div>
+              <div class="media-grid all-videos-grid">${cardsHTML}</div>
+            </div>
+          </section>`;
       } else {
         dynamicContentArea.innerHTML =
-          backHomeButtonHTML +
-          `<p class="container" style="text-align: center;">No results found for "${queryValue}".</p>`;
+          backBtn +
+          `<p style="text-align:center;">No results found for "${query}".</p>`;
       }
-    } catch (error) {
-      console.error("Error rendering search results:", error);
+    } catch (err) {
+      console.error("Search error:", err);
       dynamicContentArea.innerHTML =
-        backHomeButtonHTML +
-        '<p class="container" style="text-align: center; color: red;">The content could not be loaded.</p>';
+        backBtn +
+        '<p style="text-align:center;color:red;">Could not load results.</p>';
     }
   }
 
-  // =======================================================================
-  // --- HEADER SEARCH DROPDOWN LOGIC ---
-  // =======================================================================
-
-  async function initializeSearchDropdown() {
-    const input = document.getElementById("search-input");
-    const dropdown = document.getElementById("search-dropdown");
-    if (!input || !dropdown) return;
-
-    const mediaList = document.getElementById("media-list");
-    const mediaSection = document.getElementById("media-section");
-    const historySection = document.getElementById("history-section");
-    const categoriesSection = document.getElementById("categories-section");
-    const historyList = document.getElementById("history-list");
-    const noHistory = document.getElementById("no-history");
-    const categoriesList = document.getElementById("categories-list");
-    const seeAllLink = document.getElementById("see-all");
-
-    let history = JSON.parse(localStorage.getItem("searchHistory") || "[]");
-
-    const renderLiveResults = (videos) => {
-      categoriesSection.style.display = "none";
-      historySection.style.display = "none";
-      mediaSection.style.display = "block";
-      mediaList.innerHTML = "";
-
-      if (videos.length === 0) {
-        mediaList.innerHTML =
-          '<li class="search-feedback">No results found.</li>';
-        return;
-      }
-      videos.slice(0, 5).forEach((video) => {
-        let imageUrl = "images/placeholder.jpg";
-        if (video.thumbnail && video.thumbnail.url) {
-          if (video.thumbnail.url.startsWith("http")) {
-            imageUrl = video.thumbnail.url;
-          } else {
-            imageUrl = `${API_BASE_URL}${video.thumbnail.url}`;
-          }
-        }
-
-        const videoUrl = getVideoUrl(video);
-        const li = document.createElement("li");
-        li.className = "media-item";
-
-        // Converte a primeira letra do tipo de mídia para maiúscula para o rótulo
-        const mediaTypeLabel = video.sourceType
-          ? video.sourceType.charAt(0).toUpperCase() + video.sourceType.slice(1)
-          : "";
-
-        li.innerHTML = `
-          <img src="${imageUrl}" alt="${video.title}">
-          <div class="media-info">
-            <p class="media-title">${video.title}</p>
-            <p class="media-meta">${(video.categories || [])
-              .map((c) => c.name)
-              .join(", ")}</p>
-            ${
-              mediaTypeLabel
-                ? `<div class="media-type-label-dropdown">${mediaTypeLabel}</div>`
-                : ""
-            }
-          </div>`;
-        li.onclick = () => {
-          window.location.href = videoUrl;
-        };
-        mediaList.appendChild(li);
-      });
-    };
-
-    const renderEmpty = () => {
-      mediaSection.style.display = "none";
-      categoriesSection.style.display = "block";
-      historySection.style.display = "block";
-      noHistory.style.display = history.length ? "none" : "block";
-      historyList.innerHTML = "";
-      history.forEach((term) => {
-        const li = document.createElement("li");
-        li.className = "history-item";
-        li.innerHTML = `<a href="/search/?query=${encodeURIComponent(
-          term
-        )}">${term}</a>`;
-        historyList.appendChild(li);
-      });
-      seeAllLink.textContent = "See all results »";
-      seeAllLink.href = "/search";
-    };
-
-    const performLiveSearch = async (event) => {
-      const query = event.target.value.trim();
-      seeAllLink.href = `/search/?query=${encodeURIComponent(query)}`;
-      seeAllLink.textContent = `See all results for "${query}" »`;
-
-      if (query.length < 2) {
-        renderEmpty();
-        return;
-      }
-      mediaSection.style.display = "block";
-      categoriesSection.style.display = "none";
-      historySection.style.display = "none";
-      mediaList.innerHTML = '<li class="search-feedback">Searching...</li>';
-      const results = await searchMedia(query);
-      renderLiveResults(results);
-    };
-
-    const debouncedSearch = debounce(performLiveSearch, 400);
-    input.addEventListener("input", debouncedSearch);
-
-    input.addEventListener("focus", () => {
-      dropdown.style.display = "block";
-      if (input.value.trim() === "") {
-        renderEmpty();
-      }
-    });
-
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        const query = input.value.trim();
-        if (query) {
-          history = [query, ...history.filter((h) => h !== query)].slice(0, 5);
-          localStorage.setItem("searchHistory", JSON.stringify(history));
-          window.location.href = `/search/?query=${encodeURIComponent(query)}`;
-        }
-      }
-    });
-
-    document.addEventListener("click", (e) => {
-      if (!e.target.closest(".search-container")) {
-        dropdown.style.display = "none";
-      }
-    });
-  }
-
-  // =======================================================================
-  // --- GENERAL UI & INITIALIZATION ---
-  // =======================================================================
-
-  const menuBtn = document.querySelector(".btn-menu");
-  const overlay = document.querySelector(".menu-overlay");
-  const mobileNav = document.querySelector(".mobile-nav");
-  const closeBtn = document.querySelector(".btn-nav-close");
-
-  if (menuBtn && mobileNav) {
-    const toggleMobileNav = () => {
-      mobileNav.classList.toggle("open");
-      overlay.classList.toggle("open");
-    };
-    menuBtn.addEventListener("click", toggleMobileNav);
-    closeBtn.addEventListener("click", toggleMobileNav);
-    overlay.addEventListener("click", toggleMobileNav);
-
-    document.querySelectorAll(".mobile-nav .nav-group > a").forEach((link) => {
-      if (!link.nextElementSibling?.classList.contains("submenu")) return;
-      link.addEventListener("click", (e) => {
-        e.preventDefault();
-        link.classList.toggle("open");
-      });
-    });
-  }
-
-  if (dynamicContentArea) {
-    fetchAndRenderSearchResults();
-  }
-
-  initializeSearchDropdown();
+  fetchAndRenderSearchResults();
 });

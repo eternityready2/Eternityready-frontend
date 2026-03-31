@@ -331,60 +331,11 @@ document.addEventListener("DOMContentLoaded", () => {
           '<p class="loading-feedback">No results found.</p>';
       }
 
-      itemsToAppend.forEach((item, index) => {
-        // ... (seu código de criação de 'card' continua aqui, sem alterações)
-        let imageUrl = item.thumbnail.url || "/images/placeholder.jpg";
-        if (item.sourceType === "podcasts" && !imageUrl.startsWith("http")) {
-          imageUrl = `https://keystone.eternityready.com${imageUrl}`;
-        }
-        const youtubeVideoId = item.videoId;
-        let playerContainer = "";
-        // Show friendly label: when the user filters by 'radio', display 'Radio'
-        // for items whose sourceType is 'music'. Otherwise show the sourceType.
-        const displayType =
-          getActiveMidiaButton() === "radio" && item.sourceType === "radio"
-            ? "Radio"
-            : item.sourceType
-            ? item.sourceType.charAt(0).toUpperCase() + item.sourceType.slice(1)
-            : "";
-        if (youtubeVideoId) {
-          const uniquePlayerId = `yt-player-grid-${index}-${item.id}`;
-          playerContainer = `<div class="youtube-player-embed" id="${uniquePlayerId}"></div>`;
-        }
-        const card = document.createElement("div");
-        card.className = "media-card";
-        card.setAttribute("style", "cursor: pointer;");
-        card.innerHTML = `
-        <div class="media-thumb">
-            ${playerContainer} 
-            <img src="${imageUrl}" alt="${
-          item.title
-        }" loading="lazy" class="media-thumbnail"/>
-            ${
-              item.duration
-                ? `<span class="media-duration">${item.duration}</span>`
-                : ""
-            }
-            <div class="media-type-label">${displayType}</div>
-        </div>
-        <div class="media-info-col">
-            <p class="media-title">${item.title}</p>
-            <div class="media-subinfo">
-                <p class="media-genre">${renderCategoryTags(item.categories)}</p>
-                <p class="media-by">by <span class="media-author">${
-                  item.author || "EternityReady"
-                }</span></p>
-            </div>
-        </div>`;
-        card.addEventListener("click", (e) => {
-          if (!e.target.closest('.category-tag')) {
-            window.location.assign(`${ETERNITY_BASE_URL}/player?q=${encodeURIComponent(item.title || item.name)}`);
-          }
-        });
-        if (youtubeVideoId) {
-          // ... (seus event listeners de mouseover/mouseout para o player)
-        }
-        contentGrid.appendChild(card);
+      itemsToAppend.forEach((item) => {
+        const wrapper = document.createElement("div");
+        wrapper.innerHTML = window.createVideoCard(item);
+        const card = wrapper.firstElementChild;
+        if (card) contentGrid.appendChild(card);
       });
 
       currentlyDisplayedCount += itemsToAppend.length;

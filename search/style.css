@@ -2610,6 +2610,8 @@ a {
 }
 
 .backHome-Button {
+  display: inline-block;
+  margin-top: 24px;
   padding: 4px 16px;
   border: 2px solid gray;
   font-weight: 600;
