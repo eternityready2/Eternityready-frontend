@@ -716,20 +716,6 @@ body.scrolled #main_header {
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-@media (max-width: 1024px) {
-  .play_button svg,
-  .play_button span,
-  .round_button svg {
-    font-size: 14px;
-    line-height: 20px;
-  }
-
-  .round_button.info svg {
-    width: 16px;
-    height: 16px;
-  }
-}
-
 .play_button {
   position: relative;
   display: flex;
@@ -767,22 +753,6 @@ body.scrolled #main_header {
 
 .play_button svg {
   z-index: 10;
-}
-
-@media (max-width: 1024px) {
-  .play_button svg,
-  .play_button span,
-  .round_button svg {
-    font-size: 14px;
-    line-height: 20px;
-  }
-}
-
-@media (max-width: 768px) {
-  .play_button {
-    padding: 8px 12px;
-    font-size: 16px;
-  }
 }
 
 main {
@@ -987,18 +957,6 @@ ul {
 }
 
 @media (max-width: 1024px) {
-  .play_button svg,
-  .play_button span,
-  .round_button svg {
-    font-size: 24px;
-    line-height: 32px;
-  }
-
-  .round_button.info svg {
-    width: 16px;
-    height: 16px;
-  }
-
   #main_header .centered_menu {
     display: none;
   }
@@ -1061,11 +1019,6 @@ ul {
     font-size: 16px;
     line-height: 24px;
   }
-  .play_button {
-    padding: 8px 12px;
-    font-size: 16px;
-  }
-
   .swiper_content {
     position: absolute;
     display: flex;
