@@ -970,10 +970,96 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
+    function createHomepageChannelCard(channel) {
+      const card = document.createElement("div");
+      card.className = "channel-card";
+
+      const title = channel.title || channel.name;
+      let thumbnailSrc;
+      if (channel.logo) {
+        thumbnailSrc = channel.logo;
+      } else if (typeof channel.thumbnail === "string") {
+        thumbnailSrc = channel.thumbnail;
+      } else if (channel.thumbnail && channel.thumbnail.url) {
+        const url = channel.thumbnail.url;
+        thumbnailSrc = url.startsWith("http") ? url : `${API_BASE_URL}/${url.replace(/^\//, "")}`;
+      } else {
+        thumbnailSrc = "";
+      }
+
+      card.innerHTML = `
+        <div class="content-banner-tv">TV Channel</div>
+        <img src="${thumbnailSrc}" alt="${title}" loading="lazy">
+        <div class="channel-details">
+          <h3>${title}</h3>
+          <p class="online">ONLINE</p>
+          <div class="raiting-save">
+            <div class="rating" data-rating="${channel.rating || 3}"></div>
+            <button class="watch-later-btn" data-channel="${title}">
+              <i class="fa-solid fa-bookmark bookmark-icon active"></i>
+              <div class="spinner"><i class="fa-solid fa-circle-notch fa-spin"></i></div>
+            </button>
+          </div>
+          <div class="current-program" data-channel-name="${title.toLowerCase()}">
+            <div><span>On now:</span> Not Known</div>
+            <div><span>Up next:</span> Not Known</div>
+          </div>
+        </div>`;
+
+      card.querySelector(".watch-later-btn").addEventListener("click", (e) => e.stopPropagation());
+      card.addEventListener("click", () => {
+        window.location.assign(`${ETERNITY_BASE_URL}/player?q=${encodeURIComponent(title)}`);
+      });
+      return card;
+    }
+
+    function renderHomepageChannelGrid(nameQuery, categoryQuery) {
+      slidersContainer.innerHTML = "";
+      let channels = normalizedData.channels || [];
+
+      if (nameQuery) {
+        channels = channels.filter((ch) =>
+          (ch.title || ch.name || "").toLowerCase().includes(nameQuery)
+        );
+      }
+      if (categoryQuery && categoryQuery !== "all") {
+        channels = channels.filter((ch) =>
+          (ch.categories || []).some((cat) => cat.name === categoryQuery)
+        );
+      }
+
+      if (channels.length === 0) {
+        slidersContainer.innerHTML = '<p class="loading-feedback">No channels found.</p>';
+        return;
+      }
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "cardbg";
+      const inner = document.createElement("div");
+      inner.className = "main-parent";
+      const grid = document.createElement("div");
+      grid.id = "homepage-channel-grid";
+      grid.className = "channel-grid";
+
+      channels.forEach((ch) => grid.appendChild(createHomepageChannelCard(ch)));
+      inner.appendChild(grid);
+      wrapper.appendChild(inner);
+      slidersContainer.appendChild(wrapper);
+
+      if (typeof startProgramUpdates === "function") {
+        startProgramUpdates("/tv/tv-schedule-data.json");
+      }
+    }
+
     function applyFiltersAndRenderSliders() {
       const nameQuery = nameFilter.value.toLowerCase().trim();
       const mediaTypeQuery = getActiveMidiaButton();
       const categoryQuery = categoryFilter.value;
+
+      if (mediaTypeQuery === "channels") {
+        renderHomepageChannelGrid(nameQuery, categoryQuery);
+        return;
+      }
 
       console.log("Filtering with mediaTypeQuery:", mediaTypeQuery);
 

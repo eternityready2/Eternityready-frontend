@@ -47,6 +47,16 @@
     <link rel="manifest" href="/public/site.webmanifest" />
     <link rel="stylesheet" href="/lib/toast.css" />
     <link rel="stylesheet" href="/lib/ads.css" />
+  <style>
+    @media (max-width: 600px) {
+      .media-section .media-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .media-section .media-grid .media-card {
+        width: 100%;
+      }
+    }
+  </style>
   </head>
   <body>
     <eternity-header></eternity-header>

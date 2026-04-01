@@ -1160,7 +1160,7 @@ a {
    ==================================== */
 .media-section {
   background: #060d17;
-  padding: 2rem 0 60px 0;
+  padding-bottom: 60px;
 }
 
 .media-section .section-header {
@@ -1197,7 +1197,6 @@ a {
   grid-template-columns: repeat(auto-fit, minmax(265px, max-content));
   gap: 1rem;
   margin: 0 auto;
-  justify-content: center;
   padding-bottom: 2rem;
   max-width: calc(5 * 265px + 4 * 1rem);
 }
