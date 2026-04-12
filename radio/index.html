@@ -776,15 +776,21 @@
 		});
 
 
-		document.getElementById('burger_menu').addEventListener('click', () => {
-			document.getElementById('side_menu').classList.toggle('open');
-			document.body.classList.toggle('overflow_hidden');
-		});
+		var burgerMenu = document.getElementById('burger_menu');
+		if (burgerMenu) {
+			burgerMenu.addEventListener('click', () => {
+				document.getElementById('side_menu').classList.toggle('open');
+				document.body.classList.toggle('overflow_hidden');
+			});
+		}
 
-		document.getElementById('side_menu_close_button').addEventListener('click', () => {
-			document.getElementById('side_menu').classList.toggle('open');
-			document.body.classList.toggle('overflow_hidden');
-		});
+		var sideMenuClose = document.getElementById('side_menu_close_button');
+		if (sideMenuClose) {
+			sideMenuClose.addEventListener('click', () => {
+				document.getElementById('side_menu').classList.toggle('open');
+				document.body.classList.toggle('overflow_hidden');
+			});
+		}
 
 
   </script>

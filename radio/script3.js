@@ -983,23 +983,20 @@ window.addEventListener("load", function () {
   const dropdownBtn = document.getElementById("dropdown-btn");
   const dropdownMenu = document.getElementById("dropdown-menu");
 
-  // Adiciona um "escutador de evento" que reage ao clique no botão
-  dropdownBtn.addEventListener("click", function (event) {
-    console.log("oi");
-    event.preventDefault();
-    dropdownMenu.classList.toggle("show");
-  });
+  if (dropdownBtn && dropdownMenu) {
+    dropdownBtn.addEventListener("click", function (event) {
+      event.preventDefault();
+      dropdownMenu.classList.toggle("show");
+    });
 
-  // Opcional, mas recomendado: Fecha o dropdown se o usuário clicar fora dele
-  window.addEventListener("click", function (event) {
-    // Verifica se o clique NÃO foi no botão do dropdown
-    if (!dropdownBtn.contains(event.target)) {
-      // Se o menu estiver aberto (contém a classe 'show'), ele a remove para fechar
-      if (dropdownMenu.classList.contains("show")) {
-        dropdownMenu.classList.remove("show");
+    window.addEventListener("click", function (event) {
+      if (!dropdownBtn.contains(event.target)) {
+        if (dropdownMenu.classList.contains("show")) {
+          dropdownMenu.classList.remove("show");
+        }
       }
-    }
-  });
+    });
+  }
 });
 
 //
