@@ -404,41 +404,7 @@
     </section>
     
     
-    <!-- Sound Player -->
-     <audio id="audio"></audio>
-
-    <div id="player-bar">
-      <div class="song-details">
-        <img
-          src="public/placeholder.png"
-          alt="Album cape"
-          class="album-art-bar"
-        />
-        <div class="song-info-bar">
-          <h3 id="song-title">Radio Title</h3>
-          <p id="song-artist">Radio description</p>
-        </div>
-      </div>
-
-      <div class="player-core-controls">
-        <div class="controls">
-          <button id="prev" class="control-btn">
-            <i class="fas fa-backward-step"></i>
-          </button>
-          <button id="play" class="control-btn play-btn">
-            <i class="fas fa-play"></i>
-          </button>
-          <button id="next" class="control-btn">
-            <i class="fas fa-forward-step"></i>
-          </button>
-        </div>
-      </div>
-
-      <div class="extra-controls">
-        <i class="fas fa-volume-high" id="mute"></i>
-        <i class="fas fa-close" id="close"></i>
-      </div>
-    </div>
+    <!-- Old Sound Player removed — playback handled by React radio player bar -->
     
     <eternity-salvation></eternity-salvation>
     <eternity-footer></eternity-footer>
@@ -796,8 +762,8 @@
   </script>
  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script type="module">
-   import { EternityRadioPlayerMounter } from './dist20/ui.es.js';
-   EternityRadioPlayerMounter('root', './dist20/output.css', './dist20/er-radio-player-bar.css');
+   import { EternityRadioPlayerMounter } from './dist/ui.es.js';
+   EternityRadioPlayerMounter('root', './dist/output.css', './dist/er-radio-player-bar.css');
  </script>
 
  <script type="module" src="script3.js"></script>

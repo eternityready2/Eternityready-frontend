@@ -1,4 +1,4 @@
-import { e as b, N as A } from "./browser-DOQSKIj_.js";
+import { e as b, N as A } from "./browser-BwXIqfVf.js";
 function r() {
   const P = Uint8Array, l = Float32Array;
   r.modules || Object.defineProperties(r, {

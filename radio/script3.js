@@ -1,4 +1,4 @@
-import { getEternityRadioPlayerRef } from './dist20/ui.es.js';
+import { getEternityRadioPlayerRef } from './dist/ui.es.js';
 function initializeSliderControls(context = document) {
   context.querySelectorAll(".slider-wrapper").forEach((wrapper) => {
 
@@ -133,7 +133,10 @@ document.addEventListener("DOMContentLoaded", () => {
             );
             if (radioIndex > -1) {
               updateView("channel");
-              playRadio(itemToShow, radioIndex);
+              const eternityRadioRef = getEternityRadioPlayerRef();
+              if (eternityRadioRef && eternityRadioRef.current) {
+                eternityRadioRef.current.changeExternalStation(itemToShow);
+              }
             }
           } else {
             updateView("movie");
@@ -326,10 +329,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- RENDERIZAÇÃO DA VIEW DE FILMES (MODIFICADA) ---
   function renderMovieView() {
-    const player = document.getElementById("player-bar");
-    player.classList.remove("ativo");
-    pauseSong();
-
     const movieContainer = document.createElement("div");
     movieContainer.id = "movie-sections-container";
     mainContainer.appendChild(movieContainer);
@@ -999,89 +998,4 @@ window.addEventListener("load", function () {
   }
 });
 
-//
-// Music Player
-//
-
-const songTitle = document.getElementById("song-title");
-const songArtist = document.getElementById("song-artist");
-const albumArt = document.querySelector(".album-art-bar");
-const audio = document.getElementById("audio");
-
-const prevBtn = document.getElementById("prev");
-const playBtn = document.getElementById("play");
-const nextBtn = document.getElementById("next");
-const playBtnIcon = playBtn.querySelector("i.fas");
-const mute = document.getElementById("mute");
-const close = document.getElementById("close");
-const player = document.getElementById("player-bar");
-
-// Estado do Player
-let currentPlaylist = [];
-let currentSongIndex = 0;
-let isPlaying = false;
-
-function playRadio(channel, index) {
-  player.classList.add("ativo");
-  currentSongIndex = index;
-  loadSong(channel);
-  playSong();
-}
-
-// Carrega uma música específica no player
-function loadSong(song) {
-  songTitle.textContent = song.name;
-  songArtist.textContent = song.description;
-  audio.src = song.src;
-  albumArt.src = song.logo;
-}
-
-// Funções de controle do player
-function playSong() {
-  isPlaying = true;
-  playBtnIcon.classList.remove("fa-play");
-  playBtnIcon.classList.add("fa-pause");
-  audio.play();
-}
-
-function pauseSong() {
-  isPlaying = false;
-  playBtnIcon.classList.add("fa-play");
-  playBtnIcon.classList.remove("fa-pause");
-  audio.pause();
-}
-
-function prevSong() {
-  currentSongIndex--;
-  if (currentSongIndex < 0) {
-    currentSongIndex = currentPlaylist.length - 1;
-  }
-  loadSong(currentPlaylist[currentSongIndex]);
-  playSong();
-}
-
-function nextSong() {
-  currentSongIndex++;
-  if (currentSongIndex > currentPlaylist.length - 1) {
-    currentSongIndex = 0;
-  }
-  loadSong(currentPlaylist[currentSongIndex]);
-  playSong();
-}
-
-function muteSong() {
-  audio.muted = !audio.muted;
-  mute.classList.toggle("fa-volume-high");
-  mute.classList.toggle("fa-volume-mute");
-}
-
-function closeBar() {
-  player.classList.remove("ativo");
-  pauseSong();
-}
-
-playBtn.addEventListener("click", () => (isPlaying ? pauseSong() : playSong()));
-prevBtn.addEventListener("click", prevSong);
-nextBtn.addEventListener("click", nextSong);
-mute.addEventListener("click", muteSong);
-close.addEventListener("click", closeBar);
+// Old Music Player removed — playback handled by React radio player bar

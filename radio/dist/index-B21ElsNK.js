@@ -10612,9 +10612,7 @@ const Iv = /* @__PURE__ */ iy(c1), R_ = Eu.createContext(), h1 = (d) => {
         if (!nt.ok)
           throw new Error(`HTTP error! status: ${nt.status}`);
         let Re = await nt.json();
-        Re.forEach(($e) => {
-          $e.url = "https://proxy.eternityready.com/?url=" + encodeURIComponent($e.url);
-        }), console.log("Stations loaded", Re), m(Re), he(!1);
+        console.log("Stations loaded", Re), m(Re), he(!1);
       } catch (nt) {
         console.error("Failed to fetch stations", nt), he(!1);
       }
@@ -11533,7 +11531,7 @@ const Cg = {
         } catch (et) {
           console.error("error stopping old player:", et);
         }
-      const { default: fe } = await import("./IcecastMetadataPlayer-rfd8sFmS.js").then((et) => et.I), Ue = {
+      const { default: fe } = await import("./IcecastMetadataPlayer-CUXzKcu4.js").then((et) => et.I), Ue = {
         lastPlayedMetadata: !0,
         metadataTypes: ["icy", "ogg"],
         onMetadata: (et) => {
@@ -11547,7 +11545,7 @@ const Cg = {
         onError: (et) => console.error("error", et)
       };
       at = new fe(
-        d?.externalStation ? "https://proxy.eternityready.com/?url=" + encodeURIComponent(d.externalStation.src) : o.url,
+        d?.externalStation ? d.externalStation.src : o.url,
         Ue
       ), Re(at), u(!0), z({
         play: async () => {
