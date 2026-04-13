@@ -419,8 +419,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const channelGrid = document.getElementById("channel-grid");
     channelGrid.innerHTML = "";
 
-    currentPlaylist = channelsToRender;
-
     channelsToRender.forEach((channel, index) => {
       channelGrid.appendChild(createChannelCard(channel, index));
     });
