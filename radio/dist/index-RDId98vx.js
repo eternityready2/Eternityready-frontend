@@ -11533,7 +11533,7 @@ const Cg = {
         } catch (et) {
           console.error("error stopping old player:", et);
         }
-      const { default: fe } = await import("./IcecastMetadataPlayer-rfd8sFmS.js").then((et) => et.I), Ue = {
+      const { default: fe } = await import("./IcecastMetadataPlayer-De-OoRzk.js").then((et) => et.I), Ue = {
         lastPlayedMetadata: !0,
         metadataTypes: ["icy", "ogg"],
         onMetadata: (et) => {
@@ -11562,7 +11562,7 @@ const Cg = {
         switchEndpoint: async () => {
           await at.stop(), await at.detachAudioElement(), u(!1), U(!0), ae("stopped");
         }
-      }), O && (ae("loading"), await at.play(), at.audioElement.volume = he, ae("playing"));
+      }), (O || d?.externalStation) && (ae("loading"), await at.play(), at.audioElement.volume = he, ae("playing"));
     })(), () => {
       at && (at.stop(), at.detachAudioElement());
     };
