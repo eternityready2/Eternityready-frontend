@@ -1,4 +1,4 @@
-import { C as T } from "./IcecastMetadataPlayer-CUXzKcu4.js";
+import { C as T } from "./IcecastMetadataPlayer-rfd8sFmS.js";
 const A = "mp4", l = "webm", d = "mp3", g = "mp4a.40.2", m = "flac", w = "vorbis", h = "opus", b = "audio/", S = ";codecs=", f = b + A + S, y = b + l + S, u = "mse-audio-wrapper";
 class r {
   /**

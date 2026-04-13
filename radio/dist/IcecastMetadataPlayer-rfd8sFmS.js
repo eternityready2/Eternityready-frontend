@@ -1,4 +1,4 @@
-import { I as ca } from "./index-B21ElsNK.js";
+import { I as ca } from "./index-AJRTjjTw.js";
 const yi = () => {
 };
 class bi {
@@ -1642,7 +1642,7 @@ class ja {
         try {
           c = (await import(
             /* webpackChunkName: "synaudio", webpackPrefetch: true */
-            "./index-CkV5xSNr.js"
+            "./index-CM9Qj9I2.js"
           )).default;
         } catch {
           this._icecast[S](
@@ -1929,7 +1929,7 @@ class at extends Ge {
   constructor(e, t, s, i, a) {
     super(e, t, s, i, a), this._MSEAudioWrapper = import(
       /* webpackChunkName: "mediasource", webpackPrefetch: true */
-      "./MSEAudioWrapper-DnvTVE6F.js"
+      "./MSEAudioWrapper-cUUj1dAl.js"
     ), this._initSupportedContainers(), this._init();
   }
   static canPlayType(e) {
@@ -2178,28 +2178,28 @@ class nt extends Ge {
         case "mpeg":
           const { MPEGDecoderWebWorker: t } = await import(
             /* webpackChunkName: "mpeg" */
-            "./index-BD1Ye9lz.js"
+            "./index-DvE6jIzt.js"
           );
           e = t;
           break;
         case "opus":
           const { OpusDecoderWebWorker: s } = await import(
             /* webpackChunkName: "opus" */
-            "./index-CgRCX3Te.js"
+            "./index-DG5JElux.js"
           );
           e = s;
           break;
         case "flac":
           const { FLACDecoderWebWorker: i } = await import(
             /* webpackChunkName: "flac" */
-            "./index-Cur4V6eN.js"
+            "./index-g_4dtBoh.js"
           );
           e = i;
           break;
         case "vorbis":
           const { OggVorbisDecoderWebWorker: a } = await import(
             /* webpackChunkName: "vorbis" */
-            "./index-ChEjPZC2.js"
+            "./index-BXtKVdEe.js"
           );
           e = a;
           break;
