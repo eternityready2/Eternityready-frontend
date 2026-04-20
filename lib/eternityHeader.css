@@ -120,12 +120,12 @@ button {
   display: none;
   position: absolute;
   top: 0rem;
-  left: 0;
+  left: -100px;
   background-color: var(--bg-dark);
   list-style: none;
   padding: 10px 0;
   margin: 0;
-  width: 750px;
+  width: 660px;
   max-height: 400px;
   overflow-y: auto;
   z-index: 10;
