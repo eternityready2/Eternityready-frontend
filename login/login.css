@@ -177,6 +177,10 @@ form#login #check-and-forgot-password {
   }
 }
 
+.g_id_signin {
+  margin-bottom: 1.25rem;
+}
+
 /* Large devices (desktops, 992px and up) */
 @media (min-width: 992px) {}
 
