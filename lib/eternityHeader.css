@@ -120,10 +120,16 @@ button {
   display: none;
   position: absolute;
   top: 0rem;
-  left: -100px;
-  background-color: var(--bg-dark);
+  left: 0;
+  background-color: rgba(6, 13, 23, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 2px solid #fb2c36;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   list-style: none;
-  padding: 10px 0;
+  padding: 12px;
   margin: 0;
   width: 660px;
   max-height: 400px;
@@ -138,26 +144,27 @@ button {
 .dropdown-section {
   display: flex;
   flex-wrap: wrap;
-  /* gap: 15px;
-  padding: 10px; */
 }
 
 .dropdown-section li {
   width: 25%;
   font-weight: normal;
-  padding: 3px 0px 3px 10px;
+  padding: 2px;
 }
 
 .on-demand-dropdown a {
+  display: block;
   color: #ffffff;
   font-size: 14px;
-  /* padding: 5px 0px 5px 20px; */
   font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .on-demand-dropdown a:hover {
-  /* color: #33c3a5; */
   color: #fb2c36;
+  background-color: rgba(251, 44, 54, 0.1);
 }
 
 
@@ -173,29 +180,39 @@ button {
   position: absolute;
   top: 0rem;
   left: 0;
-  background-color: var(--bg-dark);
+  background-color: rgba(6, 13, 23, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 2px solid #fb2c36;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   list-style: none;
-  padding: 10px 0;
+  padding: 12px;
   margin: 0;
-  width: 180px;
+  width: 200px;
   opacity: 0;
   transform: scale(0.95);
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .about-us-dropdown li {
-  padding: 1.5px 15px;
+  padding: 2px 0;
 }
 
 .about-us-dropdown a {
+  display: block;
   color: #fff;
   text-decoration: none;
   font-size: 14px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .about-us-dropdown a:hover {
-  /* color: #33c3a5; */
   color: #fb2c36;
+  background-color: rgba(251, 44, 54, 0.1);
 }
 
 /* ============================================= */
@@ -899,8 +916,16 @@ button {
 #main_header .centered_menu > ul {
   display: flex;
   flex: 1;
-  justify-content: end;
+  justify-content: flex-start;
   gap: 1.5rem;
+}
+
+#main_header > .centered_menu {
+  margin-left: 1.5rem;
+}
+
+#main_header .right .centered_menu > ul {
+  justify-content: flex-end;
 }
 
 #main_header .centered_menu > ul > li {
@@ -1371,7 +1396,7 @@ ul {
 }
 
 @media (max-width: 950px) {
-  #links-and-icons-container > .centered_menu {
+  #main_header > .centered_menu {
     display: none;
   }
 }
