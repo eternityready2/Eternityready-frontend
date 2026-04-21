@@ -1275,7 +1275,9 @@ header .cta-button a {
 .media-section .media-grid {
   display: flex;
   gap: 24px;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
 }
 
 /* CARD LAYOUT */
@@ -1367,7 +1369,7 @@ header .cta-button a {
   flex-direction: row;
   overflow-x: auto;
   gap: 24px;
-  scroll-snap-type: x mandatory;
+  scroll-snap-type: x proximity;
   -webkit-overflow-scrolling: touch;
   padding-bottom: 12px;
   /* hide scrollbar by default */
@@ -1470,7 +1472,7 @@ header .cta-button a {
   flex-direction: row;
   overflow-x: auto;
   gap: 24px;
-  scroll-snap-type: x mandatory;
+  scroll-snap-type: x proximity;
   -webkit-overflow-scrolling: touch;
   padding-bottom: 12px;
   scrollbar-width: none;
@@ -1827,7 +1829,7 @@ header .cta-button a {
   gap: 24px;
   overflow-x: auto;
   padding-bottom: 10px;
-  scroll-snap-type: x mandatory;
+  scroll-snap-type: x proximity;
   -webkit-overflow-scrolling: touch;
 
   /* hide in Firefox */
@@ -2005,7 +2007,7 @@ header .cta-button a {
   gap: 20px 24px;
   overflow-x: auto;
   padding-bottom: 16px;
-  scroll-snap-type: x mandatory;
+  scroll-snap-type: x proximity;
   -webkit-overflow-scrolling: touch;
 
   /* Firefox */
@@ -2641,7 +2643,7 @@ header .cta-button a {
     gap: 12px;
     margin-bottom: 16px;
     padding-bottom: 10px;
-    scroll-snap-type: x mandatory;
+    scroll-snap-type: x proximity;
     -webkit-overflow-scrolling: touch;
   }
 
