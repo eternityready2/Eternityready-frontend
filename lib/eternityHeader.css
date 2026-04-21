@@ -1397,7 +1397,7 @@ ul {
 
 @media (max-width: 950px) {
   #main_header > .centered_menu {
-    display: none;
+    display: none !important;
   }
 }
 
