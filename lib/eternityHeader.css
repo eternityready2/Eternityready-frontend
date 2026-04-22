@@ -925,6 +925,7 @@ button {
 }
 
 #main_header .right .centered_menu > ul {
+  flex: 0 0 auto;
   justify-content: flex-end;
 }
 
@@ -1402,7 +1403,7 @@ ul {
 }
 
 @media (max-width: 525px) {
-  #links-and-icons-container > .right .centered_menu ul li:nth-child(1) {
+  #links-and-icons-container > .right .centered_menu .headphones-link {
     display: none;
   }
   #donateHeader {
