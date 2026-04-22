@@ -453,14 +453,19 @@ button {
 #searchClose {
   background: transparent !important;
   color: #fff !important;
-  font-family: "Roboto", sans-serif !important;
-  font-size: 0.95rem !important;
-  font-weight: 600 !important;
-  padding: 8px 10px !important;
+  padding: 6px !important;
   cursor: pointer !important;
-  white-space: nowrap !important;
   flex-shrink: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   transition: color 0.2s ease !important;
+}
+
+#searchClose .material-icons {
+  font-family: 'Material Icons' !important;
+  font-size: 1.5rem !important;
+  line-height: 1 !important;
 }
 
 #searchClose:hover {
