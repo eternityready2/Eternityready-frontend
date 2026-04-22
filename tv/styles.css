@@ -427,8 +427,13 @@ body {
     overflow-y: hidden;
     gap: 12px;
     padding-bottom: 10px;
-    scroll-snap-type: x mandatory;
+    scroll-snap-type: x proximity;
     -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .discover-grid.top-row::-webkit-scrollbar {
+    display: none;
   }
 
   .eternity-card.gradient {
