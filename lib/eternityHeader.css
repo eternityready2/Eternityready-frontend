@@ -432,12 +432,15 @@ button {
   position: relative !important;
   display: none; /* flex */
   flex: 1;
+  align-items: center;
+  gap: 8px;
   max-width: 500px !important;
   margin: 0px 6px 0px 0px !important;
 }
 
 .search-container input {
-  width: 100% !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
   padding: 10px 40px 10px 14px !important;
   border: none !important;
   border-radius: 20px !important;
@@ -445,6 +448,23 @@ button {
   color: #ccc !important;
   font-family: "Roboto", sans-serif !important;
   font-size: 0.95rem !important;
+}
+
+#searchClose {
+  background: transparent !important;
+  color: #fff !important;
+  font-family: "Roboto", sans-serif !important;
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  padding: 8px 10px !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  transition: color 0.2s ease !important;
+}
+
+#searchClose:hover {
+  color: #fb2c36 !important;
 }
 
 .search-container input::placeholder {
@@ -1407,6 +1427,10 @@ ul {
     display: none;
   }
   #donateHeader {
+    margin-left: 0rem;
     margin-right: 0rem;
+  }
+  #searchClose {
+    display: none !important;
   }
 }
