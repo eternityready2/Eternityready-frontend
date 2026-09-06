@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#060d17" />
+  <title>Eternity Ready Landing Page Preview V4</title>
+  <style>
+    html,body{margin:0;min-height:100%;background:#060d17;color:#fff;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    .loading{min-height:100vh;display:grid;place-items:center;text-align:center;padding:24px}.loading strong{display:block;font-size:1.2rem}.loading span{display:block;margin-top:8px;color:#9ca3af}
+  </style>
+</head>
+<body>
+  <div class="loading"><div><strong>Loading Eternity Ready preview…</strong><span>Preparing the interactive launch pad.</span></div></div>
+  <script>
+  (async()=>{
+    try{
+      const response=await fetch('landing-page-preview.html',{cache:'no-store'});
+      if(!response.ok) throw new Error(`Base preview failed to load (${response.status})`);
+      const source=await response.text();
+      const doc=new DOMParser().parseFromString(source,'text/html');
+
+      const style=doc.createElement('style');
+      style.textContent=`
+        .decision-check{margin-top:20px;padding:clamp(22px,3vw,30px);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:center;border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,rgba(16,29,45,.94),rgba(8,17,29,.96));box-shadow:0 18px 48px rgba(0,0,0,.18)}
+        .decision-check h3{margin:3px 0 0;font-size:clamp(1.35rem,2.4vw,1.85rem);line-height:1.2}.decision-check p{margin:8px 0 0;color:var(--muted);max-width:690px;font-size:.9rem}
+        .decision-options{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:9px}.decision-option{min-height:44px;padding:10px 16px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.045);color:#fff;font-weight:800;cursor:pointer;transition:.2s ease}.decision-option:hover,.decision-option.selected{border-color:rgba(51,195,165,.55);background:rgba(51,195,165,.11);color:#e8fff9}
+        .path-actions{display:grid;gap:9px;margin-top:auto;position:relative;z-index:2}.path-actions .btn{margin-top:0}
+        .media-guide{margin-top:20px;border:1px solid rgba(51,195,165,.24);border-radius:18px;background:radial-gradient(circle at 95% 0%,rgba(51,195,165,.11),transparent 24rem),linear-gradient(145deg,#0f1c2c,#07111c);box-shadow:var(--shadow);overflow:hidden;max-height:0;opacity:0;transform:translateY(-8px);transition:max-height .45s ease,opacity .3s ease,transform .3s ease}
+        .media-guide.open{max-height:1320px;opacity:1;transform:translateY(0)}.media-guide-inner{padding:clamp(25px,4vw,40px)}
+        .media-guide-top{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:24px}.media-guide-top h3{margin:3px 0 0;font-size:clamp(1.65rem,3vw,2.45rem);letter-spacing:-.035em;line-height:1.08}.media-guide-top p{margin:10px 0 0;max-width:720px;color:var(--muted)}
+        .guide-close{flex:0 0 auto;width:40px;height:40px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.05);color:#fff;display:grid;place-items:center;cursor:pointer}.guide-close:hover{background:rgba(251,44,54,.16);color:#ff7077}
+        .needs-panel{margin:0 0 22px;padding:19px;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(255,255,255,.028)}.needs-panel h4{margin:0;font-size:1.05rem}.needs-panel>p{margin:5px 0 13px;color:var(--muted);font-size:.85rem}
+        .need-options{display:flex;flex-wrap:wrap;gap:8px}.need-chip{padding:9px 12px;border:1px solid rgba(255,255,255,.12);border-radius:999px;background:rgba(255,255,255,.04);color:#fff;font-weight:700;font-size:.82rem;cursor:pointer;transition:.2s ease}.need-chip:hover,.need-chip.selected{border-color:rgba(251,44,54,.58);background:rgba(251,44,54,.11)}
+        .format-label{margin:0 0 10px;color:#8f9cac;font-size:.74rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+        .media-intents{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.intent-btn{min-height:116px;padding:18px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.035);color:#fff;text-align:left;cursor:pointer;transition:.2s ease}.intent-btn:hover,.intent-btn.selected{transform:translateY(-2px);border-color:rgba(51,195,165,.52);background:rgba(51,195,165,.08)}.intent-btn .material-icons{display:block;margin-bottom:10px;color:var(--teal);font-size:28px}.intent-btn strong{display:block;font-size:.98rem}.intent-btn small{display:block;margin-top:5px;color:#8f9cac;line-height:1.4}
+        .media-result{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:center;margin-top:16px;padding:18px 20px;border-radius:14px;border:1px solid rgba(251,44,54,.22);background:rgba(251,44,54,.055)}.media-result-label{color:#ff7379;font-size:.72rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase}.media-result h4{margin:4px 0 0;font-size:1.18rem}.media-result p{margin:5px 0 0;color:var(--muted);font-size:.88rem}.media-result .btn{white-space:nowrap}
+        @media(max-width:1050px){.decision-check{grid-template-columns:1fr}.decision-options{justify-content:flex-start}.media-intents{grid-template-columns:repeat(2,minmax(0,1fr))}.media-result{grid-template-columns:1fr}.media-result .btn{width:max-content}}
+        @media(max-width:720px){.decision-option{flex:1 1 92px}.need-options{display:grid;grid-template-columns:1fr 1fr}.need-chip{border-radius:10px}.media-intents{grid-template-columns:1fr}.media-guide-top{gap:10px}.media-result .btn{width:100%}}
+      `;
+      doc.head.appendChild(style);
+
+      const questionGrid=doc.querySelector('.question-grid');
+      if(questionGrid && !doc.getElementById('recentDecisionCheck')){
+        questionGrid.insertAdjacentHTML('afterend',`
+          <div class="decision-check" id="recentDecisionCheck">
+            <div>
+              <div class="eyebrow">One more thing</div>
+              <h3>Have you recently made a decision to follow Jesus?</h3>
+              <p>This helps us distinguish a new believer from someone who is still exploring. It does not turn your answers into a spiritual score.</p>
+            </div>
+            <div class="decision-options" role="group" aria-label="Have you recently made a decision to follow Jesus?">
+              <button class="decision-option" type="button" data-decision="yes">Yes</button>
+              <button class="decision-option" type="button" data-decision="no">No</button>
+              <button class="decision-option" type="button" data-decision="unsure">I’m not sure</button>
+            </div>
+          </div>`);
+      }
+
+      const newCard=doc.getElementById('newBelieverCard');
+      if(newCard){
+        const newLink=newCard.querySelector('a.btn');
+        if(newLink){newLink.href='https://eternityready.com/discipleship/';newLink.innerHTML='Start My Discipleship Journey <span class="material-icons">chevron_right</span>';}
+        const p=newCard.querySelector('p');
+        if(p) p.textContent='Build a strong foundation through prayer, the Bible, discipleship, Christian community, and finding a Bible-believing local church.';
+      }
+
+      const christianCard=doc.getElementById('christianCard');
+      if(christianCard && !doc.getElementById('openMediaGuide')){
+        const enter=christianCard.querySelector('a.btn');
+        if(enter){
+          const actions=doc.createElement('div');actions.className='path-actions';
+          const chooser=doc.createElement('button');chooser.className='btn primary';chooser.id='openMediaGuide';chooser.type='button';chooser.innerHTML='Help Me Choose What I Need <span class="material-icons">tune</span>';
+          enter.parentNode.insertBefore(actions,enter);actions.appendChild(chooser);actions.appendChild(enter);
+        }
+      }
+
+      const pathGrid=doc.querySelector('.path-grid');
+      if(pathGrid && !doc.getElementById('mediaGuide')){
+        pathGrid.insertAdjacentHTML('afterend',`
+          <div class="media-guide" id="mediaGuide" aria-hidden="true">
+            <div class="media-guide-inner">
+              <div class="media-guide-top">
+                <div><div class="eyebrow">Your Eternity Ready launch pad</div><h3>What would encourage you most right now?</h3><p>Tell us what you need today and we’ll point you toward the best part of Eternity Ready. You can also choose directly by format below.</p></div>
+                <button class="guide-close" id="closeMediaGuide" type="button" aria-label="Close media chooser"><span class="material-icons">close</span></button>
+              </div>
+              <div class="needs-panel">
+                <h4>What do you need today?</h4><p>Choose what is on your heart.</p>
+                <div class="need-options" role="group" aria-label="What do you need today?">
+                  <button class="need-chip" type="button" data-need="encouragement">Encouragement</button>
+                  <button class="need-chip" type="button" data-need="bible">Bible Teaching</button>
+                  <button class="need-chip" type="button" data-need="worship">Worship &amp; Music</button>
+                  <button class="need-chip" type="button" data-need="watch">Something to Watch</button>
+                  <button class="need-chip" type="button" data-need="listen">Something to Listen To</button>
+                  <button class="need-chip" type="button" data-need="explore">Just Explore</button>
+                </div>
+              </div>
+              <div class="format-label">Or choose directly by format</div>
+              <div class="media-intents" role="group" aria-label="Choose a type of Christian content">
+                <button class="intent-btn" type="button" data-destination="tv"><span class="material-icons">live_tv</span><strong>I want to watch</strong><small>Christian TV, video, movies, teaching and live channels.</small></button>
+                <button class="intent-btn" type="button" data-destination="radio"><span class="material-icons">headphones</span><strong>I want to listen</strong><small>Christian radio, worship, music and encouraging audio.</small></button>
+                <button class="intent-btn" type="button" data-destination="podcasts"><span class="material-icons">podcasts</span><strong>I want to learn</strong><small>Podcasts, conversations, teaching and faith-building topics.</small></button>
+                <button class="intent-btn" type="button" data-destination="ondemand"><span class="material-icons">explore</span><strong>I want to explore</strong><small>Browse categories and discover something across Eternity Ready.</small></button>
+              </div>
+              <div class="media-result" id="mediaResult" aria-live="polite"><div><div class="media-result-label">Recommended destination</div><h4 id="mediaResultTitle">Choose an option above</h4><p id="mediaResultCopy">We’ll match what you want right now with the right Eternity Ready destination.</p></div><a class="btn primary" id="mediaResultCta" href="https://eternityready.com/home/">Explore Eternity Ready <span class="material-icons">chevron_right</span></a></div>
+            </div>
+          </div>`);
+      }
+
+      const oldNote=doc.querySelector('.new-believer-note');if(oldNote) oldNote.remove();
+
+      const enhancement=doc.createElement('script');
+      enhancement.textContent=`
+        (()=>{
+          let recentDecision=null;
+          const heavenInput=document.getElementById('heavenScore'),jesusInput=document.getElementById('jesusScore');
+          const readinessTitle=document.getElementById('readinessTitle'),readinessDetail=document.getElementById('readinessDetail'),suggestedCta=document.getElementById('suggestedCta');
+          const salvationCard=document.getElementById('salvationCard'),newBelieverCard=document.getElementById('newBelieverCard'),christianCard=document.getElementById('christianCard');
+          function applyRecommendation(){
+            const heaven=Number(heavenInput.value),jesus=Number(jesusInput.value);
+            [salvationCard,newBelieverCard,christianCard].forEach(card=>card&&card.classList.remove('recommended'));
+            if(recentDecision==='yes'){
+              readinessTitle.textContent='Your suggested next step: begin discipleship.';
+              readinessDetail.textContent='You recently decided to follow Jesus. Build a strong foundation through Scripture, prayer, Christian community, finding a local church, and practical discipleship resources.';
+              suggestedCta.href='https://eternityready.com/discipleship/';suggestedCta.innerHTML='Start My Discipleship Journey <span class="material-icons">chevron_right</span>';newBelieverCard.classList.add('recommended');return;
+            }
+            if(recentDecision==='unsure'){
+              readinessTitle.textContent='Your suggested next step: get clarity about following Jesus.';
+              readinessDetail.textContent='If you are not sure whether you have personally trusted Christ, start with the Gospel and settle what salvation means before deciding what comes next.';
+              suggestedCta.href='https://eternityready.com/salvation/';suggestedCta.innerHTML='Explore Salvation <span class="material-icons">chevron_right</span>';salvationCard.classList.add('recommended');return;
+            }
+            if(Math.min(heaven,jesus)<=4){readinessTitle.textContent='Your suggested next step: explore salvation.';readinessDetail.textContent='Your answers show some uncertainty. Start with the Gospel and learn what the Bible says about knowing Jesus and eternal life.';suggestedCta.href='https://eternityready.com/salvation/';suggestedCta.innerHTML='Explore Salvation <span class="material-icons">chevron_right</span>';salvationCard.classList.add('recommended');}
+            else if(heaven<=7||jesus<=7){readinessTitle.textContent='Your suggested next step: seek clarity and assurance.';readinessDetail.textContent='You have some confidence, but there may still be questions worth settling. Review the Gospel and strengthen your assurance.';suggestedCta.href='https://eternityready.com/salvation/';suggestedCta.innerHTML='Strengthen My Assurance <span class="material-icons">chevron_right</span>';salvationCard.classList.add('recommended');}
+            else{readinessTitle.textContent='Your suggested next step: keep growing in Christ.';readinessDetail.textContent='You express strong confidence in knowing Christ and your eternal hope. Continue growing through teaching, worship, encouragement, and Christian media.';suggestedCta.href='#christianCard';suggestedCta.innerHTML='Find Christian Content <span class="material-icons">chevron_right</span>';christianCard.classList.add('recommended');}
+          }
+          [heavenInput,jesusInput].forEach(input=>input&&input.addEventListener('input',applyRecommendation));
+          document.querySelectorAll('.decision-option').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.decision-option').forEach(i=>i.classList.remove('selected'));button.classList.add('selected');recentDecision=button.dataset.decision;applyRecommendation();}));
+          applyRecommendation();
+
+          const guide=document.getElementById('mediaGuide'),open=document.getElementById('openMediaGuide'),close=document.getElementById('closeMediaGuide');
+          const title=document.getElementById('mediaResultTitle'),copy=document.getElementById('mediaResultCopy'),cta=document.getElementById('mediaResultCta');
+          const choices={tv:{title:'Eternity Ready TV',copy:'Watch Christian television, teaching, movies, video and live channels.',href:'https://eternityready.com/tv',cta:'Go to TV'},radio:{title:'Eternity Ready Radio & Music',copy:'Listen to Christian radio, worship, music and encouraging audio.',href:'https://eternityready.com/radio',cta:'Go to Radio'},podcasts:{title:'Eternity Ready Podcasts',copy:'Listen and learn through Christian podcasts, conversations and faith-building teaching.',href:'https://podcasts.eternityready.com/',cta:'Go to Podcasts'},ondemand:{title:'Eternity Ready On-Demand',copy:'Browse categories and discover movies, channels, music, radio, podcasts and more.',href:'https://eternityready.com/categories',cta:'Browse On-Demand'}};
+          const needs={encouragement:{d:'podcasts',t:'Encouragement for Your Faith',c:'Start with Christian podcasts and conversations that can encourage, strengthen, and refocus your walk with Christ.'},bible:{d:'podcasts',t:'Bible Teaching & Faith-Building Content',c:'Start with podcasts and teaching-focused content for Scripture, Christian growth, and deeper learning.'},worship:{d:'radio',t:'Worship & Christian Music',c:'Eternity Ready Radio & Music is the fastest place to find worship, Christian music, and encouraging audio.'},watch:{d:'tv',t:'Something Christian to Watch',c:'Head to Eternity Ready TV for Christian television, teaching, movies, video, and live channels.'},listen:{d:'radio',t:'Something Christian to Listen To',c:'Head to Eternity Ready Radio & Music for worship, music, radio, and encouraging audio.'},explore:{d:'ondemand',t:'Explore Eternity Ready',c:'Browse On-Demand and discover movies, channels, music, radio, podcasts, and more across Eternity Ready.'}};
+          function showChoice(dest,t,c){const x=choices[dest];title.textContent=t||x.title;copy.textContent=c||x.copy;cta.href=x.href;cta.innerHTML=x.cta+' <span class="material-icons">chevron_right</span>';document.querySelectorAll('.intent-btn').forEach(i=>i.classList.toggle('selected',i.dataset.destination===dest));}
+          function setGuide(on){guide.classList.toggle('open',on);guide.setAttribute('aria-hidden',String(!on));if(on)setTimeout(()=>guide.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'}),80);}
+          open&&open.addEventListener('click',()=>setGuide(true));close&&close.addEventListener('click',()=>setGuide(false));
+          document.querySelectorAll('.need-chip').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.need-chip').forEach(i=>i.classList.remove('selected'));button.classList.add('selected');const n=needs[button.dataset.need];showChoice(n.d,n.t,n.c);}));
+          document.querySelectorAll('.intent-btn').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.need-chip').forEach(i=>i.classList.remove('selected'));showChoice(button.dataset.destination);}));
+        })();
+      `;
+      doc.body.appendChild(enhancement);
+
+      const final='<!doctype html>\n'+doc.documentElement.outerHTML;
+      document.open();document.write(final);document.close();
+    }catch(error){
+      document.body.innerHTML='<div class="loading"><div><strong>Preview could not load.</strong><span>'+String(error.message||error)+'</span></div></div>';
+      console.error(error);
+    }
+  })();
+  </script>
+</body>
+</html>
